@@ -1,0 +1,10 @@
+.idea
+*.min.css
+*.min.js
+*.pyc
+*~
+
+user-generated-content
+
+*.sqlite3
+*.sqlite
