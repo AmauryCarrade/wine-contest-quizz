@@ -21,7 +21,7 @@ class Answer(models.Model):
     is_correct = models.BooleanField()
 
     def __str__(self):
-        return f'{self.answer} ({"correct" if self.is_correct else "wrong"}'
+        return f'{self.answer} ({"correct" if self.is_correct else "wrong"})'
 
 
 class Question(models.Model):
@@ -32,7 +32,8 @@ class Question(models.Model):
         Answer, verbose_name="Question's proposed answers"
     )
     open_valid_answer = models.CharField(
-        "Question's valid answer if this is an open question or if this is a MCQ and the answer is not in the proposed answers",
+        "Question's valid answer if this is an open question or if this is a MCQ and the answer is not in the "
+        "proposed answers",
         blank=True,
         null=True,
         default=None,
