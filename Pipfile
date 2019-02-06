@@ -4,15 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "==2.1"
+django = ">=2.1.5"
 django-uuslug = "*"
 
 [dev-packages]
-black = "*"
 django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.7"
-
-[pipenv]
-allow_prereleases = true
