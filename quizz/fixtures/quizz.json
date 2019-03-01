@@ -1,0 +1,434 @@
+[
+  {
+    "model": "quizz.questionlocale",
+    "pk": 1,
+    "fields": {
+      "code": "fr_CH",
+      "name": "Fran\u00e7ais"
+    }
+  },
+  {
+    "model": "quizz.questionlocale",
+    "pk": 2,
+    "fields": {
+      "code": "en_US",
+      "name": "English"
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 1,
+    "fields": {
+      "answer": "It was the logical next step after coming down from the trees.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 2,
+    "fields": {
+      "answer": "Darwin",
+      "is_correct": false,
+      "linked_answer": 1,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 3,
+    "fields": {
+      "answer": "It had a dream.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 4,
+    "fields": {
+      "answer": "Martin Luther King",
+      "is_correct": false,
+      "linked_answer": 3,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 5,
+    "fields": {
+      "answer": "Chickens at rest tend to stay at rest.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 6,
+    "fields": {
+      "answer": "Sir Isaac Newton",
+      "is_correct": false,
+      "linked_answer": 5,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 7,
+    "fields": {
+      "answer": "Whether the chicken crossed the road or the road crossed the chicken depends upon your frame of reference.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 8,
+    "fields": {
+      "answer": "Albert Enstein",
+      "is_correct": false,
+      "linked_answer": 7,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 9,
+    "fields": {
+      "answer": "Because it could not resist the power of the Dark Side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 10,
+    "fields": {
+      "answer": "Darth Vader",
+      "is_correct": false,
+      "linked_answer": 9,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 11,
+    "fields": {
+      "answer": "I missed one?",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 12,
+    "fields": {
+      "answer": "Colonel Sanders",
+      "is_correct": false,
+      "linked_answer": 11,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 17,
+    "fields": {
+      "answer": "To get to the other side",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 18,
+    "fields": {
+      "answer": "To get to the same side",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 19,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 20,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 21,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 22,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 23,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 24,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 25,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 26,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 27,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 28,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 29,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 30,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 31,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 32,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 33,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 34,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": true
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 35,
+    "fields": {
+      "answer": "To get to the other side.",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 36,
+    "fields": {
+      "answer": "To get to the same side.",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 37,
+    "fields": {
+      "answer": "Yes",
+      "is_correct": true,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.answer",
+    "pk": 38,
+    "fields": {
+      "answer": "No",
+      "is_correct": false,
+      "linked_answer": null,
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "quizz.question",
+    "pk": 1,
+    "fields": {
+      "type": "LINKED",
+      "locale": 2,
+      "difficulty": 2,
+      "question": "Why did the chicken cross the road?",
+      "illustration": "",
+      "has_open_choice": false,
+      "open_valid_answer": null,
+      "answer_comment": "Why did the chicken scientist cross the road?\r\nTo invent the other side.",
+      "tags": [],
+      "answers": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ]
+    }
+  },
+  {
+    "model": "quizz.question",
+    "pk": 4,
+    "fields": {
+      "type": "MCQ",
+      "locale": 2,
+      "difficulty": 1,
+      "question": "Why did the chicken cross the M\u00f6bius strip?",
+      "illustration": "quizz/illustrations/dca93e3c8562cdeff2fc68848a964b3d--mobius-opti_b65ijWV.jpg",
+      "has_open_choice": true,
+      "open_valid_answer": "",
+      "answer_comment": "There is only one side on a M\u00f6bius strip.",
+      "tags": [],
+      "answers": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ]
+    }
+  },
+  {
+    "model": "quizz.question",
+    "pk": 5,
+    "fields": {
+      "type": "OPEN",
+      "locale": 2,
+      "difficulty": 2,
+      "question": "Why did the chicken cross the road?",
+      "illustration": "",
+      "has_open_choice": false,
+      "open_valid_answer": "To get to the other side.",
+      "answer_comment": "",
+      "tags": [],
+      "answers": []
+    }
+  }
+]

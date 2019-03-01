@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+
+{% load bulma_tags %}
+{% load i18n %}
+
+{% block head-title %}
+    {% if question %}{% blocktrans with question=question.question %}Update “{{ question }}”{% endblocktrans %}
+    {% else %}{% blocktrans %}New question{% endblocktrans %}{% endif %}
+{% endblock %}
+
+{% block hero-title %}
+    <h2 class="title">
+        {% if question %}
+            {% trans "Update a question" %}
+        {% else %}
+            {% trans "Create a new question" %}
+        {% endif %}
+    </h2>
+
+    {% if question %}
+        <p class="subtitle">{{ question.question }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="post" class="form is-horizontal" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.errors or form_answers.errors or form_linked_answers.errors %}
+            <section class="section">
+                <div class="notification is-warning">
+                    <p><strong>{% trans "We cannot save this question as there were errors." %}</strong></p>
+                    <ul>
+                        {% for error in form.non_form_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        {% for error in form_answers.non_form_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        {% for error in form_linked_answers.non_form_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </section>
+        {% endif %}
+
+        <section class="form-questions-commons section">
+            <fieldset>
+                <div class="columns">
+                    <div class="column is-6">{{ form.type|bulma }}</div>
+                    <div class="column is-3">{{ form.locale|bulma }}</div>
+                    <div class="column is-3">{{ form.difficulty|bulma }}</div>
+                </div>
+
+                <div class="columns">
+                    <div class="column {% if question.illustration %}is-6{% else %}is-7{% endif %}">{{ form.question|bulma }}</div>
+                    <div class="column is-offset-1 {% if question.illustration %}is-3{% else %}is-4{% endif %}">
+                        {{ form.illustration|bulma }}
+                        {% if question.illustration %}
+                            {{ form.delete_illustration|bulma }}
+                        {% endif %}
+                    </div>
+                    {% if question.illustration %}
+                        <div class="column is-2">
+                            <figure class="image">
+                                <img src="{{ question.illustration.thumbnail.392x294 }}" alt="{% trans "Question's current illustration" %}" />
+                            </figure>
+                        </div>
+                    {% endif %}
+                </div>
+            </fieldset>
+        </section>
+
+        <section class="section" id="form-questions-answers">
+            <fieldset>
+                {{ form_answers.management_form }}
+
+                {% for form_answer in form_answers.forms %}
+                    {% if forloop.first %}
+                        <div class="field">
+                            <label class="label" for="{{ form_answer.answer.id_for_label }}">Proposed answers</label>
+                            <div class="help">
+                                {% blocktrans %}
+                                    Enter one answer per line below. If you need more answers, click the green button.
+                                    To remove an answer, click the corresponding red button or empty the field.
+                                    Don't forget to check all correct answers (there may be one, many, or none).
+                                {% endblocktrans %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="field has-addons" data-prefix="{{ form_answers.prefix }}">
+                        <p class="control is-expanded">
+                            {{ form_answer.answer.as_widget }}
+                        </p>
+                        <p class="control">
+                            <span class="button is-light">
+                                <label class="checkbox">
+                                    {{ form_answer.is_correct.as_widget }}
+                                    Correct answer
+                                </label>
+                            </span>
+                        </p>
+                        <p class="control form-set-delete-button" title="{% trans "Remove this answer" %}" data-other-title="{% trans "Undo removing this answer" %}">
+                            <span class="button is-danger">
+                                <span class="fas fa-trash-alt"></span>
+                            </span>
+                            {{ form_answer.DELETE.as_hidden }}
+                        </p>
+                    </div>
+                {% endfor %}
+
+                <div class="field is-grouped is-grouped-right">
+                    <p class="control">
+                        <a class="button is-success form-set-add-button">
+                            <span class="icon">
+                                <span class="fas fa-plus"></span>
+                            </span>
+                            <span>{% trans "Add another proposed answer" %}</span>
+                        </a>
+                    </p>
+                </div>
+            </fieldset>
+        </section>
+
+        <section class="section" id="form-questions-open-related-fields">
+            <fieldset>
+                <div id="form-questions-has-open-choice">
+                    {{ form.has_open_choice|bulma }}
+                </div>
+                <div id="form-questions-open-answer">
+                    {{ form.open_answer|bulma }}
+                </div>
+            </fieldset>
+        </section>
+
+        <section class="section" id="form-questions-linked-answers">
+            <fieldset>
+                {{ form_linked_answers.management_form }}
+
+                {% for form_answer in form_linked_answers.forms %}
+                    {% if forloop.first %}
+                        <div class="field">
+                            <label class="label" for="{{ form_answer.answer.id_for_label }}">Linked answers</label>
+                            <div class="help">
+                                {% blocktrans %}
+                                    In linked answers questions, users will have to link two sets of answers randomly
+                                    displayed. In the forms below, please for each line add a couple of answers.
+                                {% endblocktrans %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="field has-addons" data-prefix="{{ form_linked_answers.prefix }}">
+                        <p class="control is-expanded">
+                            {{ form_answer.answer.as_widget }}
+                        </p>
+                        <p class="control">
+                            <span class="button is-light">
+                                <span class="fas fa-arrows-alt-h"></span>
+                            </span>
+                        </p>
+                        <p class="control is-expanded">
+                            {{ form_answer.linked_answer.as_widget }}
+                        </p>
+                        <p class="control form-set-delete-button" title="{% trans "Remove this answer" %}" data-other-title="{% trans "Undo removing this answer" %}">
+                            <span class="button is-danger">
+                                <span class="fas fa-trash-alt"></span>
+                            </span>
+                            {{ form_answer.DELETE.as_hidden }}
+                        </p>
+                    </div>
+                {% endfor %}
+
+                <div class="field is-grouped is-grouped-right">
+                    <p class="control">
+                        <a class="button is-success form-set-add-button">
+                            <span class="icon">
+                                <span class="fas fa-plus"></span>
+                            </span>
+                            <span>{% trans "Add another linked answer" %}</span>
+                        </a>
+                    </p>
+                </div>
+            </fieldset>
+        </section>
+
+        <section class="section">
+            <fieldset>
+                {{ form.answer_comment|bulma }}
+            </fieldset>
+        </section>
+
+        <section class="section">
+            <div class="field is-grouped is-grouped-right">
+                <p class="control">
+                    <button type="submit" name="and_after" value="CREATE" class="button is-primary">
+                        {% trans "Save question" %}
+                    </button>
+                </p>
+                <p class="control">
+                    <button type="submit" name="and_after" value="ANOTHER" class="button is-info">
+                        {% trans "Save and create another" %}
+                    </button>
+                </p>
+            </div>
+        </section>
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script type="application/javascript">
+        $(function () {
+            const $open_answer = $('#form-questions-open-answer');
+            const $answers = $('#form-questions-answers');
+            const $linked_answers = $('#form-questions-linked-answers');
+            const $has_open_choices = $('#form-questions-has-open-choice');
+
+            const $open_related_fields = $('#form-questions-open-related-fields');
+
+            $open_answer.hide();
+            $answers.hide();
+            $linked_answers.hide();
+            $has_open_choices.hide();
+
+            function update_form_parts_shown()
+            {
+                let question_type = $('input[name=type]:checked').val();
+
+                switch (question_type) {
+                    case 'OPEN':
+                        $answers.hide();
+                        $linked_answers.hide();
+                        $has_open_choices.hide();
+                        $open_answer.show();
+                        $open_related_fields.show();
+                        break;
+
+                    case 'MCQ':
+                        $linked_answers.hide();
+                        $answers.show();
+                        $has_open_choices.show();
+                        $open_related_fields.show();
+
+                        if ($('input[name=has_open_choice]').is(':checked'))
+                        {
+                            $open_answer.show();
+                        }
+                        else
+                        {
+                            $open_answer.hide();
+                        }
+                        break;
+
+                    case 'LINKED':
+                        $answers.hide();
+                        $has_open_choices.hide();
+                        $open_answer.hide();
+                        $open_related_fields.hide();
+
+                        $linked_answers.show();
+                        break;
+                }
+            }
+
+            update_form_parts_shown();
+
+            $('input[name=type]').on('change', update_form_parts_shown);
+            $('input[name=has_open_choice]').on('change', update_form_parts_shown);
+        });
+
+        function clone_one_more_form_set(selector, prefix)
+        {
+            if (!prefix)
+            {
+                prefix = $(selector).data('prefix');
+            }
+
+            let new_element = $(selector).clone(true);
+            let $total = $('#id_' + prefix + '-TOTAL_FORMS');
+            let total = $total.val();
+
+            new_element.find(':input').each(function()
+            {
+                let name = $(this).attr('name');
+
+                if(name)
+                {
+                    name = name.replace('-' + (total-1) + '-', '-' + total + '-');
+                    let id = 'id_' + name;
+                    $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+                }
+            });
+
+            total++;
+            $total.val(total);
+            console.log(prefix, total, $total);
+
+            $(selector).after(new_element);
+            return false;
+        }
+
+        $(function() {
+            $('.form-set-delete-button').on('click', function () {
+                let $delete_input = $(this).find("input[type=hidden]");
+                if (!$delete_input) return;
+
+                let $parent = $(this).parent('.field.has-addons');
+                let $icon_container = $(this).find("span.button");
+                let $icon = $(this).find('.fas');
+
+                let old_title = $(this).attr('title');
+                $(this).attr('title', $(this).data('other-title')).data('other-title', old_title);
+
+                let now_deleting = $delete_input.val() !== 'on';
+
+                if (now_deleting)
+                {
+                    $delete_input.val('on');
+                    $icon_container.addClass('is-warning').removeClass("is-danger");
+                    $icon.removeClass('fa-trash-alt').addClass('fa-undo');
+                }
+                else
+                {
+                    $delete_input.val('');
+                    $icon_container.removeClass('is-warning').addClass("is-danger");
+                    $icon.addClass('fa-trash-alt').removeClass('fa-undo');
+                }
+
+                $parent.find('input').each(function(i, e)
+                {
+                    if (now_deleting)
+                    {
+                        $(e).attr('disabled', 'disabled').addClass("has-text-danger");
+                    }
+                    else
+                    {
+                        $(e).attr('disabled', false).removeClass("has-text-danger");
+                    }
+                });
+            });
+
+            $('.form-set-add-button').on('click', function()
+            {
+                return clone_one_more_form_set($(this).parents('fieldset').find('.field.has-addons:last'));
+            });
+        });
+    </script>
+{% endblock %}

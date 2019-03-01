@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head-title %}{% trans "Delete question?" %}{% endblock %}
+
+{% block hero-title %}
+    <h1 class="title">{% trans "Are you sure you want to delete this question?" %}</h1>
+    <p class="subtitle">
+        {{ question.question }}
+    </p>
+{% endblock %}
+
+{% block content %}
+    <section class="section has-text-centered">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="buttons is-centered">
+                <input type="submit" class="button is-danger" value="{% trans "Yes, delete this question forever" %}" />
+            </div>
+            <div class="buttons is-centered">
+                <a href="{% url "quizz:management:list" %}" class="button is-text">{% trans "No, I changed my mind" %}</a>
+            </div>
+        </form>
+    </section>
+{% endblock %}

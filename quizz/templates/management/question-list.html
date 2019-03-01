@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head-title %}{% trans "All questions" %}{% endblock %}
+
+{% block hero-title %}
+    <h1 class="title">{% trans "All questions" %}</h1>
+    <p class="subtitle">
+        {% blocktrans count count=page_obj.paginator.count %}
+            {{ count }} question
+        {% plural %}
+            {{ count }} questions
+        {% endblocktrans %}
+    </p>
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="columns">
+            <div class="column is-4">
+                <p class="has-text-grey">
+                    {% blocktrans with questions_here=page_obj.object_list|length questions_total=page_obj.paginator.count page=page_obj.number pages=page_obj.paginator.num_pages %}
+                        Listing {{ questions_here }} questions out of {{ questions_total }}.
+                    {% endblocktrans %}
+                </p>
+            </div>
+            <div class="column is-8">
+                <div class="field is-grouped is-grouped-right">
+                    <div class="control">
+                        <div class="dropdown is-hoverable">
+                            <div class="dropdown-trigger">
+                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu-sort">
+                                    <span>
+                                        {% if sort_by == "name" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>name</strong>" %}
+                                        {% elif sort_by == "name" and sort_reversed %}
+                                            {% trans "Sorting by <strong>name</strong> (Z → A)" %}
+                                        {% elif sort_by == "difficulty" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>difficulty</strong>" %}
+                                        {% elif sort_by == "difficulty" and sort_reversed %}
+                                            {% trans "Sorting by <strong>difficulty</strong> (Hard → Easy)" %}
+                                        {% elif sort_by == "illustration" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>illustration</strong>" %}
+                                        {% elif sort_by == "illustration" and sort_reversed %}
+                                            {% trans "Sorting by <strong>illustration</strong> (without first)" %}
+                                        {% elif sort_by == "answered" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>most answered</strong>" %}
+                                        {% elif sort_by == "answered" and sort_reversed %}
+                                            {% trans "Sorting by <strong>least answered</strong>" %}
+                                        {% elif sort_by == "success-rate" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>best success rate</strong>" %}
+                                        {% elif sort_by == "success-rate" and sort_reversed %}
+                                            {% trans "Sorting by <strong>worst success rate</strong>" %}
+                                        {% endif %}
+                                    </span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu-sort" role="menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-item has-text-weight-bold">
+                                        {% trans "Sort by…" %}
+                                    </div>
+                                    <hr class="dropdown-divider" />
+                                    <a href="?sort={% if sort_by == "name" and not sort_reversed %}-{% endif %}name" class="dropdown-item{% if sort_by == "name" %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "name" %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Name" %}
+                                    </a>
+                                    <a href="?sort={% if sort_by == "difficulty" and not sort_reversed %}-{% endif %}difficulty" class="dropdown-item{% if sort_by == "difficulty" %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "difficulty" %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Difficulty" %}
+                                    </a>
+                                    <a href="?sort={% if sort_by == "illustration" and not sort_reversed %}-{% endif %}illustration" class="dropdown-item{% if sort_by == "illustration" %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "illustration" %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Illustration" %}
+                                    </a>
+                                    <hr class="dropdown-divider" />
+                                    <a href="?sort=answered" class="dropdown-item{% if sort_by == "answered" and not sort_reversed %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "answered" and not sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Most answered" %}
+                                    </a>
+                                    <a href="?sort=-answered" class="dropdown-item{% if sort_by == "answered" and sort_reversed %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "answered" and sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Least answered" %}
+                                    </a>
+                                    <a href="?sort=success-rate" class="dropdown-item{% if sort_by == "success-rate" and not sort_reversed %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "success-rate" and not sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Best success rate" %}
+                                    </a>
+                                    <a href="?sort=-success-rate" class="dropdown-item{% if sort_by == "success-rate" and sort_reversed %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "success-rate" and sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Worst success rate" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <a href="{% url "quizz:management:create" %}" class="button is-primary">
+                            <span class="icon">
+                                <span class="fas fa-plus"></span>
+                            </span>
+                            <span>{% trans "Create a new question" %}</span>
+                        </a>
+                    </div>
+                    <div class="control">
+                        <a href="" class="button is-primary">
+                            <span class="icon">
+                                <span class="fas fa-file-import"></span>
+                            </span>
+                            <span>{% trans "Import" %}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sectionn">
+        <div class="columns is-multiline">
+            {% for question in questions %}
+                <div class="column is-6">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="media">
+                                {% if question.illustration %}
+                                    <div class="media-left">
+                                        <figure class="image is-48x48">
+                                            <img src="{{ question.illustration.thumbnail.96x96 }}" alt="{% trans "Question's illustration" %}">
+                                        </figure>
+                                    </div>
+                                {% endif %}
+                                <div class="media-content">
+                                    <p class="title is-4">{{ question.question }}</p>
+                                    <p class="subtitle is-6">
+                                        {% spaceless %}
+                                            {% if question.type != "OPEN" %}
+                                                {{ question.answers_count }} {{ question.verbose_type|lower }}
+                                            {% else %}
+                                                {{ question.verbose_type }}
+                                            {% endif %}
+                                            <span class="icon">
+                                                <i class="fas fa-angle-right"></i>
+                                            </span>
+                                        {% endspaceless %}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="content">
+                                <p>
+                                    This question was <strong>never answered</strong>. That's a <strong class="has-text-success">100% success rate</strong>.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag is-dark">{{ question.locale.name }}</span>
+                                    {% if question.difficulty == 1 %}<span class="tag is-success" title="{% trans "Easy difficulty" %}">{% trans "Easy" %}</span>
+                                    {% elif question.difficulty == 2 %}<span class="tag is-warning" title="{% trans "Medium difficulty" %}">{% trans "Medium" %}</span>
+                                    {% elif question.difficulty == 3 %}<span class="tag is-danger" title="{% trans "Hard difficulty" %}">{% trans "Hard" %}</span>{% endif %}
+                                    <a class="tag" href="">One</a>
+                                    <a class="tag" href="">Two</a>
+                                    <a class="tag" href="">Three</a>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="card-footer">
+                            <a href="#" class="card-footer-item is-disabled is-unselectable">{% trans "View answers" %}</a>
+                            {% if perms.quizz.change_question %}
+                                <a href="{% url "quizz:management:edit" pk=question.pk %}" class="card-footer-item">{% trans "Edit question" %}</a>
+                            {% endif %}
+                            {% if perms.quizz.delete_question %}
+                                <a href="{% url "quizz:management:delete" pk=question.pk %}" class="card-footer-item">{% trans "Delete" %}</a>
+                            {% endif %}
+                        </footer>
+                    </div>
+                </div>
+            {% empty %}
+                <tr>
+                    <td colspan="2" class="has-text-centered">
+                        {% url "quizz:management:create" as create_url %}
+                        {% blocktrans with create_url=create_url %}
+                            There are no questions. You can <a href="{{ create_url }}">create one</a> or
+                            <a href="#">import some</a>.
+                        {% endblocktrans %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="section">
+        {% include "pagination.html" with page_obj=page_obj only %}
+    </section>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

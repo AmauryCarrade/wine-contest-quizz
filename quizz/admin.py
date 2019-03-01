@@ -1,13 +1,14 @@
 from django.contrib import admin
 
-from .models import Tag, Answer, Question
+from .models import QuestionLocale, Tag, Answer, Question
 
+admin.site.register(QuestionLocale)
 admin.site.register(Tag)
 admin.site.register(Answer)
 
 
 class AnswerInline(admin.TabularInline):
-    model = Question.proposed_answers.through
+    model = Question.answers.through
 
 
 class TagInline(admin.StackedInline):
@@ -17,4 +18,5 @@ class TagInline(admin.StackedInline):
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [AnswerInline, TagInline]
-    exclude = ("tags", "proposed_answers")
+    exclude = ("tags", "answers")
+    readonly_fields = ("type",)

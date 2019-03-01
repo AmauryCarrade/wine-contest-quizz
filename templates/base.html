@@ -1,0 +1,115 @@
+{% extends "base-blank.html" %}
+
+{% load i18n %}
+
+{% block main %}
+    <section class="hero is-primary is-small is-bold">
+        <!-- Hero head: will stick at the top -->
+        <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <a class="navbar-item">
+                            <img src="https://bulma.io/images/bulma-type-white.png" alt="Logo">
+                        </a>
+                        <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </div>
+
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end">
+                            {% block hero-menu %}
+                                {% if user.is_authenticated %}
+                                    <div class="navbar-item">
+                                            Hi, {% if user.first_name or user.last_name %}
+                                                {{ user.first_name }} {{ user.last_name }}
+                                            {% else %}
+                                                {{ user.username }}
+                                            {% endif %}
+                                    </div>
+
+                                    <a href="" class="navbar-item">
+                                        <strong>{% trans "Take a quizz" %}</strong>
+                                    </a>
+
+                                    <a href="" class="navbar-item">
+                                        {% trans "Quizzes history" %}
+                                    </a>
+
+                                    <div class="navbar-item has-dropdown is-hoverable">
+                                        <a class="navbar-link" href="">
+                                            Management
+                                        </a>
+
+                                        <div class="navbar-dropdown has-text-black">
+                                            <a class="navbar-item">
+                                                {% trans "Overview" %}
+                                            </a>
+                                            <hr class="navbar-divider">
+                                            <a class="navbar-item" href="{% url "quizz:management:list" %}">
+                                                {% trans "All questions" %}
+                                            </a>
+                                            <a class="navbar-item" href="{% url "quizz:management:create" %}">
+                                                {% trans "Create question" %}
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <a href="{% url "logout" %}" class="navbar-item" title="{% trans "Logout" %}">
+                                        <span class="is-sr-only">{% trans "Logout" %}</span>
+                                        <span class="icon">
+                                            <span class="fas fa-sign-out-alt"></span>
+                                        </span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url "login" %}" class="navbar-item">
+                                        {% trans "Login" %}
+                                    </a>
+                                    <a class="navbar-item">
+                                        {% trans "Sign up" %}
+                                    </a>
+                                {% endif %}
+                            {% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Hero content: will be in the middle -->
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                {% block hero-title %}{% endblock %}
+            </div>
+        </div>
+
+        <!-- Hero footer: will stick at the bottom -->
+        <div class="hero-foot">
+            {% block hero-foot %}{% endblock %}
+        </div>
+    </section>
+
+    {% block container %}
+        <div class="container">
+            {% if messages %}
+                <section class="section">
+                    {% for message in messages %}
+                        <div class="notification {% spaceless %}
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}is-link
+                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}is-info
+                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}is-success
+                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}is-warning
+                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}is-danger
+                            {% endif %}
+                        {% endspaceless %} {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    {% endblock %}
+{% endblock %}
