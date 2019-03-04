@@ -1,7 +1,11 @@
 from django import forms
+from django.forms import CheckboxSelectMultiple
 from django.utils.translation import gettext_lazy as _
+from mptt.forms import TreeNodeChoiceField, TreeNodeMultipleChoiceField
 
-from ..models import QuestionLocale, QUESTION_TYPES, QUESTION_MCQ
+from quizz.fields import TreeNodeAllMultipleChoiceField
+from quizz.widgets import CheckboxTreeSelectMultiple
+from ..models import QuestionLocale, Tag, QUESTION_TYPES, QUESTION_MCQ
 
 
 class ManageQuizzQuestionForm(forms.Form):
@@ -62,10 +66,19 @@ class ManageQuizzQuestionForm(forms.Form):
             "words will not be shown while the user is answering the question, so feel free to spoil the answer to add "
             "details or precisions here."
         ),
-        widget=forms.Textarea(attrs={"rows": "2", "cols": ""}),
+        widget=forms.Textarea(attrs={"rows": "3", "cols": ""}),
     )
 
-    # TODO tags
+    tags = TreeNodeAllMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        widget=CheckboxTreeSelectMultiple(
+            container_classes="columns is-multiline",
+            columns_classes="column is-3",
+            bold_parents=True,
+            attrs={"class": "checkbox"},
+        ),
+        required=False,
+    )
 
     # Open questions (+ MCQ with other field)
 

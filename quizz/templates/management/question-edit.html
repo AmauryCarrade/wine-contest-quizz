@@ -193,6 +193,12 @@
         </section>
 
         <section class="section">
+            <fieldset>
+                {{ form.tags|bulma }}
+            </fieldset>
+        </section>
+
+        <section class="section">
             <div class="field is-grouped is-grouped-right">
                 <p class="control">
                     <button type="submit" name="and_after" value="CREATE" class="button is-primary">
@@ -207,6 +213,14 @@
             </div>
         </section>
     </form>
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        #id_tags ul ul {
+            margin-left: 2rem;
+        }
+    </style>
 {% endblock %}
 
 {% block js %}

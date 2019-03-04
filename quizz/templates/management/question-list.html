@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% load i18n %}
+{% load mathfilters %}
+{% load mptt_tags %}
 
 {% block head-title %}{% trans "All questions" %}{% endblock %}
 
@@ -112,28 +114,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="control">
-                        <a href="{% url "quizz:management:create" %}" class="button is-primary">
-                            <span class="icon">
-                                <span class="fas fa-plus"></span>
-                            </span>
-                            <span>{% trans "Create a new question" %}</span>
-                        </a>
-                    </div>
-                    <div class="control">
-                        <a href="" class="button is-primary">
-                            <span class="icon">
-                                <span class="fas fa-file-import"></span>
-                            </span>
-                            <span>{% trans "Import" %}</span>
-                        </a>
-                    </div>
+                    {% if perms.quizz.add_question %}
+                        <div class="control">
+                            <a href="{% url "quizz:management:create" %}" class="button is-primary">
+                                <span class="icon">
+                                    <span class="fas fa-plus"></span>
+                                </span>
+                                <span>{% trans "Create a new question" %}</span>
+                            </a>
+                        </div>
+                        <div class="control">
+                            <a href="" class="button is-primary">
+                                <span class="icon">
+                                    <span class="fas fa-file-import"></span>
+                                </span>
+                                <span>{% trans "Import" %}</span>
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="sectionn">
+    <section class="section">
         <div class="columns is-multiline">
             {% for question in questions %}
                 <div class="column is-6">
@@ -173,9 +177,20 @@
                                     {% if question.difficulty == 1 %}<span class="tag is-success" title="{% trans "Easy difficulty" %}">{% trans "Easy" %}</span>
                                     {% elif question.difficulty == 2 %}<span class="tag is-warning" title="{% trans "Medium difficulty" %}">{% trans "Medium" %}</span>
                                     {% elif question.difficulty == 3 %}<span class="tag is-danger" title="{% trans "Hard difficulty" %}">{% trans "Hard" %}</span>{% endif %}
-                                    <a class="tag" href="">One</a>
-                                    <a class="tag" href="">Two</a>
-                                    <a class="tag" href="">Three</a>
+                                    {% for tag, omitted_children in question.reduced_tags.values %}
+                                        <a href=""
+                                           class="tag{% if forloop.counter > 3 %} is-overflowing-tag is-hidden{% endif %}"
+                                           title="{{ tag.get_ancestors|tree_path:" > " }} > {{ tag.name }}{% if omitted_children > 1 %} {% blocktrans count count=omitted_children %}+ one child{% plural %}+ {{ count }} children{% endblocktrans %}{% endif %}">
+                                            {{ tag.name }}
+                                        </a>
+                                        {% if forloop.last and forloop.counter > 3 %}
+                                            <a href="#"
+                                               class="tag is-overflowing-tags-toggler"
+                                               title="{% blocktrans count count=forloop.counter|sub:"3" %}Click to expand the other tag{% plural %}Click to expand the {{ count }} other tags{% endblocktrans %}"
+                                               data-other-title="{% blocktrans count count=forloop.counter|sub:"3" %}Click to retract the other tag{% plural %}Click to retract the {{ count }} other tags{% endblocktrans %}"
+                                               data-other-text="{% trans "«" %}">+ {{ forloop.counter|sub:"3" }}</a>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -209,5 +224,22 @@
 {% endblock %}
 
 {% block js %}
+    <script type="application/javascript">
+        $(function()
+        {
+            $('.is-overflowing-tags-toggler').on('click', function (e)
+            {
+                e.preventDefault();
+                $(this).parent().find('.tag.is-overflowing-tag').toggleClass("is-hidden");
 
+                let cur_text = $(this).text();
+                let cur_title = $(this).attr("title");
+
+                $(this).text($(this).data("other-text"))
+                       .attr("title", $(this).data("other-title"))
+                       .data("other-text", cur_text)
+                       .data("other-title", cur_title);
+            });
+        });
+    </script>
 {% endblock %}

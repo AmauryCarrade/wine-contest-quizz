@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = ">=2.1.5"
+django = ">=2.1.6"
 django-mathfilters = "*"
 django-uuslug = "*"
 django-versatileimagefield = "*"
 path-py = "*"
 django-bulma = "*"
+django-mptt = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

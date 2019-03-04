@@ -116,6 +116,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
             "answer_comment": self.edited_question.answer_comment,
             "open_answer": self.edited_question.open_valid_answer,
             "has_open_choice": self.edited_question.has_open_choice,
+            "tags": self.edited_question.tags.all(),
         }
 
     def get_initial_answers_formset(self):
@@ -198,7 +199,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     if "delete_illustration" in form.cleaned_data
                     else False,
                     comment=form.cleaned_data["answer_comment"],
-                    tags=None,  # TODO
+                    tags=form.cleaned_data["tags"],
                 )
 
             elif question_type == QUESTION_MCQ:
@@ -234,10 +235,12 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     if "delete_illustration" in form.cleaned_data
                     else False,
                     comment=form.cleaned_data["answer_comment"],
-                    tags=None,  # TODO
+                    tags=form.cleaned_data["tags"],
                 )
 
-                if not any([answer["is_correct"] for answer in answers]) and (not question.has_open_choice or not question.open_valid_answer):
+                if not any([answer["is_correct"] for answer in answers]) and (
+                    not question.has_open_choice or not question.open_valid_answer
+                ):
                     messages.warning(
                         self.request,
                         _(
@@ -278,7 +281,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     if "delete_illustration" in form.cleaned_data
                     else False,
                     comment=form.cleaned_data["answer_comment"],
-                    tags=None,  # TODO
+                    tags=form.cleaned_data["tags"],
                 )
 
             if is_update:
@@ -308,7 +311,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                 "and_after" in self.request.POST
                 and self.request.POST["and_after"] == "ANOTHER"
             ):
-                return HttpResponseRedirect(reverse_lazy("quizz:quizz:create"))
+                return HttpResponseRedirect(reverse_lazy("quizz:management:create"))
             else:
                 return HttpResponseRedirect(reverse_lazy("quizz:management:list"))
 

@@ -1,8 +1,8 @@
-from uuslug import uuslug
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
+from uuslug import uuslug
 from versatileimagefield.fields import VersatileImageField
 
 
@@ -21,7 +21,7 @@ class QuestionLocale(models.Model):
         return f"{self.name}"
 
 
-class Tag(models.Model):
+class Tag(MPTTModel):
     """
     Tags are used to categorize questions: users can ask for questions
     with a specific tag only. Tags are hierarchical: if one ask for
@@ -36,18 +36,21 @@ class Tag(models.Model):
 
     """
     In the tags hierarchy, this is the parent of this tag.
-    If None, the tag is a root tag.
     """
-    parent = models.ForeignKey("Tag", on_delete=models.CASCADE, blank=True, null=True)
-
-    """Persists a tag, recalculating its slug."""
+    parent = TreeForeignKey(
+        "self", on_delete=models.CASCADE, blank=True, null=True, related_name="children"
+    )
 
     def save(self, *args, **kwargs):
+        """Persists a tag, recalculating its slug."""
         self.slug = uuslug(self.name, instance=self)
         super(Tag, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"Tag {self.name}"
+        return self.name
+
+    class MPTTMeta:
+        order_insertion_by = ["name"]
 
 
 class Answer(models.Model):
@@ -159,13 +162,11 @@ class Question(models.Model):
         verbose_name=_("Difficulty"), default=1
     )
 
+    """The question's tags."""
+    tags = TreeManyToManyField(Tag, related_name="questions", verbose_name=_("Tags"))
+
     """The question's text."""
     question = models.CharField(verbose_name=_("Question"), max_length=256)
-
-    """The question's tags."""
-    tags = models.ManyToManyField(
-        Tag, verbose_name=_("Question's tags for quizz generation filtering")
-    )
 
     """The question's illustration, if any."""
     illustration = VersatileImageField(
@@ -243,6 +244,42 @@ class Question(models.Model):
     def answers_count(self):
         return self.answers.filter(is_deleted=False).count()
 
+    @property
+    def reduced_tags(self):
+        """
+        Reduces the tags to a minimal set, for display.
+
+        If there is a tag and all its children, the children are omitted.
+        Also, for each tag we check all ancestors; if there are ancestors in
+        the tags list, they are removed as they will be implied anyway.
+
+        :return: A dictionary {tag_pk: (tag, number of children omitted)}
+        """
+        tags = self.tags.all()
+        reduced = {tag.pk: (tag, 1) for tag in tags}
+
+        tag: Tag
+        for tag in tags:
+            if tag.is_leaf_node():
+                continue
+
+            descendants = tag.get_descendants()
+            all_in = True
+            for child in descendants:
+                all_in &= child in tags
+
+            if all_in:
+                reduced[tag.pk] = tag, tag.get_descendant_count()
+                for child in tag.get_descendants():
+                    del reduced[child.pk]
+
+        for tag, children_removed in reduced.copy().values():
+            for parent in tag.get_ancestors():
+                if parent in tags:
+                    del reduced[parent.pk]
+
+        return reduced
+
     def _update_common(
         self,
         question=None,
@@ -271,6 +308,7 @@ class Question(models.Model):
             self.answer_comment = comment
 
         if tags:
+            # For tag, we replace all existing tags with the given ones.
             self.tags.clear()
             for tag in tags:
                 self.tags.add(tag)

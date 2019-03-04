@@ -1,0 +1,42 @@
+{% load mathfilters %}
+
+<div{% if widget.attrs.id %} id="{{ widget.attrs.id }}"{% endif %}{% if widget.container_classes %} class="{{ widget.container_classes }}"{% endif %}>
+    <div{% if widget.columns_classes %} class="{{ widget.columns_classes }}"{% endif %}>
+        {% for index, option in widget.flat_tree %}
+            {# Start of a new column #}
+            {% if option.level == 0 and index != 0 %}
+                </div><div{% if widget.columns_classes %} class="{{ widget.columns_classes }}"{% endif %}>
+            {% endif %}
+
+            {# If the level increases, we need to add a new nested list. #}
+            {% if option.level_diff > 0 %}
+                {% with range='x'|rjust:option.level_diff %}
+                    {% for _ in range %}
+                        <ul><li>
+                    {% endfor %}
+                {% endwith %}
+
+            {# If it stays the same, we only close the old list item and open the next one. #}
+            {% elif option.level_diff == 0 %}
+                </li><li>
+
+            {# Finally if the level decreases, we need to close the list item, and the list, and then again for each removed level. #}
+            {# If the new level is 0, we started a new column and we need to start a new list. Then the usual new list item. #}
+            {% elif option.level_diff < 0 %}
+                </li>
+                {% with abs_level_diff=option.level_diff|abs %}
+                    {% with range='x'|rjust:abs_level_diff %}
+                        {% for _ in range %}
+                            </ul></li>
+                        {% endfor %}
+                    {% endwith %}
+                {% endwith %}
+                {% if option.level == 0 %}<ul>{% endif %}
+                <li>
+            {% endif %}
+
+            {# And at the end, the widget itself. #}
+            {% include option.template_name with widget=option %}
+        {% endfor %}
+    </div>
+</div>
