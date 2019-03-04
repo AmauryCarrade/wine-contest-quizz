@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -108,11 +109,6 @@ class Answer(models.Model):
             ("[DELETED] " if self.is_deleted else "")
             + self.answer
             + (" (correct)" if self.is_correct else "")
-            + (
-                " (→ linked)"
-                if not self.primary
-                else ("(linked →)" if self.linked_answer else "")
-            )
         )
 
 
@@ -165,6 +161,27 @@ class Question(models.Model):
     """The question's tags."""
     tags = TreeManyToManyField(Tag, related_name="questions", verbose_name=_("Tags"))
 
+    """The user who created or imported the question."""
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Creator"),
+        editable=False,
+        blank=True,
+        null=True,
+        related_name="questions_created",
+    )
+
+    """The user(s) who edited the question."""
+    editors = models.ManyToManyField(
+        User, verbose_name=_("Editors"), editable=False, related_name="questions_edited"
+    )
+
+    """True if this question was imported."""
+    imported = models.BooleanField(
+        verbose_name=_("Was this question imported?"), editable=False, default=False
+    )
+
     """The question's text."""
     question = models.CharField(verbose_name=_("Question"), max_length=256)
 
@@ -212,11 +229,10 @@ class Question(models.Model):
 
     @property
     def verbose_type(self):
-        return {
-            "OPEN": _("Open answer"),
-            "MCQ": _("Multiple choices"),
-            "LINKED": _("Linked answers"),
-        }[self.type]
+        for question_type, verbose in QUESTION_TYPES:
+            if self.type == question_type:
+                return verbose
+        return "UNKNOWN"  # Only for non-filled & unsaved questions
 
     @property
     def selectable_answers(self):
@@ -289,7 +305,20 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        user=None,
     ):
+        """
+        Common things updated for every question type.
+
+        :param question: The question.
+        :param locale: The question's locale.
+        :param difficulty: The question's difficulty.
+        :param illustration: The question's illustration.
+        :param delete_illustration: True if any existing illustration should be deleted.
+        :param comment: The comment on the question's answer.
+        :param tags: A list of tags. They will *replace* existing tags.
+        :param user: The user who made this edit.
+        """
         if question:
             self.question = question
 
@@ -313,6 +342,9 @@ class Question(models.Model):
             for tag in tags:
                 self.tags.add(tag)
 
+        if user:
+            self.editors.add(user)
+
     @staticmethod
     def create_open(
         question,
@@ -322,6 +354,7 @@ class Question(models.Model):
         illustration=None,
         comment=None,
         tags=None,
+        user=None,
         **kwargs,
     ):
         """
@@ -334,6 +367,7 @@ class Question(models.Model):
         :param illustration: An illustration for this question (can be None).
         :param comment: A comment on the answer of this question (can be None).
         :param tags: A list of tags for this question (can be None/empty).
+        :param user: The user who created this question.
         :return: The created question.
         """
         if tags is None:
@@ -347,6 +381,7 @@ class Question(models.Model):
             difficulty=difficulty,
             illustration=illustration,
             answer_comment=comment,
+            creator=user,
         )
         question.save()
 
@@ -365,6 +400,7 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        user=None,
         **kwargs,
     ):
         """
@@ -380,6 +416,7 @@ class Question(models.Model):
         :param delete_illustration: If True, the associated illustration will be deleted.
         :param comment: A comment on the answer of this question (can be None).
         :param tags: A list of tags for this question (can be None/empty). Existing tags will be replaced.
+        :param user: The user who did this update.
         :return: The updated question (i.e. self).
         """
         assert (
@@ -396,6 +433,7 @@ class Question(models.Model):
             delete_illustration=delete_illustration,
             comment=comment,
             tags=tags,
+            user=user,
         )
 
         self.save()
@@ -429,6 +467,7 @@ class Question(models.Model):
         illustration=None,
         comment=None,
         tags=None,
+        user=None,
         **kwargs,
     ):
         """
@@ -445,6 +484,7 @@ class Question(models.Model):
         :param illustration: The question's illustration (can be None).
         :param comment: A comment on the question's answer (can be None).
         :param tags: A list of tags for this question (can be None/empty).
+        :param user: The user who created this question.
         :return: The created question.
         """
         if tags is None:
@@ -459,6 +499,7 @@ class Question(models.Model):
             difficulty=difficulty,
             illustration=illustration,
             answer_comment=comment,
+            creator=user,
         )
         question.save()
 
@@ -486,6 +527,7 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        user=None,
         **kwargs,
     ):
         """
@@ -505,6 +547,7 @@ class Question(models.Model):
         :param delete_illustration: If True, the associated illustration will be deleted.
         :param comment: A comment on the question's answer (can be None).
         :param tags: A list of tags for this question (can be None/empty). Existing tags will be overwritten.
+        :param user: The user who did this update.
         :return:
         """
         assert (
@@ -552,6 +595,7 @@ class Question(models.Model):
             delete_illustration=delete_illustration,
             comment=comment,
             tags=tags,
+            user=user,
         )
 
         self.save()
@@ -584,6 +628,7 @@ class Question(models.Model):
         illustration=None,
         comment=None,
         tags=None,
+        user=None,
         **kwargs,
     ):
         """
@@ -597,6 +642,7 @@ class Question(models.Model):
         :param illustration: The question's illustration (can be None).
         :param comment: A comment on the question's answer (can be None).
         :param tags: A list of tags for this question (can be None/empty).
+        :param user: The user who created this question.
         :return: The created question.
         """
         if tags is None:
@@ -609,6 +655,7 @@ class Question(models.Model):
             difficulty=difficulty,
             illustration=illustration,
             answer_comment=comment,
+            creator=user,
         )
         question.save()
 
@@ -636,10 +683,11 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        user=None,
         **kwargs,
     ):
         """
-        Creates a linked-choices question.
+        Updates a linked-choices question.
 
         :param question: The question.
         :param answers: A list of answers. Each answer is a 2-tuple containing
@@ -650,6 +698,7 @@ class Question(models.Model):
         :param delete_illustration: If True, the associated illustration will be deleted.
         :param comment: A comment on the question's answer (can be None).
         :param tags: A list of tags for this question (can be None/empty).
+        :param user: The user who did this update.
         :return: The created question.
         """
         assert (
@@ -696,6 +745,7 @@ class Question(models.Model):
             delete_illustration=delete_illustration,
             comment=comment,
             tags=tags,
+            user=user,
         )
 
         self.save()

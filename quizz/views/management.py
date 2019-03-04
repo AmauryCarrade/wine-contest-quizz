@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.functional import cached_property
@@ -184,6 +183,15 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                 self.request.POST, self.request.FILES, prefix="linked-answers"
             )
 
+        if (
+            form.has_changed()
+            or (not form_answers or form_answers.has_changed())
+            or (not form_linked_answers or form_linked_answers.has_changed())
+        ) and self.request.user.is_authenticated:
+            user = self.request.user
+        else:
+            user = None
+
         if (not form_answers or form_answers.is_valid()) and (
             not form_linked_answers or form_linked_answers.is_valid()
         ):
@@ -200,6 +208,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     else False,
                     comment=form.cleaned_data["answer_comment"],
                     tags=form.cleaned_data["tags"],
+                    user=user,
                 )
 
             elif question_type == QUESTION_MCQ:
@@ -236,6 +245,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     else False,
                     comment=form.cleaned_data["answer_comment"],
                     tags=form.cleaned_data["tags"],
+                    user=user,
                 )
 
                 if not any([answer["is_correct"] for answer in answers]) and (
@@ -282,6 +292,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     else False,
                     comment=form.cleaned_data["answer_comment"],
                     tags=form.cleaned_data["tags"],
+                    user=user,
                 )
 
             if is_update:
