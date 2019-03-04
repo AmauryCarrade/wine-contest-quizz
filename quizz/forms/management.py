@@ -5,7 +5,7 @@ from mptt.forms import TreeNodeChoiceField, TreeNodeMultipleChoiceField
 
 from quizz.fields import TreeNodeAllMultipleChoiceField
 from quizz.widgets import CheckboxTreeSelectMultiple
-from ..models import QuestionLocale, Tag, QUESTION_TYPES, QUESTION_MCQ
+from ..models import Contest, QuestionLocale, Tag, QUESTION_TYPES, QUESTION_MCQ
 
 
 class ManageQuizzQuestionForm(forms.Form):
@@ -31,6 +31,15 @@ class ManageQuizzQuestionForm(forms.Form):
             "(users will have to link answers together)."
         ),
         widget=forms.RadioSelect,
+    )
+
+    source = forms.ModelChoiceField(
+        label=_("Source"),
+        queryset=Contest.objects.all(),
+        required=False,
+        help_text=_(
+            "If this question is taken from an existing contest, you can select it here."
+        ),
     )
 
     difficulty = forms.ChoiceField(

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db.models import F
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.functional import cached_property
@@ -13,7 +14,7 @@ from ..forms.management import (
     ManageQuizzLinkedAnswerFormSet,
 )
 
-from ..models import Question, QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED, Answer
+from ..models import Question, QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED
 
 
 class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -46,6 +47,10 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
         if sort_by == "difficulty":
             questions = questions.order_by(rev + "difficulty")
+        elif sort_by == "source":
+            questions = questions.order_by(
+                F("source__name").asc(nulls_last=True, descending=sort_reversed)
+            )
         elif sort_by == "illustration":
             # “Ordered” sorting for illustrations is with illustrations first,
             # so we need to have empty values last, corresponding to a reverse
@@ -208,6 +213,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     else False,
                     comment=form.cleaned_data["answer_comment"],
                     tags=form.cleaned_data["tags"],
+                    source=form.cleaned_data["source"],
                     user=user,
                 )
 
@@ -245,6 +251,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     else False,
                     comment=form.cleaned_data["answer_comment"],
                     tags=form.cleaned_data["tags"],
+                    source=form.cleaned_data["source"],
                     user=user,
                 )
 
@@ -292,6 +299,7 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     else False,
                     comment=form.cleaned_data["answer_comment"],
                     tags=form.cleaned_data["tags"],
+                    source=form.cleaned_data["source"],
                     user=user,
                 )
 

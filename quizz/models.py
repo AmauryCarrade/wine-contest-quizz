@@ -19,7 +19,24 @@ class QuestionLocale(models.Model):
     name = models.CharField(_("Display name"), max_length=255)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
+
+    class Meta:
+        ordering = ("name",)
+
+
+class Contest(models.Model):
+    """
+    Questions can be from an existing contest.
+    """
+
+    name = models.CharField(_("Contest name"), max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("name",)
 
 
 class Tag(MPTTModel):
@@ -151,6 +168,15 @@ class Question(models.Model):
     """The question's locale"""
     locale = models.ForeignKey(
         QuestionLocale, on_delete=models.PROTECT, verbose_name=_("Locale"), max_length=8
+    )
+
+    """Some questions are extracted from a contest."""
+    source = models.ForeignKey(
+        Contest,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Contest from which this question is taken"),
+        blank=True,
+        null=True,
     )
 
     """The question's difficulty, between 1 (easy) and 3 (hard)"""
@@ -305,6 +331,7 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        source=None,
         user=None,
     ):
         """
@@ -317,6 +344,7 @@ class Question(models.Model):
         :param delete_illustration: True if any existing illustration should be deleted.
         :param comment: The comment on the question's answer.
         :param tags: A list of tags. They will *replace* existing tags.
+        :param source: The contest from which this question is taken, or None if there is none.
         :param user: The user who made this edit.
         """
         if question:
@@ -345,6 +373,8 @@ class Question(models.Model):
         if user:
             self.editors.add(user)
 
+        self.source = source
+
     @staticmethod
     def create_open(
         question,
@@ -354,6 +384,7 @@ class Question(models.Model):
         illustration=None,
         comment=None,
         tags=None,
+        source=None,
         user=None,
         **kwargs,
     ):
@@ -367,6 +398,7 @@ class Question(models.Model):
         :param illustration: An illustration for this question (can be None).
         :param comment: A comment on the answer of this question (can be None).
         :param tags: A list of tags for this question (can be None/empty).
+        :param source: The contest from which this question is taken, or None if there is none.
         :param user: The user who created this question.
         :return: The created question.
         """
@@ -381,6 +413,7 @@ class Question(models.Model):
             difficulty=difficulty,
             illustration=illustration,
             answer_comment=comment,
+            source=source,
             creator=user,
         )
         question.save()
@@ -400,6 +433,7 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        source=None,
         user=None,
         **kwargs,
     ):
@@ -416,6 +450,7 @@ class Question(models.Model):
         :param delete_illustration: If True, the associated illustration will be deleted.
         :param comment: A comment on the answer of this question (can be None).
         :param tags: A list of tags for this question (can be None/empty). Existing tags will be replaced.
+        :param source: The contest from which this question is taken, or None if there is none.
         :param user: The user who did this update.
         :return: The updated question (i.e. self).
         """
@@ -433,6 +468,7 @@ class Question(models.Model):
             delete_illustration=delete_illustration,
             comment=comment,
             tags=tags,
+            source=source,
             user=user,
         )
 
@@ -467,6 +503,7 @@ class Question(models.Model):
         illustration=None,
         comment=None,
         tags=None,
+        source=None,
         user=None,
         **kwargs,
     ):
@@ -484,6 +521,7 @@ class Question(models.Model):
         :param illustration: The question's illustration (can be None).
         :param comment: A comment on the question's answer (can be None).
         :param tags: A list of tags for this question (can be None/empty).
+        :param source: The contest from which this question is taken, or None if there is none.
         :param user: The user who created this question.
         :return: The created question.
         """
@@ -499,6 +537,7 @@ class Question(models.Model):
             difficulty=difficulty,
             illustration=illustration,
             answer_comment=comment,
+            source=source,
             creator=user,
         )
         question.save()
@@ -527,6 +566,7 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        source=None,
         user=None,
         **kwargs,
     ):
@@ -547,6 +587,7 @@ class Question(models.Model):
         :param delete_illustration: If True, the associated illustration will be deleted.
         :param comment: A comment on the question's answer (can be None).
         :param tags: A list of tags for this question (can be None/empty). Existing tags will be overwritten.
+        :param source: The contest from which this question is taken, or None if there is none.
         :param user: The user who did this update.
         :return:
         """
@@ -595,6 +636,7 @@ class Question(models.Model):
             delete_illustration=delete_illustration,
             comment=comment,
             tags=tags,
+            source=source,
             user=user,
         )
 
@@ -628,6 +670,7 @@ class Question(models.Model):
         illustration=None,
         comment=None,
         tags=None,
+        source=None,
         user=None,
         **kwargs,
     ):
@@ -642,6 +685,7 @@ class Question(models.Model):
         :param illustration: The question's illustration (can be None).
         :param comment: A comment on the question's answer (can be None).
         :param tags: A list of tags for this question (can be None/empty).
+        :param source: The contest from which this question is taken, or None if there is none.
         :param user: The user who created this question.
         :return: The created question.
         """
@@ -655,6 +699,7 @@ class Question(models.Model):
             difficulty=difficulty,
             illustration=illustration,
             answer_comment=comment,
+            source=source,
             creator=user,
         )
         question.save()
@@ -683,6 +728,7 @@ class Question(models.Model):
         delete_illustration=False,
         comment=None,
         tags=None,
+        source=None,
         user=None,
         **kwargs,
     ):
@@ -697,7 +743,8 @@ class Question(models.Model):
         :param illustration: The question's illustration (can be None).
         :param delete_illustration: If True, the associated illustration will be deleted.
         :param comment: A comment on the question's answer (can be None).
-        :param tags: A list of tags for this question (can be None/empty).
+        :param tags: A list of tags for this question (can be None/empty). Existing tags will be overwritten.
+        :param source: The contest from which this question is taken, or None if there is none.
         :param user: The user who did this update.
         :return: The created question.
         """
@@ -745,6 +792,7 @@ class Question(models.Model):
             delete_illustration=delete_illustration,
             comment=comment,
             tags=tags,
+            source=source,
             user=user,
         )
 

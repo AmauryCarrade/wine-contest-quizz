@@ -194,7 +194,14 @@
 
         <section class="section">
             <fieldset>
-                {{ form.tags|bulma }}
+                <div class="columns">
+                    <div class="column is-9">
+                        {{ form.tags|bulma }}
+                    </div>
+                    <div class="column is-3">
+                        {{ form.source|bulma }}
+                    </div>
+                </div>
             </fieldset>
         </section>
 

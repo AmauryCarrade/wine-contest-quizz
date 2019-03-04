@@ -4,9 +4,10 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from mptt.admin import DraggableMPTTAdmin
 
-from .models import QuestionLocale, Tag, Answer, Question
+from .models import QuestionLocale, Contest, Tag, Answer, Question
 
 admin.site.register(QuestionLocale)
+admin.site.register(Contest)
 admin.site.register(Answer)
 
 admin.site.register(
@@ -37,7 +38,10 @@ class QuestionAdmin(admin.ModelAdmin):
         Sends a warning message to end users trying to update the question
         through this form.
         """
-        if not self.warning_sent_for_request or self.warning_sent_for_request != request:
+        if (
+            not self.warning_sent_for_request
+            or self.warning_sent_for_request != request
+        ):
             if "add" in request.get_full_path():
                 messages.error(
                     request,
@@ -53,15 +57,20 @@ class QuestionAdmin(admin.ModelAdmin):
             else:
                 messages.warning(
                     request,
-                    _(
-                        "You can look at the questions (especially metadata like "
-                        "creator and editors), but you shouldn't update them "
-                        "through this advanced admin panel unless you know what "
-                        "you are doing. It could corrupt the database!"
+                    mark_safe(
+                        _(
+                            "You can look at the questions (especially metadata "
+                            "like creator and editors), but you shouldn't update "
+                            "them through this advanced admin panel unless you "
+                            "know what you are doing. It could corrupt the "
+                            "database!  Click the <strong>View on site</strong> button below "
+                            "to update the question on the primary admin interface."
+                        )
                     ),
                 )
             self.warning_sent_for_request = request
 
-        return super(QuestionAdmin, self).get_form(
-            request, *args, **kwargs
-        )
+        return super(QuestionAdmin, self).get_form(request, *args, **kwargs)
+
+    def view_on_site(self, obj=None):
+        return reverse_lazy("quizz:management:edit", args=(obj.pk,))

@@ -42,6 +42,10 @@
                                             {% trans "Sorting by <strong>difficulty</strong>" %}
                                         {% elif sort_by == "difficulty" and sort_reversed %}
                                             {% trans "Sorting by <strong>difficulty</strong> (Hard → Easy)" %}
+                                        {% elif sort_by == "source" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>source</strong>" %}
+                                        {% elif sort_by == "source" and sort_reversed %}
+                                            {% trans "Sorting by <strong>source</strong> (Z → A)" %}
                                         {% elif sort_by == "illustration" and not sort_reversed %}
                                             {% trans "Sorting by <strong>illustration</strong>" %}
                                         {% elif sort_by == "illustration" and sort_reversed %}
@@ -78,6 +82,12 @@
                                             {% if sort_by == "difficulty" %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Difficulty" %}
+                                    </a>
+                                    <a href="?sort={% if sort_by == "source" and not sort_reversed %}-{% endif %}source" class="dropdown-item{% if sort_by == "source" %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "source" %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Source" %}
                                     </a>
                                     <a href="?sort={% if sort_by == "illustration" and not sort_reversed %}-{% endif %}illustration" class="dropdown-item{% if sort_by == "illustration" %} is-active{% endif %}">
                                         <span class="icon">
@@ -173,7 +183,9 @@
                                     This question was <strong>never answered</strong>. That's a <strong class="has-text-success">100% success rate</strong>.
                                 </p>
                                 <div class="tags">
-                                    <span class="tag is-dark">{{ question.locale.name }}</span>
+                                    {% if question.source %}
+                                        <span class="tag is-dark">{{ question.source }}</span>
+                                    {% endif %}
                                     {% if question.difficulty == 1 %}<span class="tag is-success" title="{% trans "Easy difficulty" %}">{% trans "Easy" %}</span>
                                     {% elif question.difficulty == 2 %}<span class="tag is-warning" title="{% trans "Medium difficulty" %}">{% trans "Medium" %}</span>
                                     {% elif question.difficulty == 3 %}<span class="tag is-danger" title="{% trans "Hard difficulty" %}">{% trans "Hard" %}</span>{% endif %}
