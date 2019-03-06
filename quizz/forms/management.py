@@ -224,8 +224,8 @@ class AnswersFormSet(forms.formsets.BaseFormSet):
 
 
 """
-In the formsets below, min_num is set to 0 instead of 2, as one of the formsets
-will be sent 
+In the formsets below, min_num is set to 0 instead of 2, as only one of the
+formsets will be sent 
 """
 
 ManageQuizzSimpleAnswerFormSet = forms.formset_factory(
@@ -245,3 +245,32 @@ ManageQuizzLinkedAnswerFormSet = forms.formset_factory(
     validate_min=True,
     can_delete=True,
 )
+
+
+class ImportQuestionsForm(forms.Form):
+    spreadsheet = forms.FileField(
+        label=_("Spreadsheet containing the questions to import"),
+        help_text=_(
+            "Upload an Excel 2010 spreadsheet (*.xlsx) containing the "
+            "questions you want to import. The format is specified below, "
+            "with examples."
+        ),
+    )
+
+    create_missing_tags = forms.BooleanField(
+        label=_("Create missing tags on the fly?"),
+        help_text=_(
+            "If checked, non-recognized tags in the file will be created "
+            "automatically at the root of the tags hierarchy — you'll be "
+            "able to move them in the tree after. Else, invalid tags will "
+            "be ignored."
+        ),
+        required=False,
+    )
+
+    default_difficulty = forms.ChoiceField(
+        label=_("Default difficulty"),
+        choices=((1, _("Easy")), (2, _("Medium")), (3, _("Hard"))),
+        initial=2,
+        help_text=_("For questions with missing difficulty, what should it be?"),
+    )

@@ -1,0 +1,71 @@
+{% load i18n %}
+{% load mathfilters %}
+{% load mptt_tags %}
+
+<div class="card">
+    <div class="card-content">
+        <div class="media">
+            {% if question.illustration %}
+                <div class="media-left">
+                    <figure class="image is-48x48">
+                        <img src="{{ question.illustration.thumbnail.96x96 }}" alt="{% trans "Question's illustration" %}">
+                    </figure>
+                </div>
+            {% endif %}
+            <div class="media-content">
+                <p class="title is-4">{{ question.question }}</p>
+                <p class="subtitle is-6">
+                    {% spaceless %}
+                        {% if question.type != "OPEN" %}
+                            {{ question.answers_count }} {{ question.verbose_type|lower }}
+                        {% else %}
+                            {{ question.verbose_type }}
+                        {% endif %}
+                        <span class="icon">
+                            <i class="fas fa-angle-right"></i>
+                        </span>
+                    {% endspaceless %}
+                </p>
+            </div>
+        </div>
+
+        <div class="content">
+            {% if show_answers_stats %}
+                <p>
+                    This question was <strong>never answered</strong>. That's a <strong class="has-text-success">100% success rate</strong>.
+                </p>
+            {% endif %}
+            <div class="tags">
+                {% if question.source %}
+                    <span class="tag is-dark">{{ question.source }}</span>
+                {% endif %}
+                {% if question.difficulty == 1 %}<span class="tag is-success" title="{% trans "Easy difficulty" %}">{% trans "Easy" %}</span>
+                {% elif question.difficulty == 2 %}<span class="tag is-warning" title="{% trans "Medium difficulty" %}">{% trans "Medium" %}</span>
+                {% elif question.difficulty == 3 %}<span class="tag is-danger" title="{% trans "Hard difficulty" %}">{% trans "Hard" %}</span>{% endif %}
+                {% for tag, omitted_children in question.reduced_tags.values %}
+                    <a href=""
+                       class="tag{% if forloop.counter > 3 %} is-overflowing-tag is-hidden{% endif %}"
+                       title="{{ tag.get_ancestors|tree_path:" > " }} > {{ tag.name }}{% if omitted_children > 1 %} {% blocktrans count count=omitted_children %}+ one child{% plural %}+ {{ count }} children{% endblocktrans %}{% endif %}">
+                        {{ tag.name }}
+                    </a>
+                    {% if forloop.last and forloop.counter > 3 %}
+                        <a href="#"
+                           class="tag is-overflowing-tags-toggler"
+                           title="{% blocktrans count count=forloop.counter|sub:"3" %}Click to expand the other tag{% plural %}Click to expand the {{ count }} other tags{% endblocktrans %}"
+                           data-other-title="{% blocktrans count count=forloop.counter|sub:"3" %}Click to retract the other tag{% plural %}Click to retract the {{ count }} other tags{% endblocktrans %}"
+                           data-other-text="{% trans "«" %}">+ {{ forloop.counter|sub:"3" }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <footer class="card-footer">
+        <a href="#" class="card-footer-item is-disabled is-unselectable">{% trans "View answers" %}</a>
+        {% if perms.quizz.change_question %}
+            <a href="{% url "quizz:management:edit" pk=question.pk %}" class="card-footer-item">{% trans "Edit question" %}</a>
+        {% endif %}
+        {% if perms.quizz.delete_question %}
+            <a href="{% url "quizz:management:delete" pk=question.pk %}" class="card-footer-item">{% trans "Delete" %}</a>
+        {% endif %}
+    </footer>
+</div>

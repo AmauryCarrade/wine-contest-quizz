@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% load bulma_tags %}
+{% load i18n %}
+
+{% block head-title %}{% trans "Import questions" %}{% endblock %}
+{% block hero-title %}
+    <h1 class="title">{% trans "Import questions" %}</h1>
+{% endblock %}
+
+{% block container %}
+    <section class="section">
+        <div class="container">
+            <form method="post" class="form" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="columns">
+                    <div class="column is-6">
+                        {{ form.spreadsheet|bulma }}
+                    </div>
+                    <div class="column is-6">
+                        {{ form.default_difficulty|bulma }}
+                        {{ form.create_missing_tags|bulma }}
+                    </div>
+                </div>
+
+                <div class="field is-grouped is-grouped-centered">
+                    <p class="control">
+                        <button type="submit" class="button is-primary is-medium">
+                            {% trans "Import all questions from this spreadsheet" %}
+                        </button>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </section>
+    <section class="section">
+        <div class="content container">
+            {% blocktrans %}
+                <h2>How it works</h2>
+                <p>
+                    Instead of filling way too many forms, you can import questions from a spreadsheet.
+                    Each line in the spreadsheet will be a question (the format is specified below).
+                </p>
+                <p>
+                    There is a few things you need to know to import questions.
+                </p>
+                <ul>
+                    <li>You can only import questions from an <strong>Excel 2010</strong> spreadsheet (<code>*.xlsx</code>). Other formats (LibreOffice, CSV…) are not supported.</li>
+                    <li>If there are multiple sheets in your spreadsheet, only the first one will be considered.</li>
+                    <li>The sheet must follow the format specified below.</li>
+                    <li>Pictures embedded in spreadsheets are not supported. But you can add illustrations later, or create illustrated questions directly on the web interface.</li>
+                    <li>Lines with missing required fields will be discarded (and listed in the confirmation page). Invalid data will be ignored, except for tags.</li>
+                    <li>If something goes wrong, you'll be able to cancel this import. Imported questions can always be edited later, too.</li>
+                </ul>
+            {% endblocktrans %}
+
+            <h2>{% trans "Format" %}</h2>
+
+            <p>{% trans "The table below represents the spreadsheet' first sheet." %}</p>
+        </div>
+
+        <table class="table is-narrow is-bordered is-striped is-fullwidth">
+            <thead>
+                <tr>
+                    <th>{% trans "Lang" %}</th>
+                    <th>{% trans "Question" %}</th>
+                    <th>{% trans "Proposed answers" %}</th>
+                    <th>{% trans "Actual answer(s)" %}</th>
+                    <th>{% trans "Comment on answer" %}</th>
+                    <th>{% trans "Tags" %}</th>
+                    <th>{% trans "Source" %}</th>
+                    <th>{% trans "Difficulty" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="content">
+                        {% blocktrans %}
+                            <p><code>Français</code>, or</p>
+                            <p><code>fr_FR</code>, or</p>
+                            <p><code>F</code>.</p>
+                        {% endblocktrans %}
+                    </td>
+                    <td class="content">
+                        <p>{% trans "The litteral question." %}</p>
+                    </td>
+                    <td class="content">
+                        {% blocktrans %}
+                            <p>For open questions, nothing.</p>
+                            <p>
+                                For <abbr title="Multiple-Choices Questions">MCQ</abbr>, one answer per line.<br />
+                                If you want to accept an open answer (“Other” field), add a line with <code>Other:</code> or <code>Autre&nbsp;:</code>.
+                            </p>
+                            <p>For linked answers, the following on <em>each</em> line:</p>
+                            <pre>Answer --> Linked answer</pre>
+                        {% endblocktrans %}
+                    </td>
+                    <td class="content">
+                        {% blocktrans %}
+                            <p>For open questions, the written answer.</p>
+                            <p>
+                                For <abbr title="Multiple-Choices Questions">MCQ</abbr>, the valid answers from the “proposed answers” list.<br />
+                                If you added an “Other” option in the previous field, answers listed here but not in the previous list will be
+                                the open answer.
+                            </p>
+                            <p>For linked answers, nothing.</p>
+                        {% endblocktrans %}
+                    </td>
+                    <td class="content">
+                        <p>{% trans "If you have comments to add on the answer, write them here. They will be displayed on the correction page." %}</p>
+                    </td>
+                    <td class="content">
+                        <p>{% trans "Write one tag per line. They must match an existing tag, except if the option to create them on the fly is selected." %}</p>
+                    </td>
+                    <td class="content">
+                        <p>{% trans "If this question is taken from an existing contest, write its name here. Take care to write them always the same." %}</p>
+                    </td>
+                    <td class="content">
+                        {% blocktrans %}
+                            <p><code>1</code>, <code>2</code>, <code>3</code>, or</p>
+                            <p><code>E</code>, <code>M</code>, <code>H</code>, or</p>
+                            <p><code>Easy</code>, <code>Medium</code>, <code>Hard</code></p>
+                        {% endblocktrans %}
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="8" class="has-text-centered">{% trans "Examples" %}</th>
+                </tr>
+                <tr>
+                    <td colspan="8" class="has-text-centered is-italic">{% trans "A multiple-choices question, “Yes” being the valid answer" %}</td>
+                </tr>
+                {% blocktrans %}
+                <tr class="is-family-code">
+                    <td>E</td>
+                    <td>Is this true?</td>
+                    <td>Yes<br />No</td>
+                    <td>Yes</td>
+                    <td></td>
+                    <td>Tag 1<br />Tag 2</td>
+                    <td></td>
+                    <td>Easy</td>
+                </tr>
+                {% endblocktrans %}
+                <tr>
+                    <td colspan="8" class="has-text-centered is-italic">{% trans "A multiple-choices question with an open answer, the correct open answer being “Maybe”, alongside the “Yes” answer that must be checked too" %}</td>
+                </tr>
+                {% blocktrans %}
+                <tr class="is-family-code">
+                    <td>E</td>
+                    <td>Is this true?</td>
+                    <td>Yes<br />No<br />Other:</td>
+                    <td>Yes<br />Maybe</td>
+                    <td></td>
+                    <td>Tag 1<br />Tag 2</td>
+                    <td></td>
+                    <td>Easy</td>
+                </tr>
+                {% endblocktrans %}
+                <tr>
+                    <td colspan="8" class="has-text-centered is-italic">{% trans "A multiple-choices question with an open answer, but without valid open answer (the field must be left blank to get the point)" %}</td>
+                </tr>
+                {% blocktrans %}
+                <tr class="is-family-code">
+                    <td>E</td>
+                    <td>Is this true?</td>
+                    <td>Yes<br />No<br />Other:</td>
+                    <td>Yes</td>
+                    <td></td>
+                    <td>Tag 1<br />Tag 2</td>
+                    <td></td>
+                    <td>Easy</td>
+                </tr>
+                {% endblocktrans %}
+                <tr>
+                    <td colspan="8" class="has-text-centered is-italic">{% trans "An open question, with “An open question” as the answer, from an existing contest" %}</td>
+                </tr>
+                {% blocktrans %}
+                <tr class="is-family-code">
+                    <td>English</td>
+                    <td>What's this question' type?</td>
+                    <td></td>
+                    <td>An open question</td>
+                    <td></td>
+                    <td>Tag 1<br />Tag 2<br />Tag 3</td>
+                    <td>Some contest</td>
+                    <td>M</td>
+                </tr>
+                {% endblocktrans %}
+                <tr>
+                    <td colspan="8" class="has-text-centered is-italic">{% trans "An easy linked-choices question, with a comment and from an existing contest" %}</td>
+                </tr>
+                {% blocktrans %}
+                <tr class="is-family-code">
+                    <td>EN</td>
+                    <td>Translate the words</td>
+                    <td>Yes --> Oui<br />No --> Non<br />Maybe --> Peut-être</td>
+                    <td></td>
+                    <td>This was very basic French</td>
+                    <td>Tag 1<br />Tag 2</td>
+                    <td>Some contest</td>
+                    <td>1</td>
+                </tr>
+                {% endblocktrans %}
+            </tbody>
+        </table>
+    </section>
+{% endblock %}

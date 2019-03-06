@@ -247,7 +247,7 @@ class Question(models.Model):
 
     """In the correction phase, will allow to display an extra explanation."""
     answer_comment = models.TextField(
-        verbose_name=_("Answer's comment"), max_length=2 ** 16
+        verbose_name=_("Answer's comment"), max_length=2 ** 16, blank=True, null=True
     )
 
     def __str__(self):
@@ -321,6 +321,11 @@ class Question(models.Model):
                     del reduced[parent.pk]
 
         return reduced
+
+    def delete(self, using=None, keep_parents=False):
+        for answer in self.answers.all():
+            answer.delete()
+        super(Question, self).delete(using=using, keep_parents=keep_parents)
 
     def _update_common(
         self,

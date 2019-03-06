@@ -76,7 +76,7 @@
                                                         <span>{% trans "Create question" %}</span>
                                                     </a>
 
-                                                    <a class="navbar-item" href="{% url "quizz:management:create" %}">
+                                                    <a class="navbar-item" href="{% url "quizz:management:import" %}">
                                                         <span class="icon is-medium">
                                                             <span class="fas fa-file-import"></span>
                                                         </span>
@@ -175,23 +175,25 @@
         </div>
     </section>
 
+    {% if messages %}
+        <div class="container">
+            <section class="section">
+                {% for message in messages %}
+                    <div class="notification {% spaceless %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}is-link
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}is-info
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}is-success
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}is-warning
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}is-danger
+                        {% endif %}
+                    {% endspaceless %} {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        </div>
+    {% endif %}
+
     {% block container %}
         <div class="container">
-            {% if messages %}
-                <section class="section">
-                    {% for message in messages %}
-                        <div class="notification {% spaceless %}
-                            {% if message.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}is-link
-                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}is-info
-                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}is-success
-                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}is-warning
-                            {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}is-danger
-                            {% endif %}
-                        {% endspaceless %} {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
-                    {% endfor %}
-                </section>
-            {% endif %}
-
             {% block content %}{% endblock %}
         </div>
     {% endblock %}

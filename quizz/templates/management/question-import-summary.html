@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head-title %}{% trans "Import summary" %}{% endblock %}
+{% block hero-title %}
+    <h1 class="title">{% trans "Import summary" %}</h1>
+    <p class="subtitle">
+        {% blocktrans count count=created_questions|length %}
+            One question created
+        {% plural %}
+            {{ count }} questions created
+        {% endblocktrans %}
+    </p>
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <h2 class="title">{% trans "The following questions were imported" %}</h2>
+        <p class="subtitle">{% trans "If everything looks good, you can quit this page. Else, click the undo button below." %}</p>
+
+        {% if errored_questions %}
+            <div class="notification is-danger">
+                {% blocktrans count count=errored_questions|length %}
+                    One question was not imported because of errors. It is displayed at the bottom of the page.
+                {% plural %}
+                    {{ count }} questions were not imported because of errors. They are displayed at the bottom of the page.
+                {% endblocktrans %}
+            </div>
+        {% endif %}
+
+        <div class="columns is-vcentered">
+            <div class="column is-5 has-text-right">
+                <a href="{% url "quizz:management:list" %}" class="button is-success is-medium">
+                    {% trans "Keep that, everything is good" %}
+                </a>
+            </div>
+            <div class="column is-2 has-text-centered">{% trans "or" %}</div>
+            <div class="column is-5 has-text-left">
+                <form action="{% url "quizz:management:undo-import" %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="pks" value="{{ created_questions_pks }}" />
+                    <input type="submit" value="{% trans "undo" %}" class="button is-text is-medium" />
+                </form>
+            </div>
+        </div>
+
+        <div class="columns is-multiline">
+            {% for question in created_questions %}
+                <div class="column is-6">
+                    {% include "snippets/question-card.html" with question=question show_answers_stats=False %}
+                </div>
+            {% empty %}
+                <div class="column is-12 has-text-centered is-italic">
+                    <p>{% trans "Nothing here… Nothing was imported. Were there questions in the spreadsheet?" %}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns is-vcentered">
+            <div class="column is-5 has-text-right">
+                <a href="{% url "quizz:management:list" %}" class="button is-success is-medium">
+                    {% trans "Keep that, everything is good" %}
+                </a>
+            </div>
+            <div class="column is-2 has-text-centered">{% trans "or" %}</div>
+            <div class="column is-5 has-text-left">
+                <form action="{% url "quizz:management:undo-import" %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="pks" value="{{ created_questions_pks }}" />
+                    <input type="submit" value="{% trans "undo" %}" class="button is-text is-medium" />
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="title">{% trans "The following questions were not imported because of errors" %}</h2>
+        <p class="subtitle">{% trans "You can undo this import and fix the problems in the file before sending it again." %}</p>
+
+        <table class="table is-narrow is-bordered is-striped is-fullwidth">
+            <thead>
+                <tr>
+                    <th class="has-text-centered">{% trans "Lang" %}</th>
+                    <th class="has-text-centered">{% trans "Question" %}</th>
+                    <th class="has-text-centered">{% trans "Proposed answers" %}</th>
+                    <th class="has-text-centered">{% trans "Actual answer(s)" %}</th>
+                    <th class="has-text-centered">{% trans "Comment on answer" %}</th>
+                    <th class="has-text-centered">{% trans "Tags" %}</th>
+                    <th class="has-text-centered">{% trans "Source" %}</th>
+                    <th class="has-text-centered">{% trans "Difficulty" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for question, error in errored_questions %}
+                <tr class="is-family-code">
+                    <td class="has-text-centered {% if not question.locale and error == "missing_fields" or error == "locale" %}has-text-danger{% endif %}">
+                        {% with available_locales=locales|join:", " %}
+                            {% if question.locale %}
+                                {% if error == "locale" %}
+                                    {% blocktrans with available_locales=available_locales locale=question.locale %}
+                                        {{ locale }}<br />
+                                        Valid languages are: {{ available_locales }}
+                                    {% endblocktrans %}
+                                {% else %}
+                                    {{ question.locale }}
+                                {% endif %}
+                            {% else %}
+                                {% blocktrans with available_locales=available_locales %}
+                                    Missing language<br />
+                                    Valid languages are: {{ available_locales }}
+                                {% endblocktrans %}
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td class="has-text-centered {% if not question.question and error == "missing_fields" %}has-text-danger{% endif %}">
+                        {% if question.question %}
+                            {{ question.question }}
+                        {% else %}
+                            {% trans "Missing question." %}
+                        {% endif %}
+                    </td>
+                    {% if error == "missing_fields" and not question.proposed_answers and not question.answers %}
+                        <td class="has-text-centered has-text-danger" colspan="2">
+                            {% trans "At least one of these two fields must be set." %}
+                        </td>
+                    {% else %}
+                        <td class="has-text-centered">{{ question.proposed_answers|join:"<br />" }}</td>
+                        <td class="has-text-centered">{{ question.answers|join:"<br />" }}</td>
+                    {% endif %}
+                    <td class="has-text-centered">
+                        {{ question.comment|default:"–" }}
+                    </td>
+                    <td class="has-text-centered">
+                        {{ question.tags|join:"<br />" }}
+                    </td>
+                    <td class="has-text-centered">
+                        {{ question.source|default:"–" }}
+                    </td>
+                    <td class="has-text-centered">
+                        {{ question.difficulty|default:"–" }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="section">
+        <div class="columns is-vcentered">
+            <div class="column is-5 has-text-right">
+                <a href="{% url "quizz:management:list" %}" class="button is-success is-medium">
+                    {% trans "Keep that, everything is good" %}
+                </a>
+            </div>
+            <div class="column is-2 has-text-centered">{% trans "or" %}</div>
+            <div class="column is-5 has-text-left">
+                <form action="{% url "quizz:management:undo-import" %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="pks" value="{{ created_questions_pks }}" />
+                    <input type="submit" value="{% trans "undo" %}" class="button is-text is-medium" />
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

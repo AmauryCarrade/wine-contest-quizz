@@ -22,6 +22,32 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 			  crossorigin="anonymous"></script>
+
+        <script type="text/javascript" src="{% url "javascript-catalog" %}"></script>
+
+        <script type="text/javascript">
+            /**
+             * Updates each file input field to be interactive, displaying their file name when a file is selected.
+             */
+            $(function()
+            {
+                $('label.file-label').each(function()
+                {
+                    let $this = $(this);
+                    $this.wrap('<div class="file has-name" />')
+                        .append('<div class="file-name">Ø</div>')
+                        .attr("title", gettext("Nothing selected yet. Click to choose a file."));
+
+                    let file_name = $this.find(".file-name");
+                    $this.find("input[type=file]").on('change', function()
+                    {
+                        file_name.text(this.files[0].name);
+                        $this.attr("title", interpolate(gettext("You selected “%s”. Click again to select another file."), [this.files[0].name]));
+                    });
+                });
+            });
+        </script>
+
         {% block js %}{% endblock %}
     </body>
 </html>

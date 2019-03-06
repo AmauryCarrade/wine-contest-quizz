@@ -11,6 +11,7 @@ django-versatileimagefield = "*"
 path-py = "*"
 django-bulma = "*"
 django-mptt = "*"
+openpyxl = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
