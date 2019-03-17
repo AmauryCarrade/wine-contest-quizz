@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<article class="card" data-result="{{ question.success }}">
+<article class="card question-correction" data-result="{{ question.success }}">
     <header class="card-header">
         <p class="card-header-title">
             {{ question.question.question }}
@@ -14,7 +14,7 @@
                 </span>
             </span>
             <span class="icon">
-                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                <i class="fas fa-angle-up" aria-hidden="true"></i>
             </span>
         </a>
     </header>

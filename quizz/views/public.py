@@ -1,12 +1,14 @@
 from datetime import timedelta
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum, F, FloatField, Count, Case, When, IntegerField
 from django.http import HttpResponseRedirect, Http404, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, FormView
+from django.views.generic import DetailView, FormView, ListView
 from ipware import get_client_ip
 
 from quizz.forms.public import CreateQuizzForm
@@ -65,12 +67,17 @@ class QuizzView(DetailView):
         """
         # For ongoing quizzes, only the owner is allowed to access the quizz, or
         # everyone but only if the user is not logged in.
-        allowed = (quizz.user is None and not self.request.user.is_authenticated) or (quizz.user == self.request.user)
+        allowed = (quizz.user is None and not self.request.user.is_authenticated) or (
+            quizz.user == self.request.user
+        )
 
         # If the quizz is finished, we also allow users with the permission to
         # view quizzes to view all quizzes.
         if not quizz.is_running:
-            allowed |= self.request.user.is_authenticated and self.request.user.has_perm("quizz.view_quizz")
+            allowed |= (
+                self.request.user.is_authenticated
+                and self.request.user.has_perm("quizz.view_quizz")
+            )
 
         if not allowed:
             raise Http404("User is not allowed to access this quizz.")
@@ -142,3 +149,49 @@ class QuizzView(DetailView):
         # the next question will be displayed, either it is and the summary
         # will be.
         return HttpResponseRedirect(reverse_lazy("quizz:quizz", args=(quizz.slug,)))
+
+
+class QuizzesListMixin(ListView):
+    template_name = "public/quizz-list.html"
+
+    model = Quizz
+    paginate_by = 20
+
+    context_object_name = "quizzes"
+
+    def get_base_queryset(self):
+        return super(QuizzesListMixin, self).get_queryset()
+
+    def get_queryset(self):
+        return (
+            self.get_base_queryset()
+            .filter(finished_at__isnull=False)
+            .annotate(
+                score=Sum("questions__points", output_field=FloatField())
+                / Sum("questions__question__difficulty", output_field=FloatField())
+                * 100,
+                questions_count=Count('questions'),
+                perfect_answers=Sum(Case(
+                    When(questions__success="PERFECT", then=1),
+                    default=0,
+                    output_field=IntegerField()
+                )),
+                almost_answers=Sum(Case(
+                    When(questions__success="ALMOST", then=1),
+                    default=0,
+                    output_field=IntegerField()
+                )),
+                failed_answers=Sum(Case(
+                    When(questions__success="FAILED", then=1),
+                    default=0,
+                    output_field=IntegerField()
+                ))
+            )
+            .prefetch_related("user")
+            .order_by("-finished_at")
+        )
+
+
+class UserQuizzesListView(LoginRequiredMixin, QuizzesListMixin):
+    def get_base_queryset(self):
+        return Quizz.objects.filter(user=self.request.user)

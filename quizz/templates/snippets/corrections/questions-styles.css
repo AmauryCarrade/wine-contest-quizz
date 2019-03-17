@@ -12,6 +12,16 @@
     background-color: rgba(255, 56, 96, .3);
 }
 
+.question-correction .card-header {
+    cursor: pointer;
+}
+.question-correction .card-header:hover .card-header-icon .icon {
+    color: #363636;
+}
+.question-correction .card-header-icon .tag {
+    margin-right: .4rem;
+}
+
 .is-static-checkbox {
     border-radius: 4px;
 }

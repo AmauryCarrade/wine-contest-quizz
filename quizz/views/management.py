@@ -1,9 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import F
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -12,6 +13,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import DeleteView, FormView
 from openpyxl import load_workbook
 
+from quizz.views.public import QuizzesListMixin
 from ..forms.management import (
     ImportQuestionsForm,
     ManageQuizzLinkedAnswerFormSet,
@@ -19,7 +21,7 @@ from ..forms.management import (
     ManageQuizzSimpleAnswerFormSet,
 )
 from ..models.questions import Contest, Question, QuestionLocale, Tag
-from quizz.models import QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED
+from quizz.models import QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED, Quizz
 
 
 class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -720,3 +722,37 @@ class QuestionDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
         )
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class QuizzesListView(LoginRequiredMixin, PermissionRequiredMixin, QuizzesListMixin):
+    permission_required = "quizz.view_quizz"
+
+    def get_base_queryset(self):
+        return Quizz.objects.all()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(QuizzesListView, self).get_context_data(*args, **kwargs)
+
+        context["management"] = True
+        context["quizzes_user"] = None
+
+        return context
+
+
+class UserProfileView(LoginRequiredMixin, PermissionRequiredMixin, QuizzesListMixin):
+    permission_required = ("quizz.view_quizz", "auth.view_user")
+
+    @cached_property
+    def user(self):
+        return get_object_or_404(User, username=self.kwargs['username'])
+
+    def get_base_queryset(self):
+        return Quizz.objects.filter(user=self.user)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(UserProfileView, self).get_context_data(*args, **kwargs)
+
+        context["management"] = True
+        context["quizzes_user"] = self.user
+
+        return context

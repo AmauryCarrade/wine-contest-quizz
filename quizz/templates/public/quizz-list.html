@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block head-title %}{% spaceless %}
+    {% if management %}
+        {% if quizzes_user %}
+            {% blocktrans with name=quizzes_user.get_full_name %}
+                {{ name }}'s quizzes
+            {% endblocktrans %}
+        {% else %}
+            {% trans "All quizzes" %}
+        {% endif %}
+    {% else %}
+        {% trans "Your quizzes" %}
+    {% endif %}
+{% endspaceless %}{% endblock %}
+
+{% block hero-title %}
+    <h1 class="title">{% spaceless %}
+        {% if management %}
+            {% if quizzes_user %}
+                {% blocktrans with name=quizzes_user.get_full_name %}
+                    {{ name }}'s quizzes
+                {% endblocktrans %}
+            {% else %}
+                {% trans "All quizzes" %}
+            {% endif %}
+        {% else %}
+            {% trans "Your quizzes" %}
+        {% endif %}
+    {% endspaceless %}</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <nav class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <p class="subtitle is-5">
+                        {% if quizzes_user and quizzes_user != user %}
+                            {% blocktrans count quizzes_here=page_obj.object_list|length|stringformat:"d" with quizzes_total=page_obj.paginator.count|stringformat:"d" name=quizzes_user.get_full_name %}
+                                {{ name }} answered <strong>{{ quizzes_total }}</strong> quizz ({{ quizzes_here }} shown).
+                            {% plural %}
+                                {{ name }} answered <strong>{{ quizzes_total }}</strong> quizzes ({{ quizzes_here }} shown).
+                            {% endblocktrans %}
+                        {% elif management %}
+                            {% blocktrans count quizzes_here=page_obj.object_list|length|stringformat:"d" with quizzes_total=page_obj.paginator.count|stringformat:"d" %}
+                                <strong>{{ quizzes_total }}</strong> quizz ({{ quizzes_here }} shown).
+                            {% plural %}
+                                <strong>{{ quizzes_total }}</strong> quizzes ({{ quizzes_here }} shown).
+                            {% endblocktrans %}
+                        {% else %}
+                            {% blocktrans count quizzes_here=page_obj.object_list|length|stringformat:"d" with quizzes_total=page_obj.paginator.count|stringformat:"d" %}
+                                You answered <strong>{{ quizzes_total }}</strong> quizz ({{ quizzes_here }} shown).
+                            {% plural %}
+                                You answered <strong>{{ quizzes_total }}</strong> quizzes ({{ quizzes_here }} shown).
+                            {% endblocktrans %}
+                        {% endif %}
+                        {% if page_obj.paginator.num_pages > 1 %}
+                            {% blocktrans with page=page_obj.number|stringformat:"d" pages=page_obj.paginator.num_pages|stringformat:"d" %}
+                                <span class="has-text-grey">Page {{ page }} of {{ pages }}.</span>
+                            {% endblocktrans %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="level-right">
+                {% if not management or quizzes_user %}
+                    <div class="level-item">
+                        <p class="level-item">
+                            <a href="" class="button is-info tooltip is-tooltip-top" disabled="disabled" data-tooltip="{% trans "Coming soon!" %}">
+                                <span class="icon">
+                                    <span class="fas fa-chart-line "></span>
+                                </span>
+                                <span>
+                                    {% if quizzes_user %}
+                                        {% blocktrans with name=quizzes_user.get_full_name %}
+                                            {{ name }}'s progression
+                                        {% endblocktrans %}
+                                    {% else %}
+                                        {% trans "Your progression" %}
+                                    {% endif %}
+                                </span>
+                            </a>
+                        </p>
+                    </div>
+                {% endif %}
+                {% if not management %}
+                    <div class="level-item">
+                        <p class="level-item">
+                            <a href="{% url "quizz:create-quizz" %}" class="button is-success">
+                                <span class="icon">
+                                    <span class="fas fa-file-signature"></span>
+                                </span>
+                                <span>{% trans "Start a quizz" %}</span>
+                            </a>
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </nav>
+
+        <div class="columns is-multiline">
+            {% for quizz in quizzes %}
+                <div class="column is-6">
+                    {% include "snippets/quizz-card.html" with question=question show_answers_stats=True %}
+                </div>
+            {% empty %}
+                <tr>
+                    <td colspan="2" class="has-text-centered">
+                        {% url "quizz:create-quizz" as create_url %}
+                        {% blocktrans with create_url=create_url %}
+                            You never finished a quizz yet. <a href="{{ create_url }}">What about starting one?</a>
+                        {% endblocktrans %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        {% include "pagination.html" with page_obj=page_obj only %}
+    </section>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "css/bulma-tooltip.min.css" %}" />
+    <style type="text/css">
+        li.has-text-success strong {
+            color: inherit;
+        }
+        li.has-text-warning strong {
+            color: inherit;
+        }
+        li.has-text-danger strong {
+            color: inherit;
+        }
+    </style>
+{% endblock %}

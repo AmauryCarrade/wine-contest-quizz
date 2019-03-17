@@ -59,10 +59,7 @@ class MultipleChoicesQuestionForm(QuestionForm):
                 label=_("Other"),
                 required=False,
                 widget=forms.TextInput(
-                    attrs={
-                        "class": "input",
-                        "placeholder": _("Write the answer here…")
-                    }
+                    attrs={"class": "input", "placeholder": _("Write the answer here…")}
                 ),
                 help_text=_(
                     "If none of the above choices are correct, or if there is "

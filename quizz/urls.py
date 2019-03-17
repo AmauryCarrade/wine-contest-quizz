@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views.public import QuizzView, CreateQuizzView
+from .views.public import QuizzView, CreateQuizzView, UserQuizzesListView
 
 from .views.management import (
     QuestionsListView,
@@ -8,6 +8,8 @@ from .views.management import (
     QuestionsImportView,
     UndoImportView,
     QuestionDeleteView,
+    QuizzesListView,
+    UserProfileView,
 )
 
 app_name = "quizz"
@@ -15,17 +17,21 @@ app_name = "quizz"
 management_patterns = (
     [
         path("questions", QuestionsListView.as_view(), name="list"),
-        path("create", EditQuestionView.as_view(), name="create"),
-        path("import", QuestionsImportView.as_view(), name="import"),
-        path("import/undo", UndoImportView.as_view(), name="undo-import"),
-        path("edit/<int:pk>", EditQuestionView.as_view(), name="edit"),
-        path("delete/<int:pk>", QuestionDeleteView.as_view(), name="delete"),
+        path("questions/create", EditQuestionView.as_view(), name="create"),
+        path("questions/import", QuestionsImportView.as_view(), name="import"),
+        path("questions/import/undo", UndoImportView.as_view(), name="undo-import"),
+        path("questions/edit/<int:pk>", EditQuestionView.as_view(), name="edit"),
+        path("questions/delete/<int:pk>", QuestionDeleteView.as_view(), name="delete"),
+
+        path("quizzes", QuizzesListView.as_view(), name="quizzes"),
+        path("quizzes/<str:username>", UserProfileView.as_view(), name="user-quizzes"),
     ],
     "management",
 )
 
 urlpatterns = [
     path("", CreateQuizzView.as_view(), name="create-quizz"),
+    path("quizzes", UserQuizzesListView.as_view(), name="user-quizzes"),
     path("quizz/<slug:slug>", QuizzView.as_view(), name="quizz"),
     path("management/", include(management_patterns, namespace="management")),
 ]

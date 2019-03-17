@@ -1,0 +1,139 @@
+{% load i18n %}
+
+<div class="card">
+    {% comment %}
+    <header class="card-header">
+        <p class="card-header-title">
+            <img src="https://bulma.io/images/placeholders/64x64.png" alt="" class="image is-24x24 is-rounded" />
+            {% if management or True %}
+                {% blocktrans with since=quizz.finished_at|timesince name=quizz.user.get_full_name %}
+                    {{ name }}, {{ since }} ago
+                {% endblocktrans %}
+            {% else %}
+                {% blocktrans with since=quizz.finished_at|timesince %}
+                    {{ since }} ago
+                {% endblocktrans %}
+            {% endif %}
+        </p>
+        <span class="card-header-icon">
+            <span class="tag is-medium {% if quizz.score > 80 %}is-success{% elif quizz.score > 50 %}is-warning{% else %}is-danger{% endif %}">
+                {% blocktrans with score=quizz.score|floatformat:"0" %}
+                    {{ score }}&nbsp;%
+                {% endblocktrans %}
+            </span>
+        </span>
+    </header>
+    {% endcomment %}
+    <div class="card-content">
+        <div class="media">
+            {% if management %}
+                <div class="media-left">
+                    <figure class="image is-48x48">
+                        <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image" class="is-rounded">
+                    </figure>
+                </div>
+            {% endif %}
+            <div class="media-content">
+                <div class="columns is-vcentered">
+                    <div class="column is-9">
+                        {% if management %}
+                            <p class="title is-4">
+                                {% if quizz.user %}
+                                    {{ quizz.user.get_full_name }}
+                                {% else %}
+                                    {% trans "Anonymous" %}
+                                {% endif %}
+                            </p>
+                            <p class="subtitle is-6" title="{{ quizz.finished_at|date }} {{ quizz.finished_at|time }}{% if quizz.ip %} – {{ quizz.ip }}{% endif %}">
+                                {% blocktrans with since=quizz.finished_at|timesince %}
+                                    {{ since }} ago
+                                {% endblocktrans %}
+                                {% if not quizz.user %}
+                                    – {% if quizz.ip %}{{ quizz.ip }}{% else %}{% trans "IP unknown or deleted" %}{% endif %}
+                                {% endif %}
+                            </p>
+                        {% else %}
+                            <p class="title is-4">
+                                {% blocktrans with since=quizz.finished_at|timesince %}
+                                    {{ since }} ago
+                                {% endblocktrans %}
+                            </p>
+                            <p class="subtitle is-6">
+                                {% blocktrans with date=quizz.finished_at|date hour=quizz.finished_at|time %}
+                                    {{ date }} at {{ hour }}
+                                {% endblocktrans %}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="column is-3 has-text-right">
+                        <span class="tag is-medium {% if quizz.score > 80 %}is-success{% elif quizz.score > 50 %}is-warning{% else %}is-danger{% endif %}">
+                            {% blocktrans with score=quizz.score|floatformat:"0" %}
+                                {{ score }}&nbsp;%
+                            {% endblocktrans %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <p>
+                {% blocktrans with duration=quizz.started_at|timesince:quizz.finished_at count questions_count=quizz.questions_count  %}
+                    <strong>{{ questions_count }} question</strong>, answered in {{ duration }}.
+                {% plural %}
+                    <strong>{{ questions_count }} questions</strong>, all answered in {{ duration }}.
+                {% endblocktrans %}
+            </p>
+            <div class="field is-grouped is-grouped-multiline">
+                {% if quizz.perfect_answers > 0 %}
+                    <div class="control">
+                        <div class="tags has-addons">
+                            {% blocktrans count count=quizz.perfect_answers %}
+                                <span class="tag is-success">{{ count }}</span>
+                                <span class="tag is-dark">perfect answer</span>
+                            {% plural %}
+                                <span class="tag is-success">{{ count }}</span>
+                                <span class="tag is-dark">perfect answers</span>
+                            {% endblocktrans %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if quizz.almost_answers > 0 %}
+                    <div class="control">
+                        <div class="tags has-addons">
+                            {% blocktrans count count=quizz.almost_answers %}
+                                <span class="tag is-warning">{{ count }}</span>
+                                <span class="tag is-dark">close answer</span>
+                            {% plural %}
+                                <span class="tag is-warning">{{ count }}</span>
+                                <span class="tag is-dark">close answers</span>
+                            {% endblocktrans %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if quizz.failed_answers > 0 %}
+                    <div class="control">
+                        <div class="tags has-addons">
+                            {% blocktrans count count=quizz.failed_answers %}
+                                <span class="tag is-danger">{{ count }}</span>
+                                <span class="tag is-dark">failed answer</span>
+                            {% plural %}
+                                <span class="tag is-danger">{{ count }}</span>
+                                <span class="tag is-dark">failed answers</span>
+                            {% endblocktrans %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <footer class="card-footer">
+        <a href="{% url "quizz:quizz" slug=quizz.slug %}" class="card-footer-item">{% trans "Report" %}</a>
+        {% if management and quizz.user != quizzes_user %}
+            <a href="{% url "quizz:management:user-quizzes" username=quizz.user.username %}" class="card-footer-item">
+                {% blocktrans with name=quizz.user.get_full_name %}
+                    {{ name }}'s quizzes
+                {% endblocktrans %}
+            </a>
+        {% endif %}
+    </footer>
+</div>

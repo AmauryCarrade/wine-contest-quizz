@@ -64,3 +64,43 @@
         {% include "snippets/corrections/questions-styles.css" %}
     </style>
 {% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        'use strict';
+
+        function toggle_correction_block($block, animate)
+        {
+            $block.find('.card-header .card-header-icon .icon .fas')
+                .toggleClass('fa-angle-down')
+                .toggleClass('fa-angle-up');
+
+            if (animate)
+            {
+                $block.find('.card-content').slideToggle('fast');
+            }
+            else
+            {
+                $block.find('.card-content').toggle();
+            }
+        }
+
+        $(function()
+        {
+            let $corrections = $("article.question-correction");
+
+            $corrections.each(function()
+            {
+                if ($(this).data('result') === 'PERFECT')
+                {
+                    toggle_correction_block($(this));
+                }
+            });
+
+            $corrections.find('.card-header').on('click', function()
+            {
+                 toggle_correction_block($(this).parent(), true);
+            });
+        });
+    </script>
+{% endblock %}

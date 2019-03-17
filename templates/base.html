@@ -11,7 +11,7 @@
                 <div class="container">
                     <div class="navbar-brand">
                         <a href="{% url "quizz:create-quizz" %}" class="navbar-item has-text-weight-bold">
-                            {% trans "EHL OENOLOGY" %}
+                            {% trans "EHL OENOLOGY" %}&nbsp;<span class="is-uppercase is-size-7">Bêta</span>
                         </a>
                         <span class="navbar-burger burger" data-target="navbarMenuHeroA">
                             <span></span>
@@ -67,9 +67,11 @@
                                                                 <span class="icon is-medium">
                                                                     <span class="fas fa-envelope-open-text"></span>
                                                                 </span>
-                                                                <span>
-                                                                    {% blocktrans with date=ongoing_quizz.started_at|date hour=ongoing_quizz.started_at|time %}
+                                                                <span title="{% spaceless %}{% blocktrans with date=ongoing_quizz.started_at|date hour=ongoing_quizz.started_at|time %}
                                                                         Started {{ date }} at {{ hour }}
+                                                                    {% endblocktrans %}{% endspaceless %}">
+                                                                    {% blocktrans with since=ongoing_quizz.started_at|timesince %}
+                                                                        Started {{ since }} ago
                                                                     {% endblocktrans %}
                                                                     <br />
                                                                     <span class="has-text-grey">
@@ -94,7 +96,7 @@
                                         {% endif %}
                                     {% endif %}
 
-                                    <a href="" class="navbar-item">
+                                    <a href="{% url "quizz:user-quizzes" %}" class="navbar-item">
                                         {% trans "Past quizzes" %}
                                     </a>
 
@@ -171,7 +173,7 @@
                                                     {% endif %}
                                                 {% endif %}
 
-                                                {% if perms.auth.view_user %}
+                                                {% if perms.auth.view_user or perms.quizz.view_quizz %}
                                                     <hr class="navbar-divider" />
 
                                                     <div class="navbar-item">
@@ -184,6 +186,15 @@
                                                                 <span class="fas fa-user-graduate"></span>
                                                             </span>
                                                             <span>{% trans "All users" %}</span>
+                                                        </a>
+                                                    {% endif %}
+
+                                                    {% if perms.quizz.view_quizz %}
+                                                        <a href="{% url "quizz:management:quizzes" %}" class="navbar-item">
+                                                            <span class="icon is-medium">
+                                                                <span class="fas fa-file-signature"></span>
+                                                            </span>
+                                                            <span>{% trans "All quizzes" %}</span>
                                                         </a>
                                                     {% endif %}
                                                 {% endif %}
