@@ -1,0 +1,146 @@
+{% extends "base-full-hero.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load bulma_tags %}
+{% load mathfilters %}
+
+{% block content %}
+    {% with question=quizz.current_question.question form=quizz.current_question.form %}
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="box">
+                <h2 class="title">{{ question.question }}</h2>
+                {% if question.is_linked %}
+                    <p class="subtitle">
+                        {% blocktrans %}
+                            Associate each item below with their corresponding answer.
+                        {% endblocktrans %}
+                    </p>
+                {% endif %}
+
+                <div class="columns">
+                    <div class="column {% if question.illustration %}is-8{% else %}is-12{% endif %}">
+                        <div class="is-size-5 is-answer-form">
+                            <div class="answers-form">
+                                {% if question.is_open %}
+                                    <div class="control">
+                                        <label for="{{ form.answer.id_for_label }}" class="is-sr-only">{{ form.answer.label }}</label>
+                                        {{ form.answer }}
+                                        <div class="help">{% trans "Enter your answer in this area. Punctuation, capitalization, accents, diatrics, spaces or line breaks does not matter." %}</div>
+                                    </div>
+                                {% elif question.is_mcq %}
+                                    <div class="field">
+                                        {{ form.answers }}
+                                    </div>
+
+                                    {% if form.other_answer %}
+                                        {{ form.other_answer|bulma }}
+                                    {% endif %}
+                                {% elif question.is_linked %}
+                                    {% for field in form %}
+                                        <div class="level">
+                                            <div class="level-left">
+                                                <div class="level-item has-text-right">
+                                                    <label for="{{ field.id_for_label }}" class="has-text-right">{{ field.label }}</label>
+                                                </div>
+                                            </div>
+                                            <div class="level-right">
+                                                <div class="level-item">
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <div class="answers-button">
+                                <div class="columns is-vcentered">
+                                    <div class="column is-5">
+                                        <input type="submit" value="{% trans "Next" %}" class="button is-link is-medium is-next-button" />
+                                    </div>
+                                    <div class="column is-7 has-text-right has-text-centered-mobile is-size-6 has-text-grey">
+                                        {{ question.source|default:"" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if question.illustration %}
+                        <div class="column is-4">
+                            <figure class="image">
+                                <img src="{{ question.illustration.thumbnail.600x600 }}" alt="{% trans "Question's illustration" %}" />
+                            </figure>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="columns question-box-footer is-vcentered">
+                <div class="column is-8">
+                    <ul class="steps is-small">
+                        {% for question_step in quizz.all_questions %}
+                            <li class="step-item
+                                    {% if question_step == quizz.current_question %}
+                                        is-active
+                                    {% elif question_step.is_finished %}
+                                        is-completed
+                                    {% endif %}">
+                                <div class="step-marker">
+                                    {% if question_step.is_finished %}
+                                        <span class="icon">
+                                            <span class="fa fa-check"></span>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="column is-4 has-text-right has-text-centered-mobile is-size-5">
+                    {% blocktrans with current_question_num=quizz.questions_finished|add:1 total_questions=quizz.questions_total %}
+                        Question {{ current_question_num }} of {{ total_questions }}
+                    {% endblocktrans %}
+                </div>
+            </div>
+        </form>
+    {% endwith %}
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "css/bulma-steps.min.css" %}">
+    <style type="text/css">
+        .hero .box .title, .hero .box .subtitle {
+            color: #4a4a4a;
+        }
+
+        @media screen and (min-width: 1088px) {
+            .box, .question-box-footer {
+                width: 72%;
+                margin: auto;
+            }
+        }
+
+        .is-answer-form {
+            display: flex;
+            flex-direction: column;
+
+            height: 100%;
+        }
+
+        .is-answer-form .answers-form {
+            flex: 2;
+            margin-bottom: 1.4rem;
+        }
+
+        figure.image img {
+            border-radius: 4px;
+        }
+
+        .is-next-button {
+            padding-left: 4rem;
+            padding-right: 4rem;
+        }
+    </style>
+{% endblock %}

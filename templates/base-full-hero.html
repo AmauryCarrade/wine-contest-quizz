@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block flash-messages %}{% endblock %}
+{% block container %}{% endblock %}
+
+{% block hero-classes %}is-primary is-bold is-fullheight{% endblock %}
+
+{% block hero-body %}
+    <div class="container">
+        {% if messages %}
+            {% include "snippets/flash-messages.html" with messages=messages DEFAULT_MESSAGE_LEVELS=DEFAULT_MESSAGE_LEVELS only %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}

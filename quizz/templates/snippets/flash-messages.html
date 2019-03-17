@@ -1,0 +1,18 @@
+{% if messages %}
+    <section class="section">
+        <div class="container">
+            {% for message in messages %}
+                <article class="message {% spaceless %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}is-link
+                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}is-info
+                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}is-success
+                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}is-warning
+                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}is-danger
+                    {% endif %}
+                {% endspaceless %} {% if message.tags %}{{ message.tags }}{% endif %}">
+                    <div class="message-body">{{ message }}</div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}

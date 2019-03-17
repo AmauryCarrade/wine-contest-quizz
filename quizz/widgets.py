@@ -35,7 +35,9 @@ class CheckboxTreeSelectMultiple(CheckboxSelectMultiple):
             if option_value is None:
                 option_value = ""
 
-            if not is_leaf_node and self.bold_parents:
+            if (
+                not is_leaf_node or is_leaf_node and option_level == 0
+            ) and self.bold_parents:
                 option_label = mark_safe(f"<strong>{option_label}</strong>")
 
             if isinstance(option_label, (list, tuple)):

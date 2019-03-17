@@ -12,6 +12,9 @@ path-py = "*"
 django-bulma = "*"
 django-mptt = "*"
 openpyxl = "*"
+django-ipware = "*"
+python-levenshtein = "*"
+unidecode = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

@@ -1,0 +1,26 @@
+{% extends "snippets/corrections/question-base.html" %}
+
+{% block answer %}
+    {% for answer in question.answers.all %}
+        <div class="columns is-vcentered {% if answer.linked_to == answer.proposed_answer.linked_answer %}has-text-success{% else %}has-text-danger{% endif %}">
+            <div class="column is-5 is-5-mobile has-text-right has-text-weight-semibold">
+                <p>{{ answer.proposed_answer.answer }}</p>
+            </div>
+            <div class="column is-1 is-1-mobile has-text-centered">
+                <span class="icon">
+                    <span class="fas fa-arrow-right"></span>
+                </span>
+            </div>
+            <div class="column is-5 is-5-mobile has-text-left has-text-weight-semibold">
+                <p class="{% if answer.linked_to != answer.proposed_answer.linked_answer %}has-text-stroked{% endif %}">
+                    {{ answer.linked_to.answer }}
+                </p>
+                {% if answer.linked_to != answer.proposed_answer.linked_answer %}
+                    <p class="has-text-success">
+                        {{ answer.proposed_answer.linked_answer.answer }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

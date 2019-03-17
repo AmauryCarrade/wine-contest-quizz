@@ -10,7 +10,8 @@
 - Chaque question est constituée d'une question (texte libre pouvant être long) et d'un détail de réponse pouvant être affiché, si renseigné, lors de la correction.
 - Chaque question dispose de catégories (tags).
 - Chaque question dispose d'une langue (Français ou Anglais initialement).
-- Chaque question a un niveau de difficulté $d$ entre 1 (facile) et trois (difficile). Le nombre maximal de points que peut rapporter la question est égal à $d$.
+- Chaque question dispose d'une source (typiquement, un concours dans laquelle elle a été posée), qui peut être non-renseignée (pour les questions inventées de toute pièces, par exemple).
+- Chaque question a un niveau de difficulté $d$ entre un (facile) et trois (difficile). Le nombre maximal de points que peut rapporter la question est égal à $d$.
 
 #### Questions à choix multiples
 
@@ -19,7 +20,8 @@
 - Les réponses sont présentées dans un ordre aléatoire.
 - Qu'il y ait ou non qu'une réponse juste, l'utilisateur verra dans tous les cas des cases à cocher multiples.
 - Les questions peuvent disposer d'un champ « Autre » qu'est libre. Ce champ peut être la bonne réponse, ou une des bonnes réponses, ou non. La détermination de la justesse de ce champ est la même que celle pour les questions à réponse libre ci-dessous.
-- Le nombre de points accordé pour la réponse est égal à $$\max\left(d \times \frac{N_{\text{rép. justes}} - N_{\text{rép. fausses sélectionnées}}}{N_{\text{rép.}}}\,;\,0\right)$$.
+  - Les points $\alpha$ accordés sont de 1 si la réponse est parfaite ($\ell = 0$), ½ si elle est proche ($1 \leq \ell \leq 3$), et 0 sinon.
+- Le nombre de points accordé pour la réponse est égal à, où $\zeta$ vaut 1 s'il  y a une réponse ouverte et 0 sinon, $$\max\left(d \times \frac{N_{\text{rép. justes}} - N_{\text{rép. fausses sélectionnées}} + \alpha}{N_{\text{rép.}} + \zeta}\,;\,0\right)$$.
 
 #### Questions à réponse libre
 

@@ -4,30 +4,22 @@ from django.db import transaction
 from django.db.models import F
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import ListView, RedirectView
-from django.views.generic.edit import FormView, DeleteView
+from django.views.generic import ListView
+from django.views.generic.edit import DeleteView, FormView
 from openpyxl import load_workbook
 
 from ..forms.management import (
+    ImportQuestionsForm,
+    ManageQuizzLinkedAnswerFormSet,
     ManageQuizzQuestionForm,
     ManageQuizzSimpleAnswerFormSet,
-    ManageQuizzLinkedAnswerFormSet,
-    ImportQuestionsForm,
 )
-
-from ..models import (
-    Question,
-    QUESTION_OPEN,
-    QUESTION_MCQ,
-    QUESTION_LINKED,
-    QuestionLocale,
-    Contest,
-    Tag,
-)
+from ..models.questions import Contest, Question, QuestionLocale, Tag
+from quizz.models import QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED
 
 
 class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -54,7 +46,9 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        questions = Question.objects.prefetch_related("locale")
+        questions = Question.objects.prefetch_related("tags").select_related(
+            "locale", "source"
+        )
         sort_by, sort_reversed = self.sort_by
         rev = "-" if sort_reversed else ""
 
@@ -386,7 +380,7 @@ class QuestionsImportView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
                     [str(question.pk) for question in created_questions]
                 ),
                 "errored_questions": errored_questions,
-                "locales": QuestionLocale.objects.all()
+                "locales": QuestionLocale.objects.all(),
             },
         )
 

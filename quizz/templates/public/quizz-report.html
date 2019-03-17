@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load mathfilters %}
+
+{% block head-title %}
+    {% blocktrans with date=quizz.started_at|date hour=quizz.started_at|time count count=quizz.questions_total %}
+        Your results for the {{ count }}-question quizz started {{ date }} at {{ hour }}
+    {% plural %}
+        Your results for the {{ count }}-questions quizz started {{ date }} at {{ hour }}
+    {% endblocktrans %}
+{% endblock %}
+
+{% block hero-title %}
+    <h1 class="title">
+        {% blocktrans with score=quizz.points.2|mul:100|floatformat:0 %}
+            You scored {{ score }}&nbsp;%
+        {% endblocktrans %}
+    </h1>
+    <p class="subtitle">
+        {% if quizz.points.2 == 1.0 %}
+            {% trans "That's a perfect job!" %}
+        {% elif quizz.points.2 >= .9 %}
+            {% trans "Well done! You scored almost perfectly." %}
+        {% elif quizz.points.2 >= .7 %}
+            {% trans "Quite good! A little more training and it'll be perfect." %}
+        {% elif quizz.points.2 >= .5 %}
+            {% trans "There's work to be done, but you're on the right track." %}
+        {% else %}
+            {% trans "Well that's not the best score, but keep working and you will get better every day!" %}
+        {% endif %}
+    </p>
+{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            {% for question in quizz.all_questions %}
+                <div class="question-correction-container">
+                    {% if question.question.is_open %}
+                        {% include "snippets/corrections/question-open.html" with question=question %}
+                    {% elif question.question.is_mcq %}
+                        {% include "snippets/corrections/question-mcq.html" with question=question %}
+                    {% elif question.question.is_linked %}
+                        {% include "snippets/corrections/question-linked.html" with question=question %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        .question-correction-container {
+            width: 70%;
+            margin: auto;
+        }
+        .question-correction-container:not(:last-child)
+        {
+            margin-bottom: 2rem;
+        }
+
+        {% include "snippets/corrections/questions-styles.css" %}
+    </style>
+{% endblock %}

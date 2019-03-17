@@ -1,16 +1,17 @@
 {% extends "base-blank.html" %}
 
 {% load i18n %}
+{% load mathfilters %}
 
 {% block main %}
-    <section class="hero is-primary is-small is-bold">
+    <section class="hero {% block hero-classes %}is-primary is-small is-bold{% endblock %}">
         <!-- Hero head: will stick at the top -->
         <div class="hero-head">
             <nav class="navbar">
                 <div class="container">
                     <div class="navbar-brand">
-                        <a class="navbar-item">
-                            <img src="https://bulma.io/images/bulma-type-white.png" alt="Logo">
+                        <a href="{% url "quizz:create-quizz" %}" class="navbar-item has-text-weight-bold">
+                            {% trans "EHL OENOLOGY" %}
                         </a>
                         <span class="navbar-burger burger" data-target="navbarMenuHeroA">
                             <span></span>
@@ -31,17 +32,75 @@
                                             {% endif %}
                                     </div>
 
-                                    <a href="" class="navbar-item">
-                                        <strong>{% trans "Take a quizz" %}</strong>
+                                    <a href="{% url "quizz:create-quizz" %}" class="navbar-item">
+                                        <strong>{% trans "Start a quizz" %}</strong>
                                     </a>
 
+                                    {% if ongoing_quizzes %}
+                                        {% if not quizz or ongoing_quizzes|length > 1 %}
+                                            <div class="navbar-item has-dropdown is-hoverable">
+                                                <span class="navbar-link has-text-weight-bold">
+                                                    {% trans "Ongoing quizzes" %}
+                                                </span>
+
+                                                <div class="navbar-dropdown is-right has-text-black">
+                                                    <div class="navbar-item">
+                                                        <p class="has-text-weight-bold has-text-black">
+                                                            {% if quizz and quizz.is_running %}
+                                                                {% blocktrans count count=ongoing_quizzes|length %}
+                                                                    You have one ongoing quizz (including the current one).
+                                                                {% plural %}
+                                                                    You have {{ count }} ongoing quizzes (including the current one).
+                                                                {% endblocktrans %}
+                                                            {% else %}
+                                                                {% blocktrans count count=ongoing_quizzes|length %}
+                                                                    You have one ongoing quizz.
+                                                                {% plural %}
+                                                                    You have {{ count }} ongoing quizzes.
+                                                                {% endblocktrans %}
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                    {% for ongoing_quizz in ongoing_quizzes %}
+                                                        {% if not quizz or ongoing_quizz != quizz %}
+                                                            <a class="navbar-item" href="{% url "quizz:quizz" slug=ongoing_quizz.slug %}">
+                                                                <span class="icon is-medium">
+                                                                    <span class="fas fa-envelope-open-text"></span>
+                                                                </span>
+                                                                <span>
+                                                                    {% blocktrans with date=ongoing_quizz.started_at|date hour=ongoing_quizz.started_at|time %}
+                                                                        Started {{ date }} at {{ hour }}
+                                                                    {% endblocktrans %}
+                                                                    <br />
+                                                                    <span class="has-text-grey">
+                                                                        {% if ongoing_quizz.questions_finished == 0 %}
+                                                                            {% blocktrans count total_questions=ongoing_quizz.questions_total %}
+                                                                                Not started yet ({{ total_questions }} question)
+                                                                            {% plural %}
+                                                                                Not started yet ({{ total_questions }} questions)
+                                                                            {% endblocktrans %}
+                                                                        {% else %}
+                                                                            {% blocktrans with percentage=ongoing_quizz.questions_finished|div:ongoing_quizz.questions_total|mul:100|floatformat:0 current_question=ongoing_quizz.questions_finished|add:1 total_questions=ongoing_quizz.questions_total %}
+                                                                                {{ percentage }}&nbsp;% complete (question {{ current_question }} of {{ total_questions }})
+                                                                            {% endblocktrans %}
+                                                                        {% endif %}
+                                                                    </span>
+                                                                </span>
+                                                            </a>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+
                                     <a href="" class="navbar-item">
-                                        {% trans "Quizzes history" %}
+                                        {% trans "Past quizzes" %}
                                     </a>
 
                                     <div class="navbar-item has-dropdown is-hoverable">
                                         <a class="navbar-link" href="">
-                                            Management
+                                            {% trans "Management" %}
                                         </a>
 
                                         <div class="navbar-dropdown is-right has-text-black">
@@ -164,9 +223,11 @@
 
         <!-- Hero content: will be in the middle -->
         <div class="hero-body">
-            <div class="container has-text-centered">
-                {% block hero-title %}{% endblock %}
-            </div>
+            {% block hero-body %}
+                <div class="container has-text-centered">
+                    {% block hero-title %}{% endblock %}
+                </div>
+            {% endblock %}
         </div>
 
         <!-- Hero footer: will stick at the bottom -->
@@ -175,22 +236,9 @@
         </div>
     </section>
 
-    {% if messages %}
-        <div class="container">
-            <section class="section">
-                {% for message in messages %}
-                    <div class="notification {% spaceless %}
-                        {% if message.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}is-link
-                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}is-info
-                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}is-success
-                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}is-warning
-                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}is-danger
-                        {% endif %}
-                    {% endspaceless %} {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
-                {% endfor %}
-            </section>
-        </div>
-    {% endif %}
+    {% block flash-messages %}
+        {% include "snippets/flash-messages.html" with messages=messages DEFAULT_MESSAGE_LEVELS=DEFAULT_MESSAGE_LEVELS only %}
+    {% endblock %}
 
     {% block container %}
         <div class="container">

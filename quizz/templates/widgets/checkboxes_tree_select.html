@@ -6,6 +6,7 @@
             {# Start of a new column #}
             {% if option.level == 0 and index != 0 %}
                 </div><div{% if widget.columns_classes %} class="{{ widget.columns_classes }}"{% endif %}>
+                {% if option.level_diff == 0 %}<ul>{% endif %}
             {% endif %}
 
             {# If the level increases, we need to add a new nested list. #}

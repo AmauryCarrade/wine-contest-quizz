@@ -1,0 +1,262 @@
+{% extends "base-full-hero.html" %}
+
+{% load i18n %}
+{% load bulma_tags %}
+
+{% block head-title %}{% trans "Start a new quizz" %}{% endblock %}
+
+{% block content %}
+    <form method="post" class="form is-horizontal has-text-centered">
+        {% csrf_token %}
+
+        <p class="title">
+            <label>
+                {% blocktrans with how_many_input=form.how_many %}
+                    Start a quizz containing {{ how_many_input }} questions
+                {% endblocktrans %}
+            </label>
+        </p>
+
+        <section class="section ee-quizz-options">
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {% trans "Difficulty" %}
+                    </p>
+                    <a href="#" class="card-header-icon">
+                        <span class="option-summary">
+                            {% trans "Indifferent" %}
+                        </span>
+                        <span class="icon">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </a>
+                </header>
+                <div class="card-content">
+                    {{ form.difficulty }}
+                </div>
+            </div>
+
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {% trans "Language" %}
+                    </p>
+                    <a href="#" class="card-header-icon">
+                        <span class="option-summary">
+                            {% trans "Indifferent" %}
+                        </span>
+                        <span class="icon">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </a>
+                </header>
+                <div class="card-content">
+                    {{ form.locale }}
+                </div>
+            </div>
+
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {% trans "Categories" %}
+                    </p>
+                    <a href="#" class="card-header-icon" aria-label="more options">
+                        <span class="option-summary" data-empty-value="{% trans "All" %}">
+                            {% trans "All" %}
+                        </span>
+                        <span class="icon">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </a>
+                </header>
+                <div class="card-content card-tags">
+                    {{ form.tags }}
+                </div>
+            </div>
+
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {% trans "Contest" %}
+                    </p>
+                    <a href="#" class="card-header-icon" aria-label="more options">
+                        <span class="option-summary" data-empty-value="{% trans "All + training questions" %}">
+                            {% trans "All + training questions" %}
+                        </span>
+                        <span class="icon">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </a>
+                </header>
+                <div class="card-content">
+                    {{ form.contest|bulma_inline }}
+                </div>
+            </div>
+        </section>
+
+        <input type="submit" value="{% trans "Create quizz" %}" class="button is-primary is-large" />
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        'use strict';
+
+        const max_labels_in_summary = 3;
+
+        function update_radio_checkbox_card_summary()
+        {
+            let $card = $(this).closest('.card');
+            let $summary = $card.find('.option-summary');
+            let empty_value = $summary.data('empty-value');
+            let $checked = $card.find('input:checked');
+
+            if (($checked.length === 0 || $checked.first().val() === '') && empty_value)
+            {
+                $summary.text(empty_value);
+            }
+            else
+            {
+                let i = 0, all = $checked.length;
+                let summary = [];
+
+                $checked.each(function()
+                {
+                    summary[i] = $(this).parent('label').text().trim();
+                    i += 1;
+                });
+
+                let summary_text;
+                let summary_all_text = summary.join(', ');
+
+                if (all > max_labels_in_summary)
+                {
+                    summary_text = summary.slice(0, max_labels_in_summary - 1).join(', ') + ' ' + interpolate(
+                        ngettext('and one other', 'and %s others', all - max_labels_in_summary + 1),
+                        [all - max_labels_in_summary + 1]
+                    );
+                }
+                else
+                {
+                    summary_text = summary_all_text;
+                }
+
+                $summary.text(summary_text);
+                $summary.attr('title', summary_all_text);
+            }
+        }
+
+        function update_select_card_summary()
+        {
+            let $card = $(this).closest('.card');
+            let $summary = $card.find('.option-summary');
+            let empty_value = $summary.data('empty-value');
+
+            if ($(this).val() === '' && empty_value)
+            {
+                $summary.text(empty_value);
+            }
+            else
+            {
+                $summary.text($(this).find('option:checked').text().trim());
+            }
+        }
+
+        $(function() {
+            const $option_card_contents = $('.ee-quizz-options .card .card-content');
+            const $option_card_icons = $('.ee-quizz-options .card .card-header .icon .fas');
+            const $radio_and_checkboxes = $option_card_contents.find('input[type=radio], input[type=checkbox]');
+            const $selects = $option_card_contents.find('select');
+
+            $option_card_contents.hide();
+
+            /* Accordion toggles */
+
+            $('.card-header').on('click', function()
+            {
+                let $card_content = $(this).parent('.card').find('.card-content');
+                let $card_icon = $(this).find('.fas');
+
+                if ($card_content.is(':visible'))
+                {
+                    $card_content.slideUp('fast');
+                    $card_icon.removeClass('fa-angle-up').addClass('fa-angle-down');
+                }
+                else
+                {
+                    $option_card_contents.slideUp('fast');
+                    $option_card_icons.removeClass('fa-angle-up').addClass('fa-angle-down');
+
+                    $card_content.slideDown('fast');
+                    $card_icon.removeClass('fa-angle-down').addClass('fa-angle-up');
+                }
+
+                return false;
+            });
+
+            /* Cards summaries */
+
+            // We force-update for each one at load time to handle cases
+            // were the browser stores in cache old values (e.g. if the page
+            // is refreshed), to be sure it always reflect the real values.
+            $radio_and_checkboxes.each(update_radio_checkbox_card_summary);
+            $selects.each(update_select_card_summary);
+
+            // Then, of course, we update the summaries when the values change.
+            $radio_and_checkboxes.on('change', update_radio_checkbox_card_summary);
+            $selects.on('change', update_select_card_summary);
+        });
+    </script>
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        #id_how_many {
+            width: 6rem;
+            text-align: center;
+        }
+
+        #id_tags ul ul {
+            margin-left: 2rem;
+        }
+
+        .ee-quizz-options {
+            margin: auto auto 24px;
+            width: 38%;
+        }
+
+        .ee-quizz-options .card:not(:last-child) {
+            margin-bottom: 1rem;
+        }
+
+        .ee-quizz-options .card .card-header {
+            cursor: pointer;
+        }
+
+        .ee-quizz-options .card .card-header .icon {
+            transition: color .2s ease-in-out;
+        }
+        .ee-quizz-options .card .card-header:hover .icon {
+            color: rgb(21, 21, 21);
+        }
+
+        .ee-quizz-options .card .card-content:not(.card-tags) ul {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+        }
+        .ee-quizz-options .card .card-content ul li {
+            flex: 1;
+        }
+
+        .ee-quizz-options .card .card-content.card-tags {
+            text-align: left;
+        }
+
+        .ee-quizz-options .card .card-content .select,
+        .ee-quizz-options .card .card-content .select select {
+            width: 100%;
+        }
+    </style>
+{% endblock %}

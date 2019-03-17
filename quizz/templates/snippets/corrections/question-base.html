@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<article class="card" data-result="{{ question.success }}">
+    <header class="card-header">
+        <p class="card-header-title">
+            {{ question.question.question }}
+        </p>
+        <a href="#" class="card-header-icon" aria-label="more options">
+            <span class="tag is-medium {% if question.success == 'PERFECT' %}is-success{% elif question.success == 'ALMOST' %}is-warning{% else %}is-danger{% endif %}">
+                <span class="quizz-note"
+                      data-max="{{ question.question.difficulty }}"
+                      aria-describedby="{% blocktrans with note=question.points|floatformat max=question.question.difficulty %}Score for this question: {{ note }} / {{ max }}{% endblocktrans %}">
+                    {{ question.points|floatformat }} <span class="is-size-7">&frasl; {{ question.question.difficulty }}</span>
+                </span>
+            </span>
+            <span class="icon">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </a>
+    </header>
+    <div class="card-content">
+        {% block answer %}{% endblock %}
+    </div>
+</article>

@@ -8,27 +8,28 @@
 
 {% block hero-title %}
     <h1 class="title">{% trans "All questions" %}</h1>
-    <p class="subtitle">
-        {% blocktrans count count=page_obj.paginator.count %}
-            {{ count }} question
-        {% plural %}
-            {{ count }} questions
-        {% endblocktrans %}
-    </p>
 {% endblock %}
 
 {% block content %}
     <section class="section">
-        <div class="columns">
-            <div class="column is-4">
-                <p class="has-text-grey">
-                    {% blocktrans with questions_here=page_obj.object_list|length questions_total=page_obj.paginator.count page=page_obj.number pages=page_obj.paginator.num_pages %}
-                        Listing {{ questions_here }} questions out of {{ questions_total }}.
-                    {% endblocktrans %}
-                </p>
+        <nav class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <p class="subtitle is-5">
+                        {% blocktrans with questions_here=page_obj.object_list|length|stringformat:"d" questions_total=page_obj.paginator.count|stringformat:"d" %}
+                            <strong>{{ questions_total }}</strong> questions ({{ questions_here }} shown).
+                        {% endblocktrans %}
+                        {% if page_obj.paginator.num_pages > 1 %}
+                            {% blocktrans with page=page_obj.number|stringformat:"d" pages=page_obj.paginator.num_pages|stringformat:"d" %}
+                                <span class="has-text-grey">Page {{ page }} of {{ pages }}.</span>
+                            {% endblocktrans %}
+                        {% endif %}
+                    </p>
+                </div>
             </div>
-            <div class="column is-8">
-                <div class="field is-grouped is-grouped-right">
+
+            <div class="level-right">
+                <div class="level-item">
                     <div class="control">
                         <div class="dropdown is-hoverable">
                             <div class="dropdown-trigger">
@@ -124,30 +125,29 @@
                             </div>
                         </div>
                     </div>
-                    {% if perms.quizz.add_question %}
-                        <div class="control">
-                            <a href="{% url "quizz:management:create" %}" class="button is-primary">
-                                <span class="icon">
-                                    <span class="fas fa-plus"></span>
-                                </span>
-                                <span>{% trans "Create a new question" %}</span>
-                            </a>
-                        </div>
-                        <div class="control">
-                            <a href="{% url "quizz:management:import" %}" class="button is-primary">
-                                <span class="icon">
-                                    <span class="fas fa-file-import"></span>
-                                </span>
-                                <span>{% trans "Import" %}</span>
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <section class="section">
+                {% if perms.quizz.add_question %}
+                    <p class="level-item">
+                        <a href="{% url "quizz:management:create" %}" class="button is-success">
+                            <span class="icon">
+                                <span class="fas fa-plus"></span>
+                            </span>
+                            <span>{% trans "Create a new question" %}</span>
+                        </a>
+                    </p>
+                    <p class="level-item">
+                        <a href="{% url "quizz:management:import" %}" class="button is-info">
+                            <span class="icon">
+                                <span class="fas fa-file-import"></span>
+                            </span>
+                            <span>{% trans "Import" %}</span>
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+        </nav>
+
         <div class="columns is-multiline">
             {% for question in questions %}
                 <div class="column is-6">

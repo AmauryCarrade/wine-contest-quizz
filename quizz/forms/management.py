@@ -1,11 +1,10 @@
 from django import forms
-from django.forms import CheckboxSelectMultiple
 from django.utils.translation import gettext_lazy as _
-from mptt.forms import TreeNodeChoiceField, TreeNodeMultipleChoiceField
 
 from quizz.fields import TreeNodeAllMultipleChoiceField
 from quizz.widgets import CheckboxTreeSelectMultiple
-from ..models import Contest, QuestionLocale, Tag, QUESTION_TYPES, QUESTION_MCQ
+from ..models.questions import Contest, QuestionLocale, Tag
+from quizz.models import QUESTION_MCQ, QUESTION_TYPES
 
 
 class ManageQuizzQuestionForm(forms.Form):

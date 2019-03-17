@@ -1,10 +1,18 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 from uuslug import uuslug
 from versatileimagefield.fields import VersatileImageField
+
+from quizz.forms.quizzes import (
+    OpenQuestionForm,
+    MultipleChoicesQuestionForm,
+    LinkedQuestionForm,
+)
+from quizz.models import QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED, QUESTION_TYPES
 
 
 class QuestionLocale(models.Model):
@@ -129,17 +137,6 @@ class Answer(models.Model):
         )
 
 
-QUESTION_OPEN = "OPEN"
-QUESTION_MCQ = "MCQ"
-QUESTION_LINKED = "LINKED"
-
-QUESTION_TYPES = (
-    (QUESTION_OPEN, _("Open answer")),
-    (QUESTION_MCQ, _("Multiple choices")),
-    (QUESTION_LINKED, _("Linked answers")),
-)
-
-
 class Question(models.Model):
     """
     A question.
@@ -261,14 +258,28 @@ class Question(models.Model):
         return "UNKNOWN"  # Only for non-filled & unsaved questions
 
     @property
-    def selectable_answers(self):
+    def is_open(self):
+        return self.type == QUESTION_OPEN
+
+    @property
+    def is_mcq(self):
+        return self.type == QUESTION_MCQ
+
+    @property
+    def is_linked(self):
+        return self.type == QUESTION_LINKED
+
+    def _selectable_answers(self, with_pk=False):
         """
         Returns the selectable answers of this question.
 
         If this question is an open question, returns None.
         If it is a MCQ, returns a list of answers.
         If it is a linked question, returns a list of tuples of answers linked
-        together.
+        together, or a tuple of tuples (pk, answer) if `with_pk_ is set to True.
+
+        :param with_pk: For linked answers, changes the data structure returned
+                        (see above).
         :return: The answers.
         """
         if self.type == "OPEN":
@@ -276,15 +287,72 @@ class Question(models.Model):
         elif self.type == "MCQ":
             return self.answers.filter(is_deleted=False)
         elif self.type == "LINKED":
-            return [
-                (answer.answer, answer.linked_answer.answer)
-                for answer in self.answers.filter(is_deleted=False)
-                if answer.answer and answer.linked_answer.answer
-            ]
+            if with_pk:
+                return [
+                    (
+                        (answer.pk, answer.answer),
+                        (answer.linked_answer.pk, answer.linked_answer.answer),
+                    )
+                    for answer in self.answers.filter(is_deleted=False)
+                    if answer.answer and answer.linked_answer.answer
+                ]
+            else:
+                return [
+                    (answer.answer, answer.linked_answer.answer)
+                    for answer in self.answers.filter(is_deleted=False)
+                    if answer.answer and answer.linked_answer.answer
+                ]
+
+    selectable_answers = property(
+        _selectable_answers,
+        doc="""
+        The selectable answers of this question.
+
+        If this question is an open question, None.
+        If it is a MCQ, a list of answers.
+        If it is a linked question, a list of tuples of answers linked together.
+        """,
+    )
+
+    @property
+    def selectable_answers_with_pk(self):
+        """
+        Returns the selectable answers of this question.
+
+        If this question is an open question, returns None.
+        If it is a MCQ, returns a list of answers.
+        If it is a linked question, returns a tuple of tuples (pk, answer) of
+        answers linked together.
+
+        :return: The answers.
+        """
+        return self._selectable_answers(with_pk=True)
 
     @property
     def answers_count(self):
         return self.answers.filter(is_deleted=False).count()
+
+    @property
+    def form_class(self):
+        """
+        The form class to use to display this question to an user passing
+        a quizz.
+
+        All classes returned are subclasses of `QuestionForm`, and they all
+        require a `question` argument in their constructors, alongside the
+        usual.
+
+        :return: The form's class to use for this question, according to
+                 its type.
+        """
+        if self.type == QUESTION_OPEN:
+            return OpenQuestionForm
+        elif self.type == QUESTION_MCQ:
+            return MultipleChoicesQuestionForm
+        elif self.type == QUESTION_LINKED:
+            return LinkedQuestionForm
+        else:
+            return None
 
     @property
     def reduced_tags(self):

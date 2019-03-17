@@ -69,6 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "quizz.context_processors.ongoing_quizzes"
             ]
         },
     }
@@ -119,6 +120,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
+
 MEDIA_ROOT = BASE_DIR / "user-generated-content"
 MEDIA_URL = "/user-generated-content/"
 

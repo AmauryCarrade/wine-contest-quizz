@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "27d44a32e9a8bd51df53feca64176d6095843f634cff5a11435e0b4ca54ee85a"
+            "sha256": "2e614aa4f5ce323078b0d5b39d76bd4640cd2ead9c1e84eddb4c46b92a54969d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -26,10 +26,17 @@
         },
         "django-bulma": {
             "hashes": [
-                "sha256:6e495c69dc0e08e0e2812da37999b01198bc2959cdc993f63a3ee6d2da227e23"
+                "sha256:086c000bc44aa458ee98f1e51fa01acfe080499d617e959ad1296f268cbef81b"
             ],
             "index": "pypi",
-            "version": "==0.5.3.0"
+            "version": "==0.5.6"
+        },
+        "django-ipware": {
+            "hashes": [
+                "sha256:a7c7a8fd019dbdc9c357e6e582f65034e897572fc79a7e467674efa8aef9d00b"
+            ],
+            "index": "pypi",
+            "version": "==2.1.0"
         },
         "django-js-asset": {
             "hashes": [
@@ -138,6 +145,13 @@
             ],
             "version": "==5.4.1"
         },
+        "python-levenshtein": {
+            "hashes": [
+                "sha256:033a11de5e3d19ea25c9302d11224e1a1898fe5abd23c61c7c360c25195e3eb1"
+            ],
+            "index": "pypi",
+            "version": "==0.12.0"
+        },
         "python-slugify": {
             "hashes": [
                 "sha256:f5c5a43e76ea6820c892c30aba6c8bc1f848fbb8e1cba65ed1c8da7bb2b4c522"
@@ -157,6 +171,14 @@
                 "sha256:801e38bd550b943563660a91de8d4b6fa5df60a542be9093f7abf819f86050cc"
             ],
             "version": "==1.2"
+        },
+        "unidecode": {
+            "hashes": [
+                "sha256:092cdf7ad9d1052c50313426a625b717dab52f7ac58f859e09ea020953b1ad8f",
+                "sha256:8b85354be8fd0c0e10adbf0675f6dc2310e56fda43fa8fe049123b6c475e52fb"
+            ],
+            "index": "pypi",
+            "version": "==1.0.23"
         },
         "zipp": {
             "hashes": [

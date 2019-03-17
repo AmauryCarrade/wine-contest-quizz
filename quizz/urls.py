@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views.public import QuestionView
+from .views.public import QuizzView, CreateQuizzView
 
 from .views.management import (
     QuestionsListView,
@@ -25,6 +25,7 @@ management_patterns = (
 )
 
 urlpatterns = [
-    path("one-shot/<int:pk>", QuestionView.as_view(), name="question"),
+    path("", CreateQuizzView.as_view(), name="create-quizz"),
+    path("quizz/<slug:slug>", QuizzView.as_view(), name="quizz"),
     path("management/", include(management_patterns, namespace="management")),
 ]

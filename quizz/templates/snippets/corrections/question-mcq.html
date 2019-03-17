@@ -1,0 +1,64 @@
+{% extends "snippets/corrections/question-base.html" %}
+
+{% load i18n %}
+
+{% block answer %}
+    <div class="columns is-vcentered">
+        <div class="column is-3 is-2-mobile has-text-right is-italic">
+            {% trans "Your answers" %}
+        </div>
+        <div class="column is-3 is-2-mobile is-offset-6 is-offset-8-mobile has-text-left is-italic">
+            {% trans "The correct answers" %}
+        </div>
+    </div>
+    {% for answer in question.answers.all %}
+        <div class="columns is-vcentered">
+            <div class="column is-3 is-2-mobile has-text-right">
+                <span class="icon is-static-checkbox has-text-white {% if answer.is_checked == answer.proposed_answer.is_correct %}has-background-success{% else %}has-background-danger{% endif %}"
+                      aria-describedby="{% spaceless %}
+                        {% if answer.is_checked == answer.proposed_answer.is_correct %}
+                            {% if answer.is_checked %}
+                                {% trans "You checked this answer, and that was correct." %}
+                            {% else %}
+                                {% trans "You left this answer unchecked, and that was correct." %}
+                            {% endif %}
+                        {% else %}
+                            {% if answer.is_checked %}
+                                {% trans "You checked this answer, but you shouldn't have done it." %}
+                            {% else %}
+                                {% trans "You left this answer unchecked, but you shouldn't have done it." %}
+                            {% endif %}
+                        {% endif %}{% endspaceless %}">
+                    {% if answer.is_checked %}<span class="fas fa-check"></span>{% endif %}
+                </span>
+            </div>
+            <div class="column is-6 is-8-mobile has-text-centered has-text-weight-bold {% if answer.is_checked == answer.proposed_answer.is_correct %}has-text-success{% else %}has-text-danger{% endif %}">
+                {{ answer.proposed_answer.answer }}
+            </div>
+            <div class="column is-3 is-2-mobile has-text-left">
+                <span class="icon is-static-checkbox has-background-success has-text-white"
+                      aria-describedby="{% spaceless %}
+                        {% if answer.proposed_answer.is_correct %}
+                            {% trans "This proposed answer is correct" %}
+                        {% else %}
+                            {% trans "This proposed answer is not correct" %}
+                        {% endif %}{% endspaceless %}">
+                    {% if answer.proposed_answer.is_correct %}<span class="fas fa-check"></span>{% endif %}
+                </span>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if question.question.has_open_choice %}
+        <div class="columns">
+            <div class="column is-half">
+                <h3>{% trans "Your “other” answer" %}</h3>
+                <pre class="open-answer-correction-block is-{{ question.success|lower }}">{{ question.open_answer|default:"" }}</pre>
+            </div>
+            <div class="column is-half">
+                <h3>{% trans "The correct “other” answer" %}</h3>
+                <pre class="open-answer-correction-block is-perfect">{{ question.question.open_valid_answer|default:"" }}</pre>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

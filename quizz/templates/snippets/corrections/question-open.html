@@ -1,0 +1,16 @@
+{% extends "snippets/corrections/question-base.html" %}
+
+{% load i18n %}
+
+{% block answer %}
+    <div class="columns">
+        <div class="column is-half">
+            <h3>{% trans "Your answer" %}</h3>
+            <pre class="open-answer-correction-block is-{{ question.success|lower }}">{{ question.open_answer }}</pre>
+        </div>
+        <div class="column is-half">
+            <h3>{% trans "The correct answer" %}</h3>
+            <pre class="open-answer-correction-block is-perfect">{{ question.question.open_valid_answer }}</pre>
+        </div>
+    </div>
+{% endblock %}

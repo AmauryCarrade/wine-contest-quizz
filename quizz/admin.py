@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from mptt.admin import DraggableMPTTAdmin
 
-from .models import QuestionLocale, Contest, Tag, Answer, Question
+from .models.questions import QuestionLocale, Contest, Tag, Answer, Question
 
 admin.site.register(QuestionLocale)
 admin.site.register(Contest)
