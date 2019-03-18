@@ -20,5 +20,9 @@
     </header>
     <div class="card-content">
         {% block answer %}{% endblock %}
+
+        {% if question.question.source %}
+            <p class="has-text-grey has-text-right">{{ question.question.source }}</p>
+        {% endif %}
     </div>
 </article>

@@ -53,7 +53,7 @@
                                 {% endif %}
                             </p>
                         {% else %}
-                            <p class="title is-4">
+                            <p class="title is-5">
                                 {% blocktrans with since=quizz.finished_at|timesince %}
                                     {{ since }} ago
                                 {% endblocktrans %}
@@ -80,7 +80,7 @@
                 {% blocktrans with duration=quizz.started_at|timesince:quizz.finished_at count questions_count=quizz.questions_count  %}
                     <strong>{{ questions_count }} question</strong>, answered in {{ duration }}.
                 {% plural %}
-                    <strong>{{ questions_count }} questions</strong>, all answered in {{ duration }}.
+                    <strong>{{ questions_count }} questions</strong>, answered in {{ duration }}.
                 {% endblocktrans %}
             </p>
             <div class="field is-grouped is-grouped-multiline">
