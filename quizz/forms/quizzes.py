@@ -64,7 +64,8 @@ class MultipleChoicesQuestionForm(QuestionForm):
                 help_text=_(
                     "If none of the above choices are correct, or if there is "
                     "another answer, write it here. Otherwise, leave this "
-                    "field blank. "
+                    "field blank. Punctuation, capitalization, accents, "
+                    "diatrics, spaces or line breaks does not matter."
                 ),
             )
 

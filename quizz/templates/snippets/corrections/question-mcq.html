@@ -3,17 +3,17 @@
 {% load i18n %}
 
 {% block answer %}
-    <div class="columns is-vcentered">
-        <div class="column is-3 is-2-mobile has-text-right is-italic">
+    <div class="columns is-vcentered is-mobile">
+        <div class="column is-3 is-2-mobile has-text-right has-text-centered-mobile is-italic">
             {% trans "Your answers" %}
         </div>
-        <div class="column is-3 is-2-mobile is-offset-6 is-offset-8-mobile has-text-left is-italic">
+        <div class="column is-3 is-2-mobile is-offset-6 is-offset-8-mobile has-text-left has-text-centered-mobile is-italic">
             {% trans "The correct answers" %}
         </div>
     </div>
     {% for answer in question.answers.all %}
-        <div class="columns is-vcentered">
-            <div class="column is-3 is-2-mobile has-text-right">
+        <div class="columns is-vcentered is-mobile">
+            <div class="column is-3 is-2-mobile has-text-right has-text-centered-mobile">
                 <span class="icon is-static-checkbox has-text-white {% if answer.is_checked == answer.proposed_answer.is_correct %}has-background-success{% else %}has-background-danger{% endif %}"
                       aria-describedby="{% spaceless %}
                         {% if answer.is_checked == answer.proposed_answer.is_correct %}
@@ -35,7 +35,7 @@
             <div class="column is-6 is-8-mobile has-text-centered has-text-weight-bold {% if answer.is_checked == answer.proposed_answer.is_correct %}has-text-success{% else %}has-text-danger{% endif %}">
                 {{ answer.proposed_answer.answer }}
             </div>
-            <div class="column is-3 is-2-mobile has-text-left">
+            <div class="column is-3 is-2-mobile has-text-left has-text-centered-mobile">
                 <span class="icon is-static-checkbox has-background-success has-text-white"
                       aria-describedby="{% spaceless %}
                         {% if answer.proposed_answer.is_correct %}

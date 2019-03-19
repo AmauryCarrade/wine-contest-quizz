@@ -47,9 +47,9 @@
                             </p>
                         {% endif %}
                     </div>
-                    <div class="column is-3 has-text-right">
+                    <div class="column is-3 has-text-right is-hidden-mobile">
                         <span class="tag is-medium {% if quizz.score > 80 %}is-success{% elif quizz.score > 50 %}is-warning{% else %}is-danger{% endif %}">
-                            {% blocktrans with score=quizz.score|floatformat:"0" %}
+                            {% blocktrans with score=quizz.score|floatformat:0 %}
                                 {{ score }}&nbsp;%
                             {% endblocktrans %}
                         </span>
@@ -105,13 +105,19 @@
                         </div>
                     </div>
                 {% endif %}
+                <div class="control is-hidden-tablet">
+                    <div class="tags has-addons">
+                            <span class="tag {% if quizz.score > 80 %}is-success{% elif quizz.score > 50 %}is-warning{% else %}is-danger{% endif %}">{{ quizz.score|floatformat:0 }}&nbsp;%</span>
+                            <span class="tag is-dark">{% trans "final score" %}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <footer class="card-footer">
-        <a href="{% url "quizz:quizz" slug=quizz.slug %}" class="card-footer-item">{% trans "Report" %}</a>
+        <a href="{% url "quizz:quizz" slug=quizz.slug %}" class="card-footer-item has-text-centered-mobile">{% trans "Report" %}</a>
         {% if management and quizz.user != quizzes_user %}
-            <a href="{% url "quizz:management:user-quizzes" username=quizz.user.username %}" class="card-footer-item">
+            <a href="{% url "quizz:management:user-quizzes" username=quizz.user.username %}" class="card-footer-item has-text-centered-mobile">
                 {% blocktrans with name=quizz.user.get_full_name %}
                     {{ name }}'s quizzes
                 {% endblocktrans %}

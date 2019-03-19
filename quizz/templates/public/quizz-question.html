@@ -21,6 +21,14 @@
                 {% endif %}
 
                 <div class="columns">
+
+                    {% if question.illustration %}
+                        <div class="column is-4 is-hidden-tablet">
+                            <figure class="image">
+                                <img src="{{ question.illustration.thumbnail.600x600 }}" alt="{% trans "Question's illustration" %}" />
+                            </figure>
+                        </div>
+                    {% endif %}
                     <div class="column {% if question.illustration %}is-8{% else %}is-12{% endif %}">
                         <div class="is-size-5 is-answer-form">
                             <div class="answers-form">
@@ -61,15 +69,17 @@
                                     <div class="column is-5">
                                         <input type="submit" value="{% trans "Next" %}" class="button is-link is-medium is-next-button" />
                                     </div>
-                                    <div class="column is-7 has-text-right has-text-centered-mobile is-size-6 has-text-grey">
-                                        {{ question.source|default:"" }}
-                                    </div>
+                                    {% if question.source %}
+                                        <div class="column is-7 has-text-right has-text-centered-mobile is-size-6 has-text-grey">
+                                            {{ question.source }}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
                     {% if question.illustration %}
-                        <div class="column is-4">
+                        <div class="column is-4 is-hidden-mobile">
                             <figure class="image">
                                 <img src="{{ question.illustration.thumbnail.600x600 }}" alt="{% trans "Question's illustration" %}" />
                             </figure>
@@ -141,6 +151,12 @@
         .is-next-button {
             padding-left: 4rem;
             padding-right: 4rem;
+        }
+
+        @media screen and (max-width:768px) {
+            .is-next-button {
+                width: 100%;
+            }
         }
     </style>
 {% endblock %}

@@ -49,6 +49,20 @@
                     });
                 });
             });
+
+            /**
+             * Opens or closes the menu when the burger is clicked, for mobile devices.
+             */
+            $('.navbar-burger').on('click', function()
+            {
+                // Get the target from the "data-target" attribute
+                const target = $(this).data('target');
+                const $target = $('#' + target);
+
+                // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                $(this).toggleClass('is-active');
+                $target.toggleClass('is-active');
+            });
         </script>
 
         {% block js %}{% endblock %}

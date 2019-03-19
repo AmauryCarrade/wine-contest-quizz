@@ -60,12 +60,12 @@
         </div>
     </div>
     <footer class="card-footer">
-        <a href="#" class="card-footer-item is-unselectable has-text-grey" disabled>{% trans "View answers" %}</a>
+        <a href="#" class="card-footer-item is-unselectable has-text-grey has-text-centered" disabled>{% trans "View answers" %}</a>
         {% if perms.quizz.change_question %}
-            <a href="{% url "quizz:management:edit" pk=question.pk %}" class="card-footer-item">{% trans "Edit question" %}</a>
+            <a href="{% url "quizz:management:edit" pk=question.pk %}" class="card-footer-item has-text-centered">{% trans "Edit question" %}</a>
         {% endif %}
         {% if perms.quizz.delete_question %}
-            <a href="{% url "quizz:management:delete" pk=question.pk %}" class="card-footer-item">{% trans "Delete" %}</a>
+            <a href="{% url "quizz:management:delete" pk=question.pk %}" class="card-footer-item has-text-centered">{% trans "Delete" %}</a>
         {% endif %}
     </footer>
 </div>
