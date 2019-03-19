@@ -19,7 +19,9 @@ from quizz.models import QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED, QUESTION_
 
 
 def quizz_illustration_path(instance, filename):
-    hash_name = sha256(str(settings.SECRET_KEY[:10] + '-' + str(instance.pk)).encode('utf-8')).hexdigest()
+    hash_name = sha256(
+        str(settings.SECRET_KEY[:10] + "-" + str(instance.pk)).encode("utf-8")
+    ).hexdigest()
     return f"quizz/illustrations/{hash_name}{splitext(filename)[1] or '.jpg'}"
 
 

@@ -167,7 +167,7 @@
         </div>
     </section>
     <section class="section">
-        {% include "pagination.html" with page_obj=page_obj only %}
+        {% include "pagination.html" with page_obj=page_obj request=request only %}
     </section>
 {% endblock %}
 

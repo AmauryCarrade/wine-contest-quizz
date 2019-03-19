@@ -32,7 +32,33 @@
         <div class="content">
             {% if show_answers_stats %}
                 <p>
-                    This question was <strong>never answered</strong>. That's a <strong class="has-text-success">100% success rate</strong>.
+                    {% if question.user_answers_count == 0 %}
+                        {% blocktrans %}
+                            This question was <strong>never answered</strong>.
+                        {% endblocktrans %}
+                    {% else %}
+                        {% blocktrans count count=question.user_answers_count %}
+                            This question was <strong>answered once</strong>.
+                        {% plural %}
+                            This question was <strong>answered {{ count }} times</strong>.
+                        {% endblocktrans %}
+                    {% endif %}
+
+                    {% if question.user_answers_count > 0 %}
+                        {% if question.success_rate > 80 %}
+                            {% blocktrans with success_rate=question.success_rate|floatformat:0 %}
+                                That's a <strong class="has-text-success">{{ success_rate }}&nbsp;% success rate</strong>.
+                            {% endblocktrans %}
+                        {% elif question.success_rate > 50 %}
+                            {% blocktrans with success_rate=question.success_rate|floatformat:0 %}
+                                That's a <strong class="has-text-warning">{{ success_rate }}&nbsp;% success rate</strong>.
+                            {% endblocktrans %}
+                        {% else %}
+                            {% blocktrans with success_rate=question.success_rate|floatformat:0 %}
+                                That's a <strong class="has-text-danger">{{ success_rate }}&nbsp;% success rate</strong>.
+                            {% endblocktrans %}
+                        {% endif %}
+                    {% endif %}
                 </p>
             {% endif %}
             <div class="tags">

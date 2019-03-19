@@ -66,7 +66,7 @@ class QuizzView(DetailView):
         :raises Http404: If the user is not allowed to access this quizz.
         """
         # For ongoing quizzes, only the owner is allowed to access the quizz, or
-        # everyone but only if the user is not logged in.
+        # everyone but only if the owner is anonymous.
         allowed = (quizz.user is None and not self.request.user.is_authenticated) or (
             quizz.user == self.request.user
         )
@@ -193,7 +193,7 @@ class QuizzesListMixin(ListView):
                     )
                 ),
             )
-            .prefetch_related("user")
+            .prefetch_related("user", "user__profile")
             .order_by("-finished_at")
         )
 

@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Count, Q, Sum, Case, When, IntegerField, FloatField
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -48,8 +48,23 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        questions = Question.objects.prefetch_related("tags").select_related(
-            "locale", "source"
+        questions = (
+            Question.objects.all()
+            .annotate(
+                user_answers_count=Count(
+                    "user_answers", filter=Q(user_answers__finished_at__isnull=False), output_field=FloatField()
+                ),
+                success_rate=Sum(
+                    Case(
+                        When(user_answers__success="PERFECT", then=1.0),
+                        default=0.0,
+                        output_field=FloatField(),
+                    ),
+                    output_field=FloatField()
+                ) / F("user_answers_count") * 100,
+            )
+            .prefetch_related("tags")
+            .select_related("locale", "source")
         )
         sort_by, sort_reversed = self.sort_by
         rev = "-" if sort_reversed else ""
@@ -71,10 +86,12 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             questions = questions.order_by(rev + "type")
         elif sort_by == "locale":
             questions = questions.order_by(rev + "locale")
+        elif sort_by == "answered":
+            questions = questions.order_by(("" if sort_reversed else "-") + "user_answers_count")
+        elif sort_by == "success-rate":
+            questions = questions.order_by(F("success_rate").asc(nulls_last=True, descending=not sort_reversed))
         else:
             questions = questions.order_by(rev + "question")
-
-        # TODO: answered and success-rate
 
         return questions
 

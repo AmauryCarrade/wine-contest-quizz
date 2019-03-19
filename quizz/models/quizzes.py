@@ -287,9 +287,13 @@ class QuizzQuestion(models.Model):
                 0,
             )
 
-            if correct_user_answers == correct_answers and (open_answer_count == 0 or open_answer_points > .99):
+            if correct_user_answers == correct_answers and (
+                open_answer_count == 0 or open_answer_points > 0.99
+            ):
                 self.success = QuestionSuccess.PERFECT.value
-            elif (correct_user_answers == correct_answers - 1 and correct_user_answers > 1) or (open_answer_count == 1 and open_answer_points > .49):
+            elif (
+                correct_user_answers == correct_answers - 1 and correct_user_answers > 1
+            ) or (open_answer_count == 1 and open_answer_points > 0.49):
                 self.success = QuestionSuccess.ALMOST.value
             else:
                 self.success = QuestionSuccess.FAILED.value
