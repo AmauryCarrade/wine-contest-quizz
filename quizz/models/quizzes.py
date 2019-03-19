@@ -235,6 +235,7 @@ class QuizzQuestion(models.Model):
             # none otherwise.
 
             answers = self.question.selectable_answers
+            correct_answers = len([1 for answer in answers if answer.is_correct])
 
             user_answers = []
             correct_user_answers = 0
@@ -262,7 +263,7 @@ class QuizzQuestion(models.Model):
 
             for answer in answers:
                 user_checked = str(answer.pk) in form.cleaned_data["answers"]
-                if user_checked == answer.is_correct:
+                if user_checked == answer.is_correct and user_checked:
                     correct_user_answers += 1
                 elif user_checked and not answer.is_correct:
                     wrong_user_answers_checked += 1
@@ -281,14 +282,14 @@ class QuizzQuestion(models.Model):
                         - wrong_user_answers_checked
                         + open_answer_points
                     )
-                    / float(len(answers) + open_answer_count)
+                    / float(correct_answers + open_answer_count)
                 ),
                 0,
             )
 
-            if correct_user_answers == len(answers):
+            if correct_user_answers == correct_answers and (open_answer_count == 0 or open_answer_points > .99):
                 self.success = QuestionSuccess.PERFECT.value
-            elif correct_user_answers == len(answers) - 1 and correct_user_answers > 1:
+            elif (correct_user_answers == correct_answers - 1 and correct_user_answers > 1) or (open_answer_count == 1 and open_answer_points > .49):
                 self.success = QuestionSuccess.ALMOST.value
             else:
                 self.success = QuestionSuccess.FAILED.value
@@ -311,7 +312,8 @@ class QuizzQuestion(models.Model):
                     continue
 
                 user_linked = Answer.objects.get(pk=form.cleaned_data[str(answer[0])])
-                if linked[1] == user_linked:
+                print(user_linked.pk, linked[0])
+                if linked[0] == user_linked.pk:
                     correct_user_answers += 1
 
                 user_answer = QuizzAnswer(
@@ -501,7 +503,7 @@ class Quizz(models.Model):
 
         :return: The generated quizz instance, already saved.
         """
-        questions = Question.objects.all()
+        questions = Question.objects.all().filter(type="MCQ")
 
         # We first hard-filter questions with strict conditions (locale, contest…)
 

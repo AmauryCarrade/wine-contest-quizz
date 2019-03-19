@@ -103,9 +103,10 @@
                 }
             });
 
-            $corrections.find('.card-header').on('click', function()
+            $corrections.find('.card-header').on('click', function(e)
             {
                  toggle_correction_block($(this).parent(), true);
+                 e.preventDefault();
             });
         });
     </script>
