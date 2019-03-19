@@ -97,6 +97,31 @@
 
         <input type="submit" value="{% trans "Create quizz" %}" class="button is-primary is-large" />
     </form>
+
+    {% if not user.is_authenticated %}
+        <div class="box login-invitation">
+            <div class="columns is-vcentered">
+                <div class="column is-9">
+                    <p class="is-size-5">
+                        {% blocktrans %}
+                            Login with your Google account to <strong>record your
+                            progress</strong> over time and get <strong>optimized
+                            questions</strong> according to your <strong>strengths
+                            and weaknesses</strong>.
+                        {% endblocktrans %}
+                    </p>
+                </div>
+                <div class="column is-3 has-text-centered">
+                    <a href="{% url "social:begin" "google-oauth2" %}" class="button is-link is-medium">
+                        <span class="icon">
+                            <span class="fab fa-google"></span>
+                        </span>
+                        <span>{% trans "Login" %}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block js %}
@@ -257,6 +282,11 @@
         .ee-quizz-options .card .card-content .select,
         .ee-quizz-options .card .card-content .select select {
             width: 100%;
+        }
+
+        .login-invitation {
+            margin: 72px auto 0;
+            width: 48%;
         }
     </style>
 {% endblock %}

@@ -15,6 +15,9 @@ openpyxl = "*"
 django-ipware = "*"
 python-levenshtein = "*"
 unidecode = "*"
+toml = "*"
+social-auth-app-django = "*"
+requests = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

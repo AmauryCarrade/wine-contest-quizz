@@ -100,116 +100,118 @@
                                         {% trans "Past quizzes" %}
                                     </a>
 
-                                    <div class="navbar-item has-dropdown is-hoverable">
-                                        <a class="navbar-link" href="">
-                                            {% trans "Management" %}
-                                        </a>
-
-                                        <div class="navbar-dropdown is-right has-text-black">
-                                            <a class="navbar-item">
-                                                <span class="icon is-medium">
-                                                    <span class="fas fa-globe-europe"></span>
-                                                </span>
-                                                <span>{% trans "Overview" %}</span>
+                                    {% if perms.quizz.view_question or perms.quizz.add_question or perms.quizz.view_tag or perms.quizz.add_tag or perms.auth.view_user or perms.quizz.view_quizz or user.is_staff %}
+                                        <div class="navbar-item has-dropdown is-hoverable">
+                                            <a class="navbar-link" href="">
+                                                {% trans "Management" %}
                                             </a>
 
-                                            {% if perms.quizz.view_question or perms.quizz.add_question %}
-                                                <hr class="navbar-divider" />
-
-                                                <div class="navbar-item">
-                                                    <p class="has-text-weight-bold has-text-black">{% trans "Questions" %}</p>
-                                                </div>
-
-                                                {% if perms.quizz.view_question %}
-                                                    <a class="navbar-item" href="{% url "quizz:management:list" %}">
-                                                        <span class="icon is-medium">
-                                                            <span class="fas fa-question"></span>
-                                                        </span>
-                                                        <span>{% trans "All questions" %}</span>
-                                                    </a>
-                                                {% endif %}
-
-                                                {% if perms.quizz.add_question %}
-                                                    <a class="navbar-item" href="{% url "quizz:management:create" %}">
-                                                        <span class="icon is-medium">
-                                                            <span class="fas fa-plus"></span>
-                                                        </span>
-                                                        <span>{% trans "Create question" %}</span>
-                                                    </a>
-
-                                                    <a class="navbar-item" href="{% url "quizz:management:import" %}">
-                                                        <span class="icon is-medium">
-                                                            <span class="fas fa-file-import"></span>
-                                                        </span>
-                                                        <span>{% trans "Import questions" %}</span>
-                                                    </a>
-                                                {% endif %}
-                                            {% endif %}
-
-                                            {% if user.is_staff %}
-                                                {% if perms.quizz.view_tag or perms.quizz.add_tag %}
-                                                    <hr class="navbar-divider" />
-
-                                                    <div class="navbar-item">
-                                                        <p class="has-text-weight-bold has-text-black">{% trans "Tags" %}</p>
-                                                    </div>
-
-                                                    {% if perms.quizz.view_tag %}
-                                                        <a href="{% url "admin:quizz_tag_changelist" %}" class="navbar-item">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-tags"></span>
-                                                            </span>
-                                                            <span>{% trans "All tags" %}</span>
-                                                        </a>
-                                                    {% endif %}
-
-                                                    {% if perms.quizz.add_tag %}
-                                                        <a href="{% url "admin:quizz_tag_add" %}" class="navbar-item">
-                                                            <span class="icon is-medium">
-                                                            <span class="fas fa-plus"></span>
-                                                        </span>
-                                                        <span>{% trans "Create tag" %}</span>
-                                                        </a>
-                                                    {% endif %}
-                                                {% endif %}
-
-                                                {% if perms.auth.view_user or perms.quizz.view_quizz %}
-                                                    <hr class="navbar-divider" />
-
-                                                    <div class="navbar-item">
-                                                        <p class="has-text-weight-bold has-text-black">{% trans "Users" %}</p>
-                                                    </div>
-
-                                                    {% if perms.auth.view_user %}
-                                                        <a href="{% url "admin:auth_user_changelist" %}" class="navbar-item">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-user-graduate"></span>
-                                                            </span>
-                                                            <span>{% trans "All users" %}</span>
-                                                        </a>
-                                                    {% endif %}
-
-                                                    {% if perms.quizz.view_quizz %}
-                                                        <a href="{% url "quizz:management:quizzes" %}" class="navbar-item">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-file-signature"></span>
-                                                            </span>
-                                                            <span>{% trans "All quizzes" %}</span>
-                                                        </a>
-                                                    {% endif %}
-                                                {% endif %}
-
-                                                <hr class="navbar-divider" />
-
-                                                <a href="{% url "admin:index" %}" class="navbar-item">
+                                            <div class="navbar-dropdown is-right has-text-black">
+                                                <a class="navbar-item">
                                                     <span class="icon is-medium">
-                                                        <span class="fas fa-radiation"></span>
+                                                        <span class="fas fa-globe-europe"></span>
                                                     </span>
-                                                    <span>{% trans "Advanced administration panel" %}</span>
+                                                    <span>{% trans "Overview" %}</span>
                                                 </a>
-                                            {% endif %}
+
+                                                {% if perms.quizz.view_question or perms.quizz.add_question %}
+                                                    <hr class="navbar-divider" />
+
+                                                    <div class="navbar-item">
+                                                        <p class="has-text-weight-bold has-text-black">{% trans "Questions" %}</p>
+                                                    </div>
+
+                                                    {% if perms.quizz.view_question %}
+                                                        <a class="navbar-item" href="{% url "quizz:management:list" %}">
+                                                            <span class="icon is-medium">
+                                                                <span class="fas fa-question"></span>
+                                                            </span>
+                                                            <span>{% trans "All questions" %}</span>
+                                                        </a>
+                                                    {% endif %}
+
+                                                    {% if perms.quizz.add_question %}
+                                                        <a class="navbar-item" href="{% url "quizz:management:create" %}">
+                                                            <span class="icon is-medium">
+                                                                <span class="fas fa-plus"></span>
+                                                            </span>
+                                                            <span>{% trans "Create question" %}</span>
+                                                        </a>
+
+                                                        <a class="navbar-item" href="{% url "quizz:management:import" %}">
+                                                            <span class="icon is-medium">
+                                                                <span class="fas fa-file-import"></span>
+                                                            </span>
+                                                            <span>{% trans "Import questions" %}</span>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+
+                                                {% if user.is_staff %}
+                                                    {% if perms.quizz.view_tag or perms.quizz.add_tag %}
+                                                        <hr class="navbar-divider" />
+
+                                                        <div class="navbar-item">
+                                                            <p class="has-text-weight-bold has-text-black">{% trans "Tags" %}</p>
+                                                        </div>
+
+                                                        {% if perms.quizz.view_tag %}
+                                                            <a href="{% url "admin:quizz_tag_changelist" %}" class="navbar-item">
+                                                                <span class="icon is-medium">
+                                                                    <span class="fas fa-tags"></span>
+                                                                </span>
+                                                                <span>{% trans "All tags" %}</span>
+                                                            </a>
+                                                        {% endif %}
+
+                                                        {% if perms.quizz.add_tag %}
+                                                            <a href="{% url "admin:quizz_tag_add" %}" class="navbar-item">
+                                                                <span class="icon is-medium">
+                                                                <span class="fas fa-plus"></span>
+                                                            </span>
+                                                            <span>{% trans "Create tag" %}</span>
+                                                            </a>
+                                                        {% endif %}
+                                                    {% endif %}
+
+                                                    {% if perms.auth.view_user or perms.quizz.view_quizz %}
+                                                        <hr class="navbar-divider" />
+
+                                                        <div class="navbar-item">
+                                                            <p class="has-text-weight-bold has-text-black">{% trans "Users" %}</p>
+                                                        </div>
+
+                                                        {% if perms.auth.view_user %}
+                                                            <a href="{% url "admin:auth_user_changelist" %}" class="navbar-item">
+                                                                <span class="icon is-medium">
+                                                                    <span class="fas fa-user-graduate"></span>
+                                                                </span>
+                                                                <span>{% trans "All users" %}</span>
+                                                            </a>
+                                                        {% endif %}
+
+                                                        {% if perms.quizz.view_quizz %}
+                                                            <a href="{% url "quizz:management:quizzes" %}" class="navbar-item">
+                                                                <span class="icon is-medium">
+                                                                    <span class="fas fa-file-signature"></span>
+                                                                </span>
+                                                                <span>{% trans "All quizzes" %}</span>
+                                                            </a>
+                                                        {% endif %}
+                                                    {% endif %}
+
+                                                    <hr class="navbar-divider" />
+
+                                                    <a href="{% url "admin:index" %}" class="navbar-item">
+                                                        <span class="icon is-medium">
+                                                            <span class="fas fa-radiation"></span>
+                                                        </span>
+                                                        <span>{% trans "Advanced administration panel" %}</span>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
 
                                     <a href="{% url "logout" %}" class="navbar-item" title="{% trans "Logout" %}">
                                         <span class="is-sr-only">{% trans "Logout" %}</span>
@@ -218,11 +220,8 @@
                                         </span>
                                     </a>
                                 {% else %}
-                                    <a href="{% url "login" %}" class="navbar-item">
+                                    <a href="{% url "social:begin" "google-oauth2" %}" class="navbar-item">
                                         {% trans "Login" %}
-                                    </a>
-                                    <a class="navbar-item">
-                                        {% trans "Sign up" %}
                                     </a>
                                 {% endif %}
                             {% endblock %}

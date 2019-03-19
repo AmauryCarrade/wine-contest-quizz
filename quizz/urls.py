@@ -22,7 +22,6 @@ management_patterns = (
         path("questions/import/undo", UndoImportView.as_view(), name="undo-import"),
         path("questions/edit/<int:pk>", EditQuestionView.as_view(), name="edit"),
         path("questions/delete/<int:pk>", QuestionDeleteView.as_view(), name="delete"),
-
         path("quizzes", QuizzesListView.as_view(), name="quizzes"),
         path("quizzes/<str:username>", UserProfileView.as_view(), name="user-quizzes"),
     ],

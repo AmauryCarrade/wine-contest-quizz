@@ -8,3 +8,5 @@ user-generated-content
 
 *.sqlite3
 *.sqlite
+
+credentials.toml

@@ -40,19 +40,19 @@
                 <div class="level-item">
                     <p class="subtitle is-5">
                         {% if quizzes_user and quizzes_user != user %}
-                            {% blocktrans count quizzes_here=page_obj.object_list|length|stringformat:"d" with quizzes_total=page_obj.paginator.count|stringformat:"d" name=quizzes_user.get_full_name %}
+                            {% blocktrans with quizzes_here=page_obj.object_list|length|stringformat:"d" name=quizzes_user.get_full_name quizzes_total=page_obj.paginator.count|stringformat:"d" count count=page_obj.paginator.count %}
                                 {{ name }} answered <strong>{{ quizzes_total }}</strong> quizz ({{ quizzes_here }} shown).
                             {% plural %}
                                 {{ name }} answered <strong>{{ quizzes_total }}</strong> quizzes ({{ quizzes_here }} shown).
                             {% endblocktrans %}
                         {% elif management %}
-                            {% blocktrans count quizzes_here=page_obj.object_list|length|stringformat:"d" with quizzes_total=page_obj.paginator.count|stringformat:"d" %}
+                            {% blocktrans with quizzes_here=page_obj.object_list|length|stringformat:"d" quizzes_total=page_obj.paginator.count|stringformat:"d" count count=page_obj.paginator.count %}
                                 <strong>{{ quizzes_total }}</strong> quizz ({{ quizzes_here }} shown).
                             {% plural %}
                                 <strong>{{ quizzes_total }}</strong> quizzes ({{ quizzes_here }} shown).
                             {% endblocktrans %}
                         {% else %}
-                            {% blocktrans count quizzes_here=page_obj.object_list|length|stringformat:"d" with quizzes_total=page_obj.paginator.count|stringformat:"d" %}
+                            {% blocktrans with quizzes_here=page_obj.object_list|length|stringformat:"d" quizzes_total=page_obj.paginator.count|stringformat:"d" count count=page_obj.paginator.count %}
                                 You answered <strong>{{ quizzes_total }}</strong> quizz ({{ quizzes_here }} shown).
                             {% plural %}
                                 You answered <strong>{{ quizzes_total }}</strong> quizzes ({{ quizzes_here }} shown).

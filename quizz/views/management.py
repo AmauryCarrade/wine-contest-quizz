@@ -744,7 +744,7 @@ class UserProfileView(LoginRequiredMixin, PermissionRequiredMixin, QuizzesListMi
 
     @cached_property
     def user(self):
-        return get_object_or_404(User, username=self.kwargs['username'])
+        return get_object_or_404(User, username=self.kwargs["username"])
 
     def get_base_queryset(self):
         return Quizz.objects.filter(user=self.user)

@@ -170,22 +170,28 @@ class QuizzesListMixin(ListView):
                 score=Sum("questions__points", output_field=FloatField())
                 / Sum("questions__question__difficulty", output_field=FloatField())
                 * 100,
-                questions_count=Count('questions'),
-                perfect_answers=Sum(Case(
-                    When(questions__success="PERFECT", then=1),
-                    default=0,
-                    output_field=IntegerField()
-                )),
-                almost_answers=Sum(Case(
-                    When(questions__success="ALMOST", then=1),
-                    default=0,
-                    output_field=IntegerField()
-                )),
-                failed_answers=Sum(Case(
-                    When(questions__success="FAILED", then=1),
-                    default=0,
-                    output_field=IntegerField()
-                ))
+                questions_count=Count("questions"),
+                perfect_answers=Sum(
+                    Case(
+                        When(questions__success="PERFECT", then=1),
+                        default=0,
+                        output_field=IntegerField(),
+                    )
+                ),
+                almost_answers=Sum(
+                    Case(
+                        When(questions__success="ALMOST", then=1),
+                        default=0,
+                        output_field=IntegerField(),
+                    )
+                ),
+                failed_answers=Sum(
+                    Case(
+                        When(questions__success="FAILED", then=1),
+                        default=0,
+                        output_field=IntegerField(),
+                    )
+                ),
             )
             .prefetch_related("user")
             .order_by("-finished_at")

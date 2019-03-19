@@ -23,5 +23,6 @@ class QuestionSuccess(Enum):
     FAILED = "FAILED"
 
 
+from .users import *  # noqa
 from .questions import *  # noqa
 from .quizzes import *  # noqa

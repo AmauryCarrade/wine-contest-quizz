@@ -1,35 +1,17 @@
 {% load i18n %}
+{% load static %}
 
 <div class="card">
-    {% comment %}
-    <header class="card-header">
-        <p class="card-header-title">
-            <img src="https://bulma.io/images/placeholders/64x64.png" alt="" class="image is-24x24 is-rounded" />
-            {% if management or True %}
-                {% blocktrans with since=quizz.finished_at|timesince name=quizz.user.get_full_name %}
-                    {{ name }}, {{ since }} ago
-                {% endblocktrans %}
-            {% else %}
-                {% blocktrans with since=quizz.finished_at|timesince %}
-                    {{ since }} ago
-                {% endblocktrans %}
-            {% endif %}
-        </p>
-        <span class="card-header-icon">
-            <span class="tag is-medium {% if quizz.score > 80 %}is-success{% elif quizz.score > 50 %}is-warning{% else %}is-danger{% endif %}">
-                {% blocktrans with score=quizz.score|floatformat:"0" %}
-                    {{ score }}&nbsp;%
-                {% endblocktrans %}
-            </span>
-        </span>
-    </header>
-    {% endcomment %}
     <div class="card-content">
         <div class="media">
             {% if management %}
                 <div class="media-left">
                     <figure class="image is-48x48">
-                        <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image" class="is-rounded">
+                        {% if quizz.user %}
+                            <img src="{{ quizz.user.profile.picture.thumbnail.92x92 }}" alt="{{ quizz.user.get_full_name }}" class="is-rounded" />
+                        {% else %}
+                            <img src="{% static "images/user-default-picture.png" %}" alt="{{ quizz.user.get_full_name }}" class="is-rounded" />
+                        {% endif %}
                     </figure>
                 </div>
             {% endif %}

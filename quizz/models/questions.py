@@ -1,6 +1,9 @@
+from os.path import splitext
+from hashlib import sha256
+
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
@@ -13,6 +16,11 @@ from quizz.forms.quizzes import (
     LinkedQuestionForm,
 )
 from quizz.models import QUESTION_OPEN, QUESTION_MCQ, QUESTION_LINKED, QUESTION_TYPES
+
+
+def quizz_illustration_path(instance, filename):
+    hash_name = sha256(str(settings.SECRET_KEY[:10] + '-' + str(instance.pk)).encode('utf-8')).hexdigest()
+    return f"quizz/illustrations/{hash_name}{splitext(filename)[1] or '.jpg'}"
 
 
 class QuestionLocale(models.Model):
