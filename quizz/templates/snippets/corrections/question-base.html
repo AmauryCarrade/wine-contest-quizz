@@ -21,8 +21,19 @@
     <div class="card-content">
         {% block answer %}{% endblock %}
 
-        {% if question.question.source %}
-            <p class="has-text-grey has-text-right">{{ question.question.source }}</p>
+        {% if question.question.source or question.question.is_open %}
+            <div class="columns">
+                <p class="column is-half has-text-grey">
+                    {% if question.question.is_open and question.success != 'PERFECT' %}
+                        {% trans "Automatic correction of open questions is still experimental." %}
+                    {% endif %}
+                </p>
+                <p class="column is-half has-text-grey has-text-right">
+                    {% if question.question.source %}
+                        {{ question.question.source }}
+                    {% endif %}
+                </p>
+            </div>
         {% endif %}
     </div>
 </article>

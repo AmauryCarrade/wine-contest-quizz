@@ -1,6 +1,8 @@
 .idea
-*.min.css
-*.min.js
+
+# Temp. removed until Webpack
+# *.min.css
+# *.min.js
 *.pyc
 *~
 
