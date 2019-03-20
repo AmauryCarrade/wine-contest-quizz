@@ -11,6 +11,12 @@ INTERNAL_IPS = credentials.get("internal_ips", "127.0.0.1")
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_SSL_REDIRECT = True
+
+X_FRAME_OPTIONS = "DENY"
+
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
