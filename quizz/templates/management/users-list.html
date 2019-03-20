@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block head-title %}
+    {% trans "All users" %}
+{% endblock %}
+
+{% block hero-title %}
+    <h1 class="title">{% trans "All users" %}</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <p class="subtitle is-5">
+                            {% blocktrans with users_here=page_obj.object_list|length|stringformat:"d" users_total=page_obj.paginator.count|stringformat:"d" %}
+                                <strong>{{ users_total }}</strong> users ({{ users_here }} shown).
+                            {% endblocktrans %}
+                            {% if page_obj.paginator.num_pages > 1 %}
+                                {% blocktrans with page=page_obj.number|stringformat:"d" pages=page_obj.paginator.num_pages|stringformat:"d" %}
+                                    <span class="has-text-grey">Page {{ page }} of {{ pages }}.</span>
+                                {% endblocktrans %}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </nav>
+            {% for app_user in users %}
+                <div class="columns is-vcentered has-text-centered-mobile">
+                    <div class="column is-1 is-2-tablet-only is-hidden-mobile">
+                        <figure class="image is-square">
+                            <img src="{{ app_user.profile.picture.thumbnail.192x192 }}" alt="{{ app_user.get_full_name }}" class="is-rounded" />
+                        </figure>
+                    </div>
+                    <div class="column is-7 is-6-tablet-only">
+                        <p class="is-size-4 is-size-3-mobile">
+                            {% if app_user.first_name or app_user.last_name %}
+                                {{ app_user.get_full_name }}
+                            {% else %}
+                                {{ app_user.username }}
+                            {% endif %}
+
+                            {% if app_user == user %}
+                                <span class="has-text-grey-light">&nbsp;{% trans "(You)" %}</span>
+                            {% endif %}
+                        </p>
+
+                        {% if app_user.is_superuser or app_user.is_staff or app_user.groups.all %}
+                        <div class="tags is-inline-block">
+                            {% if app_user.is_superuser %}
+                                <span class="tag is-small is-danger tooltip is-tooltip-bottom" data-tooltip="{% trans "All permissions are granted to this user." %}">
+                                    {% trans "Super User" %}
+                                </span>
+                            {% elif app_user.is_staff %}
+                                <span class="tag is-small is-warning tooltip is-tooltip-bottom" data-tooltip="{% trans "This user can access the advanced administration panel." %}">
+                                    {% trans "Staff" %}
+                                </span>
+                            {% endif %}
+
+                            {% for group in app_user.groups.all %}
+                                <span class="tag is-small is-link">{{ group.name }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <p class="is-size-6">
+                            {% blocktrans with questions=app_user.questions_count count count=app_user.quizzes_count %}
+                                Answered {{ count }} quizz and {{ questions }} questions
+                            {% plural %}
+                                Answered {{ count }} quizzes and {{ questions }} questions
+                            {% endblocktrans %}
+                        </p>
+                        <p class="is-size-7">
+                            {% blocktrans with joined=app_user.date_joined|date last_seen=app_user.last_login|timesince|default:"N/A" %}
+                                Joined {{ joined }} — Last login {{ last_seen }} ago
+                            {% endblocktrans %}
+                        </p>
+                    </div>
+                    <div class="column is-4 has-text-right has-text-centered-mobile">
+                        {% if perms.quizz.view_quizz %}
+                            <a href="{% url "quizz:management:user-quizzes" app_user.username %}" class="button is-primary{% if app_user.quizzes_count == 0 %} tooltip is-tooltip-bottom{% endif %}" {% if app_user.quizzes_count == 0 %}disabled data-tooltip="{% trans "This user answered no quizzes." %}"{% endif %}>
+                                <span class="icon">
+                                    <span class="fas fa-file-signature"></span>
+                                </span>
+                                <span>{% trans "View quizzes results" %}</span>
+                            </a>
+                        {% endif %}
+                        {% if perms.auth.change_user and user.is_staff %}
+                            <a href="{% url "admin:auth_user_change" app_user.pk %}" class="button is-link">
+                                <span class="icon">
+                                    <span class="fas fa-pen-fancy"></span>
+                                </span>
+                                <span>{% trans "Edit user" %}</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr />
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        {% include "pagination.html" with page_obj=page_obj request=request only %}
+    </section>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "css/bulma-tooltip.min.css" %}">
+{% endblock %}

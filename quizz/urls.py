@@ -10,6 +10,7 @@ from .views.management import (
     QuestionDeleteView,
     QuizzesListView,
     UserProfileView,
+    UsersListView,
 )
 
 app_name = "quizz"
@@ -24,6 +25,7 @@ management_patterns = (
         path("questions/delete/<int:pk>", QuestionDeleteView.as_view(), name="delete"),
         path("quizzes", QuizzesListView.as_view(), name="quizzes"),
         path("quizzes/<str:username>", UserProfileView.as_view(), name="user-quizzes"),
+        path("users", UsersListView.as_view(), name="users"),
     ],
     "management",
 )

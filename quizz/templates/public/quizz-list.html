@@ -21,7 +21,7 @@
     <h1 class="title">{% spaceless %}
         {% if management %}
             {% if quizzes_user %}
-                {% blocktrans with name=quizzes_user.get_full_name %}
+                {% blocktrans with name=quizzes_user.get_full_name|default:user.username %}
                     {{ name }}'s quizzes
                 {% endblocktrans %}
             {% else %}
@@ -40,7 +40,7 @@
                 <div class="level-item">
                     <p class="subtitle is-5">
                         {% if quizzes_user and quizzes_user != user %}
-                            {% blocktrans with quizzes_here=page_obj.object_list|length|stringformat:"d" name=quizzes_user.get_full_name quizzes_total=page_obj.paginator.count|stringformat:"d" count count=page_obj.paginator.count %}
+                            {% blocktrans with quizzes_here=page_obj.object_list|length|stringformat:"d" name=quizzes_user.get_full_name|default:user.username quizzes_total=page_obj.paginator.count|stringformat:"d" count count=page_obj.paginator.count %}
                                 {{ name }} answered <strong>{{ quizzes_total }}</strong> quizz ({{ quizzes_here }} shown).
                             {% plural %}
                                 {{ name }} answered <strong>{{ quizzes_total }}</strong> quizzes ({{ quizzes_here }} shown).
@@ -76,7 +76,7 @@
                                 </span>
                                 <span>
                                     {% if quizzes_user %}
-                                        {% blocktrans with name=quizzes_user.get_full_name %}
+                                        {% blocktrans with name=quizzes_user.get_full_name|default:user.username %}
                                             {{ name }}'s progression
                                         {% endblocktrans %}
                                     {% else %}
@@ -108,14 +108,16 @@
                     {% include "snippets/quizz-card.html" with question=question show_answers_stats=True %}
                 </div>
             {% empty %}
-                <tr>
-                    <td colspan="2" class="has-text-centered">
+                <div class="column is-12 is-size-4 has-text-centered">
+                    {% if not management and not quizzes_user %}
                         {% url "quizz:create-quizz" as create_url %}
                         {% blocktrans with create_url=create_url %}
                             You never finished a quizz yet. <a href="{{ create_url }}">What about starting one?</a>
                         {% endblocktrans %}
-                    </td>
-                </tr>
+                    {% else %}
+                        {% trans "There's nothing to see here." %}
+                    {% endif %}
+                </div>
             {% endfor %}
         </div>
     </section>

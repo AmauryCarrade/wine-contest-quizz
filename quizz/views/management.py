@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import F, Count, Q, Sum, Case, When, IntegerField, FloatField
+from django.db.models import F, Count, Q, Sum, Max, Case, When, IntegerField, FloatField
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -52,7 +52,9 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             Question.objects.all()
             .annotate(
                 user_answers_count=Count(
-                    "user_answers", filter=Q(user_answers__finished_at__isnull=False), output_field=FloatField()
+                    "user_answers",
+                    filter=Q(user_answers__finished_at__isnull=False),
+                    output_field=FloatField(),
                 ),
                 success_rate=Sum(
                     Case(
@@ -60,8 +62,10 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
                         default=0.0,
                         output_field=FloatField(),
                     ),
-                    output_field=FloatField()
-                ) / F("user_answers_count") * 100,
+                    output_field=FloatField(),
+                )
+                / F("user_answers_count")
+                * 100,
             )
             .prefetch_related("tags")
             .select_related("locale", "source")
@@ -87,9 +91,13 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         elif sort_by == "locale":
             questions = questions.order_by(rev + "locale")
         elif sort_by == "answered":
-            questions = questions.order_by(("" if sort_reversed else "-") + "user_answers_count")
+            questions = questions.order_by(
+                ("" if sort_reversed else "-") + "user_answers_count"
+            )
         elif sort_by == "success-rate":
-            questions = questions.order_by(F("success_rate").asc(nulls_last=True, descending=not sort_reversed))
+            questions = questions.order_by(
+                F("success_rate").asc(nulls_last=True, descending=not sort_reversed)
+            )
         else:
             questions = questions.order_by(rev + "question")
 
@@ -773,3 +781,40 @@ class UserProfileView(LoginRequiredMixin, PermissionRequiredMixin, QuizzesListMi
         context["quizzes_user"] = self.user
 
         return context
+
+
+class UsersListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    template_name = "management/users-list.html"
+    context_object_name = "users"
+
+    permission_required = "auth.view_user"
+
+    model = User
+    paginate_by = 20
+
+    def get_queryset(self):
+        return (
+            super(UsersListView, self)
+            .get_queryset()
+            .annotate(
+                quizzes_count=Count("quizzes", distinct=True),
+                questions_count=Count("quizzes__questions", distinct=True),
+                groups_count=Max(
+                    Case(
+                        When(groups__isnull=False, then=1),
+                        default=0,
+                        output_field=IntegerField(),
+                    )
+                ),
+            )
+            .order_by(
+                "-is_superuser",
+                "-is_staff",
+                "-groups_count",
+                "last_name",
+                "first_name",
+                "username",
+            )
+            .select_related("profile")
+            .prefetch_related("groups")
+        )

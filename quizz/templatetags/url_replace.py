@@ -7,12 +7,12 @@ register = template.Library()
 @register.simple_tag(takes_context=True)
 def url_replace(context, **kwargs):
     request = None
-    if 'request' in context:
-        request = context['request']
+    if "request" in context:
+        request = context["request"]
     else:
         for ctx in context:
-            if 'request' in ctx:
-                request = ctx['request']
+            if "request" in ctx:
+                request = ctx["request"]
                 break
 
     if not request:
