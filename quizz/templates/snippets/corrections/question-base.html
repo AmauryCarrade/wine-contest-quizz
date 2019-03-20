@@ -6,6 +6,11 @@
             {{ question.question.question }}
         </p>
         <a href="#" class="card-header-icon" aria-label="more options">
+            {% if question.question.answer_comment %}
+            <span class="icon is-icon-answer-comment" title="{% trans "An explanation is available for this question" %}">
+                <span class="fas fa-info-circle"></span>
+            </span>
+            {% endif %}
             <span class="tag is-medium {% if question.success == 'PERFECT' %}is-success{% elif question.success == 'ALMOST' %}is-warning{% else %}is-danger{% endif %}">
                 <span class="quizz-note"
                       data-max="{{ question.question.difficulty }}"
@@ -36,4 +41,24 @@
             </div>
         {% endif %}
     </div>
+
+    {% if question.question.answer_comment %}
+        <div class="card-content is-answer-comment">
+            <div class="columns is-mobile">
+                <div class="column {% if question.question.illustration %}is-9{% else %}is-12{% endif %}">
+                    <h3 class="title is-6">{% trans "More informations" %}</h3>
+                    <p class="is-italic">
+                        {{ question.question.answer_comment|linebreaksbr }}
+                    </p>
+                </div>
+                {% if question.question.illustration %}
+                    <div class="column is-3">
+                        <figure class="image">
+                            <img src="{{ question.question.illustration.thumbnail.400x400 }}" alt="{% trans "Question's illustration" %}" />
+                        </figure>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 </article>

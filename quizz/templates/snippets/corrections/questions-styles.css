@@ -29,3 +29,15 @@
 .has-text-stroked {
     text-decoration: line-through;
 }
+
+.is-icon-answer-comment {
+    margin-right: .8rem;
+    color: #444;
+}
+.card-content.is-answer-comment {
+    box-shadow: 0 -1px 1px rgba(10,10,10,.1);
+}
+
+figure.image img {
+    border-radius: 4px;
+}
