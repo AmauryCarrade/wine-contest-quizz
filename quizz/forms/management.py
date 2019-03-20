@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from mptt.forms import TreeNodeChoiceField
 
 from quizz.fields import TreeNodeAllMultipleChoiceField
 from quizz.widgets import CheckboxTreeSelectMultiple
@@ -281,4 +282,33 @@ class ImportQuestionsForm(forms.Form):
         choices=((1, _("Easy")), (2, _("Medium")), (3, _("Hard"))),
         initial=2,
         help_text=_("For questions with missing difficulty, what should it be?"),
+    )
+
+
+class MigrateTagsForm(forms.Form):
+    old_tag = TreeNodeChoiceField(
+        queryset=Tag.objects.all(),
+        label=_("Old tag"),
+        help_text=_(
+            "All questions associated to this tag will be migrated to " "the new one."
+        ),
+    )
+
+    new_tag = TreeNodeChoiceField(
+        queryset=Tag.objects.all(),
+        label=_("Target tag"),
+        help_text=_(
+            "All questions will be moved to this tag (if not already "
+            "attached to it)."
+        ),
+    )
+
+    delete_old_tag = forms.BooleanField(
+        label=_("Delete the old tag?"),
+        help_text=_(
+            "If checked, the old tag will be deleted. Else, kept but without "
+            "any question left attached."
+        ),
+        required=False,
+        initial=True,
     )

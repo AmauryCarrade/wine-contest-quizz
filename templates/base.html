@@ -100,7 +100,7 @@
                                         {% trans "Past quizzes" %}
                                     </a>
 
-                                    {% if perms.quizz.view_question or perms.quizz.add_question or perms.quizz.view_tag or perms.quizz.add_tag or perms.auth.view_user or perms.quizz.view_quizz or user.is_staff %}
+                                    {% if perms.quizz.view_question or perms.quizz.add_question or perms.quizz.change_question or perms.quizz.view_tag or perms.quizz.add_tag or perms.quizz.delete_tag or perms.auth.view_user or perms.quizz.view_quizz or user.is_staff %}
                                         <div class="navbar-item has-dropdown is-hoverable">
                                             <a class="navbar-link" href="">
                                                 {% trans "Management" %}
@@ -147,8 +147,8 @@
                                                     {% endif %}
                                                 {% endif %}
 
-                                                {% if user.is_staff and perms.quizz.view_tag or perms.quizz.add_tag %}
-                                                    {% if perms.quizz.view_tag or perms.quizz.add_tag %}
+                                                {% if user.is_staff or perms.quizz.view_tag or perms.quizz.add_tag or perms.quizz.delete_tag %}
+                                                    {% if perms.quizz.view_tag or perms.quizz.add_tag or perms.quizzz.delete_tag and perms.quizz.change_question %}
                                                         <hr class="navbar-divider" />
 
                                                         <div class="navbar-item">
@@ -170,6 +170,15 @@
                                                                 <span class="fas fa-plus"></span>
                                                             </span>
                                                             <span>{% trans "Create tag" %}</span>
+                                                            </a>
+                                                        {% endif %}
+
+                                                        {% if perms.quizz.delete_tag and perms.quizz.change_question %}
+                                                            <a href="{% url "quizz:management:tags-migration" %}" class="navbar-item">
+                                                                <span class="icon is-medium">
+                                                                <span class="fas fa-arrow-right"></span>
+                                                            </span>
+                                                            <span>{% trans "Migrate tag" %}</span>
                                                             </a>
                                                         {% endif %}
                                                     {% endif %}

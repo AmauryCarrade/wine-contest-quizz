@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load bulma_tags %}
+
+{% block head-title %}
+    {% trans "Tags migration" %}
+{% endblock %}
+
+{% block hero-title %}
+    <h1 class="title">{% trans "Tags migration" %}</h1>
+    <p class="subtitle">{% trans "An utility to move all questions from a tag to another" %}</p>
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <form method="post" class="form">
+                {% csrf_token %}
+                <div class="columns">
+                    <div class="column is-half">
+                        {{ form.old_tag|bulma }}
+                    </div>
+                    <div class="column is-half">
+                        {{ form.new_tag|bulma }}
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half">
+                        {{ form.delete_old_tag|bulma }}
+                    </div>
+                    <div class="column is-half">
+                        <div class="control">
+                            <input type="submit" value="{% trans "Move the questions to the new tag" %}" class="button is-primary" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

@@ -8,6 +8,7 @@ from .views.management import (
     QuestionsImportView,
     UndoImportView,
     QuestionDeleteView,
+    MigrateTagsView,
     QuizzesListView,
     UserProfileView,
     UsersListView,
@@ -26,6 +27,7 @@ management_patterns = (
         path("quizzes", QuizzesListView.as_view(), name="quizzes"),
         path("quizzes/<str:username>", UserProfileView.as_view(), name="user-quizzes"),
         path("users", UsersListView.as_view(), name="users"),
+        path("tags-migration", MigrateTagsView.as_view(), name="tags-migration"),
     ],
     "management",
 )
