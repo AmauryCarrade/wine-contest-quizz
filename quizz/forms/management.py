@@ -7,6 +7,15 @@ from ..models.questions import Contest, QuestionLocale, Tag
 from quizz.models import QUESTION_MCQ, QUESTION_TYPES
 
 
+def get_default_locale():
+    """
+    Returns the initial locale to use in the locale field, to
+    avoid load-time queryset evaluation, as first() is not lazy
+    (prevents initial migration).
+    """
+    return QuestionLocale.objects.first()
+
+
 class ManageQuizzQuestionForm(forms.Form):
 
     # Common fields
@@ -14,7 +23,7 @@ class ManageQuizzQuestionForm(forms.Form):
     locale = forms.ModelChoiceField(
         label=_("Lang"),
         queryset=QuestionLocale.objects.all(),
-        initial=QuestionLocale.objects.first(),
+        initial=get_default_locale,
         help_text=_("In which language is this question written?"),
         widget=forms.RadioSelect,
     )
