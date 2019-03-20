@@ -343,7 +343,7 @@ class QuestionsImportView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
             #  name. We should figure out if it's the case and warn the user.
             question_tags = []
             if raw_question["tags"]:
-                for tag in tags:
+                for tag in raw_question["tags"]:
                     if tag.lower() in tags:
                         question_tags.append(tags[tag.lower()])
                     else:
@@ -351,6 +351,7 @@ class QuestionsImportView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
                         if not tag_obj and form.cleaned_data["create_missing_tags"]:
                             # The tag is created as a root node. It can be moved afterward.
                             tag_obj = Tag(name=tag, parent=None)
+                            tag_obj.save()
                         question_tags.append(tag_obj)
                         tags[tag.lower()] = tag_obj
 

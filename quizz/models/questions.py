@@ -391,11 +391,12 @@ class Question(models.Model):
             if all_in:
                 reduced[tag.pk] = tag, tag.get_descendant_count()
                 for child in tag.get_descendants():
-                    del reduced[child.pk]
+                    if child.pk in reduced:
+                        del reduced[child.pk]
 
         for tag, children_removed in reduced.copy().values():
             for parent in tag.get_ancestors():
-                if parent in tags:
+                if parent in tags and parent.pk in reduced:
                     del reduced[parent.pk]
 
         return reduced
