@@ -156,9 +156,10 @@
             {% empty %}
                 <div class="column is-12 is-size-4 has-text-centered">
                     {% url "quizz:management:create" as create_url %}
+                    {% url "quizz:management:import" as import_url %}
                     {% blocktrans with create_url=create_url %}
                         There are no questions. You can <a href="{{ create_url }}">create one</a> or
-                        <a href="#">import some</a>.
+                        <a href="{{ import_url }}">import some</a>.
                     {% endblocktrans %}
                 </div>
             {% endfor %}
