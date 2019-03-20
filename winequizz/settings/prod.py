@@ -17,6 +17,10 @@ SECURE_SSL_REDIRECT = True
 
 X_FRAME_OPTIONS = "DENY"
 
+STATICFILES_DIRS.append(BASE_DIR / "dist")
+STATIC_ROOT = BASE_DIR / "dist"
+STATIC_URL = "/dist/"
+
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 

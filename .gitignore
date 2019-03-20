@@ -12,3 +12,5 @@ user-generated-content
 *.sqlite
 
 credentials.toml
+
+dist/
