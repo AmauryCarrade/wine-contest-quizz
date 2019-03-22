@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head-title %}
+    {% trans "Legal Notice and Privacy Policy" %}
+{% endblock %}
+
+{% block hero-title %}
+    <h1 class="title">{% trans "Legal Notice and Privacy Policy" %}</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <article class="container">
+            <h2 class="title">{% trans "Legal Notice" %}</h2>
+            <div class="content">
+                {% blocktrans %}
+                <p>
+                    The <em>EHL Oenology Quizzes</em> website was made on behalf of
+                    <a href="https://ehloenology.ch">EHL Oenology</a>.
+                </p>
+                <p>
+                    This website is edited by Amaury Carrade. You can contact the editor
+                    <a href="https://amaury.carrade.eu/contact">by clicking this link</a>,
+                    if you see any bug, or for any other request. The website is developed
+                    using the <a href="https://djangoproject.com">Django Project</a> and
+                    hosted in France by:
+
+                    <address>
+                        <strong>Online SAS</strong><br />
+                        75366 Paris CEDEX 08<br />
+                        FRANCE<br />
+                        RCS Paris B 433 115 904
+                    </address>
+                </p>
+                <p>
+                    This website is a free software published under the
+                    <a href="https://cecill.info/licences/Licence_CeCILL-B_V1-en.html">CeCILL-B license</a>.
+                    You can get a copy of the source code
+                    <a href="https://github.com/AmauryCarrade/wine-contest-quizz">by following this link</a>.
+                </p>
+
+                <h3>Copyright Notice</h3>
+
+                <p>
+                    &copy; EHL Oenology – 2019
+                </p>
+                <p>
+                    Any reproduction, translation, adaptation, or quote whether full or partial, whatever
+                    the process, is strictly prohibited without permission from EHL Oenology,
+                    except as provided by
+                    <a href="https://www.legifrance.gouv.fr/affichCodeArticle.do?cidTexte=LEGITEXT000006069414&amp;idArticle=LEGIARTI000006278917">
+                    Article L.122-5 of the Code of intellectual Property</a> in French law.
+                    All trademarks are the property of their respective owners.
+                </p>
+                <p>
+                    Parts of the content is owned by other entities (like questions from existing contests
+                    archives).
+                </p>
+                <p>
+                    The EHL Oenology logo is &copy; Pauline Carrade – All Rights Reserved.
+                </p>
+                {% endblocktrans %}
+            </div>
+        </article>
+    </section>
+
+    <section class="section">
+        <article class="container">
+            <h2 class="title">{% trans "Privacy Policy" %}</h2>
+
+            <div class="content">
+                {% blocktrans %}
+                <h3>
+                    <a href="https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000000886460">
+                        French Data Protection Act no. 78-17 of 6 January 1978
+                    </a>
+                </h3>
+
+                <p>
+                    In accordance with the French Data Protection Act no. 78-17
+                    of 6 January 1978, the processing of personal data on the
+                    site is exempt from a declaration to the Commission
+                    Nationale Informatique et Liberté (CNIL).
+                </p>
+                <p>
+                    The processing of each user's personal data is carried out
+                    in accordance with the Data Protection Act of 6 January 1978.
+                </p>
+                <p>
+                    The site editor undertakes to ensure a sufficient level of
+                    protection of the information provided in order to guarantee
+                    respect for privacy in accordance with legal requirements.
+                </p>
+
+                <h3>Personal Data We Collect</h3>
+
+                <p>
+                    When you answer a quizz, we collect the following personal
+                    data:
+                </p>
+
+                <ul>
+                    <li>the date and time you started the quizz;</li>
+                    <li>the date and time you finished the quizz;</li>
+                    <li>the date and time you started and finished each question;</li>
+                    <li>the answers you selected for each question;</li>
+                    <li>the answer you typed for each question (including the “other” field of some questions);</li>
+                    <li>the IP address you were using while starting the quizz;</li>
+                    <li>the account you were logged in with, if any.</li>
+                </ul>
+
+                <p>
+                    When you login with your Google Account, we collect the
+                    following additional data:
+                </p>
+
+                <ul>
+                    <li>your name;</li>
+                    <li>the primary email address associated with your Google Account;</li>
+                    <li>the picture associated with your Google Account;</li>
+                    <li>the date and time of your first login;</li>
+                    <li>the date and time of your last login.</li>
+                </ul>
+                    
+                <p>See also <a href="https://policies.google.com/privacy">Google's Privacy Policies</a>.</p>
+
+                <h3>How We Use Your Data</h3>
+
+                <p>
+                    Personal Data collected from Google is used to identify your
+                    account and know who answered each quizz. The picture is
+                    only displayed to users allowed to list all users and their
+                    quizzes (after: “Supervisors”).
+                </p>
+
+                <p>
+                    Personal Data collected from quizzes serves four purposes.
+                    First, we use them to automatically process and score each
+                    quizz you start on the website, and to allow you to see all
+                    your old quizzes and progress. Second, we use them to allow
+                    Supervisors to view all quizzes made on the platform,
+                    including aggregated infos on best and worst understood
+                    concepts. Third, we use this data to offer you better
+                    quizzes based on your past answers, e.g. by asking questions
+                    you badly answered before. This usage is only by request, if
+                    you enable the relevant option when you start a quizz.
+                    Finally, the IP address is used to prevent abuses and deleted
+                    after a year.
+                </p>
+
+                <p>
+                    Except as provided above, personal data will not be
+                    disclosed to third parties. Notably, Google never has access
+                    to your results or any other personal information managed by
+                    this website. However, they may be disclosed pursuant to a
+                    law or regulation or a decision of a competent regulatory or
+                    judicial authority.
+                </p>
+
+                <h3>Non-Acceptance, Modification and Deletion of Personal Data</h3>
+
+                <p>
+                    Users are free to refuse to give us their personal data. In
+                    such a case, they cannot use this website.
+                </p>
+
+                <p>
+                    In accordance with Articles 39 and 40 of French Data
+                    Protection Act no. 78-17 of 6 January 1978, the user may at
+                    any time access personal information held by this website
+                    and make any necessary modifications, corrections or
+                    deletions. Any user may request that the data be rectified,
+                    completed, updated, or deleted. To exercise these rights,
+                    any user may contact the publisher at the contact address
+                    provided in the legal notices in this document.
+                </p>
+
+                <h3>Cookies Policy</h3>
+
+                <p>
+                    We use cookies to operate this website. For full disclosure,
+                    we use the following cookies. They are mandatory, as you
+                    won't able to use this website correctly if you block them.
+                </p>
+                <dl>
+                    <dt><code>csrftoken</code></dt>
+                    <dd>
+                        Used to secure all forms on the website, preventing
+                        anyone to steal your data or impersonate you.<br />
+                        <em>Stays one year maximum.</em>
+                    </dd>
+                    <dt><code>sessionid</code></dt>
+                    <dd>
+                        Used to keep you logged in, and for some other usages
+                        like flash messages and association of your quizzes to
+                        your account when you answer them before sign-in.<br />
+                        <em>Stays two weeks maximum.</em>
+                    </dd>
+                </dl>
+                <p>
+                    We don't use third-party cookies (like analytics).
+                </p>
+                {% endblocktrans %}
+            </div>
+        </article>
+    </section>
+{% endblock %}
+
+{% block css %}
+    <style>
+        article.container .content * {
+            text-align: justify;
+        }
+        @media screen and (min-width:768px) {
+            article.container {
+                width: 50%;
+                margin-right: auto;
+                margin-left: auto;
+            }
+        }
+    </style>
+{% endblock %}

@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, FormView, ListView
+from django.views.generic import DetailView, FormView, ListView, TemplateView
 from ipware import get_client_ip
 
 from quizz.forms.public import CreateQuizzForm
@@ -201,3 +201,10 @@ class QuizzesListMixin(ListView):
 class UserQuizzesListView(LoginRequiredMixin, QuizzesListMixin):
     def get_base_queryset(self):
         return Quizz.objects.filter(user=self.request.user)
+
+
+class LegalView(TemplateView):
+    template_name = "public/legal.html"
+    extra_context = {
+        "now": timezone.now()
+    }

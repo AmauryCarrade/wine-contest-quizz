@@ -124,6 +124,12 @@
     {% endif %}
 {% endblock %}
 
+{% block hero-foot %}
+    <section class="section has-text-centered">
+        <a href="{% url "quizz:legal" %}">{% trans "Legal" %}</a>
+    </section>
+{% endblock %}
+
 {% block js %}
     <script type="text/javascript">
         'use strict';

@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views.public import QuizzView, CreateQuizzView, UserQuizzesListView
+from .views.public import QuizzView, CreateQuizzView, UserQuizzesListView, LegalView
 
 from .views.management import (
     QuestionsListView,
@@ -36,5 +36,6 @@ urlpatterns = [
     path("", CreateQuizzView.as_view(), name="create-quizz"),
     path("quizzes", UserQuizzesListView.as_view(), name="user-quizzes"),
     path("quizz/<slug:slug>", QuizzView.as_view(), name="quizz"),
+    path("legal", LegalView.as_view(), name="legal"),
     path("management/", include(management_patterns, namespace="management")),
 ]
