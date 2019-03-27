@@ -1,0 +1,57 @@
+.hero.is-primary nav.navbar {
+  .navbar-item {
+    transition: 0s;
+    &.has-dropdown {
+      .navbar-dropdown {
+
+        &, .navbar-item, .navbar-item p {
+          color: $text;
+
+          @include touch {
+            color: $white;
+          }
+        }
+
+        .navbar-item:hover p {
+          color: $text;
+
+          @include touch {
+            color: $white;
+          }
+        }
+
+        .navbar-item:hover, .navbar-item:hover > *, .navbar-item:hover .is-navbar-item-subtitle {
+          color: $white;
+        }
+      }
+    }
+
+    .is-navbar-item-subtitle {
+      color: $grey;
+
+      @include touch {
+        color: $white-bis;
+      }
+    }
+
+    // Fixes main menu background turning white when the dropdown is hovered
+    &.has-dropdown:hover > span.navbar-link {
+      background-color: transparent;
+      color: $white;
+    }
+  }
+
+  // Specificity
+  .navbar-start, .navbar-end {
+    > a.navbar-item:not(.button):not(.dropdown-item):not(.tag),
+    > a.navbar-item strong,
+    > .navbar-item.has-dropdown .navbar-link {
+      color: rgba($white, .7);
+
+      &:hover {
+        background-color: transparent;
+        color: $white;
+      }
+    }
+  }
+}

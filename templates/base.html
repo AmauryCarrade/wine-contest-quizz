@@ -1,7 +1,6 @@
 {% extends "base-blank.html" %}
 
-{% load i18n %}
-{% load mathfilters %}
+{% load i18n mathfilters si %}
 
 {% block main %}
     <section class="hero {% block hero-classes %}is-primary is-small is-bold{% endblock %}">
@@ -25,11 +24,15 @@
                             {% block hero-menu %}
                                 {% if user.is_authenticated %}
                                     <div class="navbar-item">
-                                            Hi, {% if user.first_name or user.last_name %}
-                                                {{ user.first_name }} {{ user.last_name }}
-                                            {% else %}
-                                                {{ user.username }}
-                                            {% endif %}
+                                        Hi, {% if user.first_name or user.last_name %}
+                                        {{ user.first_name }} {{ user.last_name }}
+                                    {% else %}
+                                        {{ user.username }}
+                                    {% endif %}
+                                    </div>
+
+                                    <div class="navbar-item is-hidden-mobile is-hidden-tablet-only" role="separator">
+                                        &bull;
                                     </div>
 
                                     <a href="{% url "quizz:create-quizz" %}" class="navbar-item">
@@ -43,14 +46,16 @@
                                                     {% trans "Ongoing quizzes" %}
                                                 </span>
 
-                                                <div class="navbar-dropdown is-right has-text-black">
-                                                    <div class="navbar-item">
-                                                        <p class="has-text-weight-bold has-text-black">
+                                                <div class="navbar-dropdown is-right">
+                                                    <div class="navbar-item is-hidden-touch">
+                                                        <p class="has-text-weight-bold">
                                                             {% if quizz and quizz.is_running %}
                                                                 {% blocktrans count count=ongoing_quizzes|length %}
-                                                                    You have one ongoing quizz (including the current one).
+                                                                    You have one ongoing quizz (including the current
+                                                                    one).
                                                                 {% plural %}
-                                                                    You have {{ count }} ongoing quizzes (including the current one).
+                                                                    You have {{ count }} ongoing quizzes (including the
+                                                                    current one).
                                                                 {% endblocktrans %}
                                                             {% else %}
                                                                 {% blocktrans count count=ongoing_quizzes|length %}
@@ -63,7 +68,8 @@
                                                     </div>
                                                     {% for ongoing_quizz in ongoing_quizzes %}
                                                         {% if not quizz or ongoing_quizz != quizz %}
-                                                            <a class="navbar-item" href="{% url "quizz:quizz" slug=ongoing_quizz.slug %}">
+                                                            <a class="navbar-item"
+                                                               href="{% url "quizz:quizz" slug=ongoing_quizz.slug %}">
                                                                 <span class="icon is-medium">
                                                                     <span class="fas fa-envelope-open-text"></span>
                                                                 </span>
@@ -73,17 +79,21 @@
                                                                     {% blocktrans with since=ongoing_quizz.started_at|timesince %}
                                                                         Started {{ since }} ago
                                                                     {% endblocktrans %}
-                                                                    <br />
-                                                                    <span class="has-text-grey">
+                                                                    <br/>
+                                                                    <span class="is-navbar-item-subtitle">
                                                                         {% if ongoing_quizz.questions_finished == 0 %}
                                                                             {% blocktrans count total_questions=ongoing_quizz.questions_total %}
-                                                                                Not started yet ({{ total_questions }} question)
+                                                                                Not started yet ({{ total_questions }}
+                                                                                question)
                                                                             {% plural %}
-                                                                                Not started yet ({{ total_questions }} questions)
+                                                                                Not started yet ({{ total_questions }}
+                                                                                questions)
                                                                             {% endblocktrans %}
                                                                         {% else %}
                                                                             {% blocktrans with percentage=ongoing_quizz.questions_finished|div:ongoing_quizz.questions_total|mul:100|floatformat:0 current_question=ongoing_quizz.questions_finished|add:1 total_questions=ongoing_quizz.questions_total %}
-                                                                                {{ percentage }}&nbsp;% complete (question {{ current_question }} of {{ total_questions }})
+                                                                                {{ percentage }}&nbsp;% complete
+                                                                                (question {{ current_question }} of
+                                                                                {{ total_questions }})
                                                                             {% endblocktrans %}
                                                                         {% endif %}
                                                                     </span>
@@ -96,136 +106,259 @@
                                         {% endif %}
                                     {% endif %}
 
+                                    <div class="navbar-item is-hidden-mobile is-hidden-tablet-only" role="separator">
+                                        &bull;
+                                    </div>
+
                                     <a href="{% url "quizz:user-quizzes" %}" class="navbar-item">
                                         {% trans "Past quizzes" %}
                                     </a>
 
                                     {% if perms.quizz.view_question or perms.quizz.add_question or perms.quizz.change_question or perms.quizz.view_tag or perms.quizz.add_tag or perms.quizz.delete_tag or perms.auth.view_user or perms.quizz.view_quizz or user.is_staff %}
-                                        <div class="navbar-item has-dropdown is-hoverable">
-                                            <a class="navbar-link" href="">
+                                        <div class="navbar-item is-hidden-mobile is-hidden-tablet-only"
+                                             role="separator">&bull;
+                                        </div>
+
+                                        <div class="navbar-item has-dropdown is-hoverable is-mega">
+                                            <span class="navbar-link" aria-haspopup="menu"
+                                                 aria-describedby="management-dropdown">
                                                 {% trans "Management" %}
-                                            </a>
+                                            </span>
+                                            <div id="management-dropdown" class="navbar-dropdown">
+                                                <div class="container is-fluid">
+                                                    <div class="columns">
+                                                        {% if perms.quizz.view_question or perms.auth.view_user or perms.quizz.view_quizz %}
+                                                            <div class="column is-3 is-hidden-mobile">
+                                                                <h2 class="title is-4 is-mega-menu-title">{% trans "Overview" %}</h2>
+                                                                {% if perms.quizz.view_question %}
+                                                                    <a href="{% url "quizz:management:questions" %}"
+                                                                       class="navbar-item is-overview-number">
+                                                                        <p class="navbar-content">
+                                                                            {# 2,6<span class="is-size-4">k</span> #}
+                                                                            {% blocktrans count count=overview_statistics.questions with questions=overview_statistics.questions|si:"is-size-4" %}
+                                                                                <span class="number">{{ questions }}</span>
+                                                                                <span><span class="title">question</span></span>
+                                                                            {% plural %}
+                                                                                <span class="number">{{ questions }}</span>
+                                                                                <span><span class="title">questions</span></span>
+                                                                            {% endblocktrans %}
+                                                                        </p>
+                                                                    </a>
+                                                                {% endif %}
+                                                                {% if perms.auth.view_user %}
+                                                                    <a href="{% url "quizz:management:users" %}"
+                                                                       class="navbar-item is-overview-number">
+                                                                        <p class="navbar-content">
+                                                                            {% if overview_statistics.anonymous > 0 %}
+                                                                                {% blocktrans count count=overview_statistics.users with anonymous=overview_statistics.anonymous  users=overview_statistics.users|si:"is-size-4" %}
+                                                                                    <span class="number">{{ users }}</span>
+                                                                                    <span><span class="title">user <span class="has-text-grey has-text-weight-normal" title="Anonymous users">(+ {{ anonymous }})</span></span>
+                                                                                {% plural %}
+                                                                                    <span class="number">{{ users }}</span>
+                                                                                    <span><span class="title">users <span class="has-text-grey has-text-weight-normal" title="Anonymous users">(+ {{ anonymous }})</span></span>
+                                                                                {% endblocktrans %}
+                                                                            {% else %}
+                                                                                {% blocktrans count count=overview_statistics.users with questions=overview_statistics.users|si:"is-size-4" %}
+                                                                                    <span class="number">{{ users }}</span>
+                                                                                    <span><span class="title">user</span>
+                                                                                {% plural %}
+                                                                                    <span class="number">{{ users }}</span>
+                                                                                    <span><span class="title">users</span>
+                                                                                {% endblocktrans %}
+                                                                            {% endif %}
 
-                                            <div class="navbar-dropdown is-right has-text-black">
-                                                <a class="navbar-item">
-                                                    <span class="icon is-medium">
-                                                        <span class="fas fa-globe-europe"></span>
-                                                    </span>
-                                                    <span>{% trans "Overview" %}</span>
-                                                </a>
+                                                                                <span class="help">
+                                                                                    {% blocktrans count count=overview_statistics.mean_quizzes_per_user with quizzes=overview_statistics.mean_quizzes_per_user|si %}
+                                                                                        {{ quizzes }} quizz in average
+                                                                                    {% plural %}
+                                                                                        {{ quizzes }} quizzes in average
+                                                                                    {% endblocktrans %}
+                                                                                </span>
+                                                                            </span>
+                                                                        </p>
+                                                                    </a>
+                                                                {% endif %}
+                                                                {% if perms.quizz.view_quizz %}
+                                                                    <a href="{% url "quizz:management:quizzes" %}"
+                                                                       class="navbar-item is-overview-number">
+                                                                        <p class="navbar-content">
+                                                                            {% blocktrans count count=overview_statistics.quizzes with quizzes=overview_statistics.quizzes|si:"is-size-4" %}
+                                                                                    <span class="number">{{ quizzes }}</span>
+                                                                                    <span><span class="title">quizz</span>
+                                                                                {% plural %}
+                                                                                    <span class="number">{{ quizzes }}</span>
+                                                                                    <span><span class="title">quizzes</span>
+                                                                                {% endblocktrans %}
 
-                                                {% if perms.quizz.view_question or perms.quizz.add_question %}
-                                                    <hr class="navbar-divider" />
+                                                                                <span class="help">
+                                                                                    {% blocktrans count count=overview_statistics.mean_questions_per_quizz with questions=overview_statistics.mean_questions_per_quizz|si %}
+                                                                                        {{ questions }} question in average
+                                                                                    {% plural %}
+                                                                                        {{ questions }} questions in average
+                                                                                    {% endblocktrans %}
+                                                                                </span>
+                                                                            </span>
+                                                                        </p>
+                                                                    </a>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
 
-                                                    <div class="navbar-item">
-                                                        <p class="has-text-weight-bold has-text-black">{% trans "Questions" %}</p>
+                                                        {% if perms.quizz.view_question or perms.quizz.add_question %}
+                                                            <div class="column is-3">
+                                                                <h2 class="title is-4 is-mega-menu-title">{% trans "Questions" %}</h2>
+                                                                {% if perms.quizz.view_question %}
+                                                                    <a class="navbar-item has-icon"
+                                                                       href="{% url "quizz:management:questions" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-question fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "All questions" %}</span>
+                                                                        </span>
+                                                                    </a>
+                                                                {% endif %}
+
+                                                                {% if perms.quizz.add_question %}
+                                                                    <a class="navbar-item has-icon"
+                                                                       href="{% url "quizz:management:questions-create" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-plus fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "Create question" %}</span>
+                                                                        </span>
+                                                                    </a>
+
+                                                                    <hr />
+
+                                                                    <a class="navbar-item has-icon"
+                                                                       href="{% url "quizz:management:questions-import" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-file-import fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "Import questions" %}</span>
+                                                                            <span class="help">{% trans "From a spreadsheet" %}</span>
+                                                                        </span>
+                                                                    </a>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
+
+                                                        {% if user.is_staff or perms.quizz.view_tag or perms.quizz.view_contest or perms.quizz.delete_tag %}
+                                                            <div class="column is-3">
+                                                                <h2 class="title is-4 is-mega-menu-title">{% trans "Metadata" %}</h2>
+
+                                                                {% if perms.quizz.view_tag and user.is_staff %}
+                                                                    <a class="navbar-item has-icon"
+                                                                       href="{% url "admin:quizz_tag_changelist" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-tags fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "All categories" %}</span>
+                                                                        </span>
+                                                                    </a>
+                                                                {% endif %}
+
+                                                                {% if perms.quizz.view_contest and user.is_staff %}
+                                                                    <a class="navbar-item has-icon"
+                                                                       href="{% url "admin:quizz_contest_changelist" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-wine-glass-alt fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "All contests" %}</span>
+                                                                        </span>
+                                                                    </a>
+                                                                {% endif %}
+
+                                                                {% if perms.quizz.delete_tag and perms.quizz.change_question %}
+                                                                    {% if perms.quizz.view_tag and user.is_staff or perms.quizz.add_tag and user.is_staff %}
+                                                                        <hr />
+                                                                    {% endif %}
+                                                                    <a class="navbar-item has-icon"
+                                                                       href="{% url "quizz:management:tags-migration" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-arrow-right fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "Migrate category" %}</span>
+                                                                            <span class="help">{% trans "Change categories in bulk" %}</span>
+                                                                        </span>
+                                                                    </a>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
+
+                                                        {% if perms.auth.view_user or perms.quizz.view_quizz %}
+                                                            <div class="column is-3">
+                                                                <h2 class="title is-4 is-mega-menu-title">{% trans "Users & quizzes" %}</h2>
+
+                                                                {% if perms.auth.view_user %}
+                                                                    <a class="navbar-item has-icon" href="{% url "quizz:management:users" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-user-graduate fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "All users" %}</span>
+                                                                        </span>
+                                                                    </a>
+                                                                {% endif %}
+
+                                                                {% if perms.quizz.view_quizz %}
+                                                                    <a class="navbar-item has-icon"  href="{% url "quizz:management:quizzes" %}">
+                                                                        <span class="icon is-large">
+                                                                            <span class="fas fa-file-signature fa-lg"></span>
+                                                                        </span>
+                                                                        <span>
+                                                                            <span class="title">{% trans "All quizzes" %}</span>
+                                                                            <span class="help">{% trans "And their detailed results" %}</span>
+                                                                        </span>
+                                                                    </a>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
                                                     </div>
+                                                </div>
 
-                                                    {% if perms.quizz.view_question %}
-                                                        <a class="navbar-item" href="{% url "quizz:management:list" %}">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-question"></span>
-                                                            </span>
-                                                            <span>{% trans "All questions" %}</span>
-                                                        </a>
-                                                    {% endif %}
+                                                <hr class="navbar-divider">
+                                                <div class="navbar-item">
+                                                    <div class="navbar-content">
+                                                        <div class="level is-mobile">
+                                                            <div class="level-left">
+                                                                <div class="level-item">
+                                                                    <a href="{% url "quizz:legal" %}" class="button is-white">
+                                                                        {% trans "Legal" %}
+                                                                    </a>
+                                                                </div>
+                                                            </div>
 
-                                                    {% if perms.quizz.add_question %}
-                                                        <a class="navbar-item" href="{% url "quizz:management:create" %}">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-plus"></span>
-                                                            </span>
-                                                            <span>{% trans "Create question" %}</span>
-                                                        </a>
-
-                                                        <a class="navbar-item" href="{% url "quizz:management:import" %}">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-file-import"></span>
-                                                            </span>
-                                                            <span>{% trans "Import questions" %}</span>
-                                                        </a>
-                                                    {% endif %}
-                                                {% endif %}
-
-                                                {% if user.is_staff or perms.quizz.view_tag or perms.quizz.add_tag or perms.quizz.delete_tag %}
-                                                    {% if perms.quizz.view_tag or perms.quizz.add_tag or perms.quizzz.delete_tag and perms.quizz.change_question %}
-                                                        <hr class="navbar-divider" />
-
-                                                        <div class="navbar-item">
-                                                            <p class="has-text-weight-bold has-text-black">{% trans "Tags" %}</p>
+                                                            <div class="level-right">
+                                                                {% if user.is_staff %}
+                                                                    <div class="level-item">
+                                                                        <a href="{% url "admin:index" %}" class="button is-white">
+                                                                            <span class="icon">
+                                                                                <span class="fas fa-radiation"></span>
+                                                                            </span>
+                                                                            <span>
+                                                                                <span class="is-hidden-mobile">{% trans "Advanced administration panel" %}</span>
+                                                                                <span class="is-hidden-tablet" aria-hidden="true">{% trans "Advanced admin" %}</span>
+                                                                            </span>
+                                                                        </a>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
                                                         </div>
-
-                                                        {% if perms.quizz.view_tag %}
-                                                            <a href="{% url "admin:quizz_tag_changelist" %}" class="navbar-item">
-                                                                <span class="icon is-medium">
-                                                                    <span class="fas fa-tags"></span>
-                                                                </span>
-                                                                <span>{% trans "All tags" %}</span>
-                                                            </a>
-                                                        {% endif %}
-
-                                                        {% if perms.quizz.add_tag %}
-                                                            <a href="{% url "admin:quizz_tag_add" %}" class="navbar-item">
-                                                                <span class="icon is-medium">
-                                                                <span class="fas fa-plus"></span>
-                                                            </span>
-                                                            <span>{% trans "Create tag" %}</span>
-                                                            </a>
-                                                        {% endif %}
-
-                                                        {% if perms.quizz.delete_tag and perms.quizz.change_question %}
-                                                            <a href="{% url "quizz:management:tags-migration" %}" class="navbar-item">
-                                                                <span class="icon is-medium">
-                                                                <span class="fas fa-arrow-right"></span>
-                                                            </span>
-                                                            <span>{% trans "Migrate tag" %}</span>
-                                                            </a>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                {% endif %}
-
-                                                {% if perms.auth.view_user or perms.quizz.view_quizz %}
-                                                    <hr class="navbar-divider" />
-
-                                                    <div class="navbar-item">
-                                                        <p class="has-text-weight-bold has-text-black">{% trans "Users" %}</p>
                                                     </div>
-
-                                                    {% if perms.auth.view_user %}
-                                                        <a href="{% url "quizz:management:users" %}" class="navbar-item">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-user-graduate"></span>
-                                                            </span>
-                                                            <span>{% trans "All users" %}</span>
-                                                        </a>
-                                                    {% endif %}
-
-                                                    {% if perms.quizz.view_quizz %}
-                                                        <a href="{% url "quizz:management:quizzes" %}" class="navbar-item">
-                                                            <span class="icon is-medium">
-                                                                <span class="fas fa-file-signature"></span>
-                                                            </span>
-                                                            <span>{% trans "All quizzes" %}</span>
-                                                        </a>
-                                                    {% endif %}
-                                                {% endif %}
-
-                                                {% if user.is_staff %}
-                                                    <hr class="navbar-divider" />
-
-                                                    <a href="{% url "admin:index" %}" class="navbar-item">
-                                                        <span class="icon is-medium">
-                                                            <span class="fas fa-radiation"></span>
-                                                        </span>
-                                                        <span>{% trans "Advanced administration panel" %}</span>
-                                                    </a>
-                                                {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     {% endif %}
 
                                     <a href="{% url "logout" %}" class="navbar-item" title="{% trans "Logout" %}">
-                                        <span class="is-sr-only">{% trans "Logout" %}</span>
+                                        <span class="is-hidden-desktop">{% trans "Logout" %}</span>
                                         <span class="icon">
                                             <span class="fas fa-sign-out-alt"></span>
                                         </span>

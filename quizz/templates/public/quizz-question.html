@@ -5,6 +5,12 @@
 {% load bulma_tags %}
 {% load mathfilters %}
 
+{% block body-id %}quizz-question{% endblock %}
+
+{% block head-title %}
+    {% trans "Oenology Quizz" %} {# FIXME oenology-specific #}
+{% endblock %}
+
 {% block content %}
     {% with question=quizz.current_question.question form=quizz.current_question.form %}
         <form method="post">
@@ -116,47 +122,4 @@
             </div>
         </form>
     {% endwith %}
-{% endblock %}
-
-{% block css %}
-    <link rel="stylesheet" href="{% static "css/bulma-steps.min.css" %}">
-    <style type="text/css">
-        .hero .box .title, .hero .box .subtitle {
-            color: #4a4a4a;
-        }
-
-        @media screen and (min-width: 1088px) {
-            .box, .question-box-footer {
-                width: 72%;
-                margin: auto;
-            }
-        }
-
-        .is-answer-form {
-            display: flex;
-            flex-direction: column;
-
-            height: 100%;
-        }
-
-        .is-answer-form .answers-form {
-            flex: 2;
-            margin-bottom: 1.4rem;
-        }
-
-        figure.image img {
-            border-radius: 4px;
-        }
-
-        .is-next-button {
-            padding-left: 4rem;
-            padding-right: 4rem;
-        }
-
-        @media screen and (max-width:768px) {
-            .is-next-button {
-                width: 100%;
-            }
-        }
-    </style>
 {% endblock %}

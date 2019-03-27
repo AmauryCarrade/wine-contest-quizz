@@ -21,10 +21,10 @@ STATICFILES_DIRS.append(BASE_DIR / "dist")
 STATIC_ROOT = BASE_DIR / "dist"
 STATIC_URL = "/dist/"
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+WEBPACK_LOADER["DEFAULT"]["CACHE"] = True
 
 db_credentials = credentials["database"]
+cache_credentials = credentials.get("cache")
 
 DATABASES = {
     "default": {
@@ -37,3 +37,13 @@ DATABASES = {
         "OPTIONS": {"init_command": "SET sql_mode='STRICT_ALL_TABLES'"},
     }
 }
+
+if cache_credentials:
+    CACHES = {
+        "default": {
+            "BACKEND": cache_credentials.get(
+                "backend", "django.core.cache.backends.locmem.LocMemCache"
+            ),
+            "LOCATION": cache_credentials.get("location", ""),
+        }
+    }

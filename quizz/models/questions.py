@@ -1,3 +1,5 @@
+from django.core.cache import cache
+from django.dispatch import receiver
 from os.path import splitext
 from hashlib import sha256
 
@@ -900,3 +902,8 @@ class Question(models.Model):
 
         else:
             return Question.create_linked(*args, **kwargs)
+
+
+@receiver([models.signals.post_save, models.signals.post_delete], sender=Question)
+def clear_overview_cache_when_quizz_is_finished(sender, instance, **kwargs):
+    cache.delete("overview-statistics")

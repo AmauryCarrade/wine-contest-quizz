@@ -1,0 +1,77 @@
+#quizz-create {
+  #id_how_many {
+    width: 6rem;
+    text-align: center;
+  }
+
+  #id_tags ul ul {
+    margin-left: 2rem;
+  }
+
+  .ee-quizz-options {
+    margin: auto auto 24px;
+    width: 38%;
+
+    @include mobile {
+      width: 100%;
+    }
+
+    .card {
+      &:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+
+      .card-header {
+        cursor: pointer;
+
+        .icon {
+          transition: color .2s ease-in-out;
+        }
+
+        &:hover .icon {
+          color: $grey-darker;
+        }
+      }
+
+      .card-content {
+        &:not(.card-tags) {
+          ul {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+
+            li {
+              flex: 1;
+            }
+          }
+        }
+
+        &.card-tags {
+          text-align: left;
+        }
+
+        .select, .select select {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .login-invitation {
+    margin: 72px auto 0;
+    width: 48%;
+
+    @include mobile {
+      width: 100%;
+      text-align: center;
+      border-radius: 0;
+    }
+  }
+
+  @include mobile {
+    .hero-body {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}

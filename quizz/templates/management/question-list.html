@@ -129,7 +129,7 @@
 
                 {% if perms.quizz.add_question %}
                     <p class="level-item">
-                        <a href="{% url "quizz:management:create" %}" class="button is-success">
+                        <a href="{% url "quizz:management:questions-create" %}" class="button is-success">
                             <span class="icon">
                                 <span class="fas fa-plus"></span>
                             </span>
@@ -137,7 +137,7 @@
                         </a>
                     </p>
                     <p class="level-item">
-                        <a href="{% url "quizz:management:import" %}" class="button is-info">
+                        <a href="{% url "quizz:management:questions-import" %}" class="button is-info">
                             <span class="icon">
                                 <span class="fas fa-file-import"></span>
                             </span>
@@ -155,8 +155,8 @@
                 </div>
             {% empty %}
                 <div class="column is-12 is-size-4 has-text-centered">
-                    {% url "quizz:management:create" as create_url %}
-                    {% url "quizz:management:import" as import_url %}
+                    {% url "quizz:management:questions-create" as create_url %}
+                    {% url "quizz:management:questions-import" as import_url %}
                     {% blocktrans with create_url=create_url %}
                         There are no questions. You can <a href="{{ create_url }}">create one</a> or
                         <a href="{{ import_url }}">import some</a>.
@@ -168,10 +168,4 @@
     <section class="section">
         {% include "pagination.html" with page_obj=page_obj request=request only %}
     </section>
-{% endblock %}
-
-{% block js %}
-    <script type="text/javascript">
-        {% include "snippets/question-card.js" %}
-    </script>
 {% endblock %}

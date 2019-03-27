@@ -1,0 +1,25 @@
+@charset "utf-8";
+
+$family-sans-serif:  BlinkMacSystemFont, -apple-system, "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+$family-serif: "Playfair Display", "Goudy Old Style", Garamond, "Big Caslon", "Times New Roman", Times, serif;
+
+$family-primary: $family-sans-serif;
+$family-secondary: $family-serif;
+
+$primary: #722F37;
+$link: #800020;
+
+$white: lighten($primary, 64%);
+$white-bis: darken($white, 1%);
+$white-ter: darken($white, 2%);
+
+$background: desaturate(lighten($primary, 58%), 30%);
+
+$navbar-dropdown-arrow: lighten($primary, 42%);
+$navbar-dropdown-background-color: lighten($white, 1%);
+
+@import "~bulma/bulma";
+@import "~bulma-tooltip/dist/css/bulma-tooltip";
+@import "~bulma-steps/src/sass/index";
+
+@import "ehl-oenology-quizz/all";

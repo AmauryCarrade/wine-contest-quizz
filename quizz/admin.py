@@ -51,7 +51,7 @@ class QuestionAdmin(admin.ModelAdmin):
                             'model is too complex. Please <a href="%(url)s">use the '
                             "form we designed in the primary admin interface</a>."
                         )
-                        % {"url": reverse_lazy("quizz:management:create")}
+                        % {"url": reverse_lazy("quizz:management:questions-create")}
                     ),
                 )
             else:
@@ -73,4 +73,4 @@ class QuestionAdmin(admin.ModelAdmin):
         return super(QuestionAdmin, self).get_form(request, *args, **kwargs)
 
     def view_on_site(self, obj=None):
-        return reverse_lazy("quizz:management:edit", args=(obj.pk,))
+        return reverse_lazy("quizz:management:questions-edit", args=(obj.pk,))

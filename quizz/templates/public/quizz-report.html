@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
-{% load i18n %}
-{% load mathfilters %}
+{% load i18n mathfilters %}
+
+{% block body-id %}quizz-report{% endblock %}
 
 {% block head-title %}
     {% blocktrans with date=quizz.started_at|date hour=quizz.started_at|time count count=quizz.questions_total %}
@@ -48,66 +49,4 @@
             {% endfor %}
         </div>
     </div>
-{% endblock %}
-
-{% block css %}
-    <style type="text/css">
-        .question-correction-container {
-            width: 70%;
-            margin: auto;
-        }
-        .question-correction-container:not(:last-child)
-        {
-            margin-bottom: 2rem;
-        }
-
-        @media screen and (max-width:768px) {
-            .question-correction-container {
-                width: 100%;
-            }
-        }
-
-        {% include "snippets/corrections/questions-styles.css" %}
-    </style>
-{% endblock %}
-
-{% block js %}
-    <script type="text/javascript">
-        'use strict';
-
-        function toggle_correction_block($block, animate)
-        {
-            $block.find('.card-header .card-header-icon .icon .fas')
-                .toggleClass('fa-angle-down')
-                .toggleClass('fa-angle-up');
-
-            if (animate)
-            {
-                $block.find('.card-content').slideToggle('fast');
-            }
-            else
-            {
-                $block.find('.card-content').toggle();
-            }
-        }
-
-        $(function()
-        {
-            let $corrections = $("article.question-correction");
-
-            $corrections.each(function()
-            {
-                if ($(this).data('result') === 'PERFECT')
-                {
-                    toggle_correction_block($(this));
-                }
-            });
-
-            $corrections.find('.card-header').on('click', function(e)
-            {
-                 toggle_correction_block($(this).parent(), true);
-                 e.preventDefault();
-            });
-        });
-    </script>
 {% endblock %}

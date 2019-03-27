@@ -1,8 +1,8 @@
 {% extends "base-full-hero.html" %}
 
-{% load i18n %}
-{% load bulma_tags %}
+{% load i18n static bulma_tags %}
 
+{% block body-id %}quizz-create{% endblock %}
 {% block head-title %}{% trans "Start a new quizz" %}{% endblock %}
 
 {% block content %}
@@ -95,7 +95,7 @@
             </div>
         </section>
 
-        <input type="submit" value="{% trans "Create quizz" %}" class="button is-primary is-large" />
+        <input type="submit" value="{% trans "Start a quizz" %}" class="button is-primary is-large is-serif" />
     </form>
 
     {% if not user.is_authenticated %}
@@ -112,9 +112,9 @@
                     </p>
                 </div>
                 <div class="column is-3 has-text-centered">
-                    <a href="{% url "social:begin" "google-oauth2" %}" class="button is-link is-medium">
+                    <a href="{% url "social:begin" "google-oauth2" %}" class="button is-link is-medium is-google-login">
                         <span class="icon">
-                            <span class="fab fa-google"></span>
+                            <img src="{% static "images/google-logo.svg" %}" alt="G" />
                         </span>
                         <span>{% trans "Login" %}</span>
                     </a>
@@ -130,184 +130,7 @@
     </section>
 {% endblock %}
 
-{% block js %}
-    <script type="text/javascript">
-        'use strict';
-
-        const max_labels_in_summary = 3;
-
-        function update_radio_checkbox_card_summary()
-        {
-            let $card = $(this).closest('.card');
-            let $summary = $card.find('.option-summary');
-            let empty_value = $summary.data('empty-value');
-            let $checked = $card.find('input:checked');
-
-            if (($checked.length === 0 || $checked.first().val() === '') && empty_value)
-            {
-                $summary.text(empty_value);
-            }
-            else
-            {
-                let i = 0, all = $checked.length;
-                let summary = [];
-
-                $checked.each(function()
-                {
-                    summary[i] = $(this).parent('label').text().trim();
-                    i += 1;
-                });
-
-                let summary_text;
-                let summary_all_text = summary.join(', ');
-
-                if (all > max_labels_in_summary)
-                {
-                    summary_text = summary.slice(0, max_labels_in_summary - 1).join(', ') + ' ' + interpolate(
-                        ngettext('and one other', 'and %s others', all - max_labels_in_summary + 1),
-                        [all - max_labels_in_summary + 1]
-                    );
-                }
-                else
-                {
-                    summary_text = summary_all_text;
-                }
-
-                $summary.text(summary_text);
-                $summary.attr('title', summary_all_text);
-            }
-        }
-
-        function update_select_card_summary()
-        {
-            let $card = $(this).closest('.card');
-            let $summary = $card.find('.option-summary');
-            let empty_value = $summary.data('empty-value');
-
-            if ($(this).val() === '' && empty_value)
-            {
-                $summary.text(empty_value);
-            }
-            else
-            {
-                $summary.text($(this).find('option:checked').text().trim());
-            }
-        }
-
-        $(function() {
-            const $option_card_contents = $('.ee-quizz-options .card .card-content');
-            const $option_card_icons = $('.ee-quizz-options .card .card-header .icon .fas');
-            const $radio_and_checkboxes = $option_card_contents.find('input[type=radio], input[type=checkbox]');
-            const $selects = $option_card_contents.find('select');
-
-            $option_card_contents.hide();
-
-            /* Accordion toggles */
-
-            $('.card-header').on('click', function()
-            {
-                let $card_content = $(this).parent('.card').find('.card-content');
-                let $card_icon = $(this).find('.fas');
-
-                if ($card_content.is(':visible'))
-                {
-                    $card_content.slideUp('fast');
-                    $card_icon.removeClass('fa-angle-up').addClass('fa-angle-down');
-                }
-                else
-                {
-                    $option_card_contents.slideUp('fast');
-                    $option_card_icons.removeClass('fa-angle-up').addClass('fa-angle-down');
-
-                    $card_content.slideDown('fast');
-                    $card_icon.removeClass('fa-angle-down').addClass('fa-angle-up');
-                }
-
-                return false;
-            });
-
-            /* Cards summaries */
-
-            // We force-update for each one at load time to handle cases
-            // were the browser stores in cache old values (e.g. if the page
-            // is refreshed), to be sure it always reflect the real values.
-            $radio_and_checkboxes.each(update_radio_checkbox_card_summary);
-            $selects.each(update_select_card_summary);
-
-            // Then, of course, we update the summaries when the values change.
-            $radio_and_checkboxes.on('change', update_radio_checkbox_card_summary);
-            $selects.on('change', update_select_card_summary);
-        });
-    </script>
-{% endblock %}
-
 {% block css %}
-    <style type="text/css">
-        #id_how_many {
-            width: 6rem;
-            text-align: center;
-        }
-
-        #id_tags ul ul {
-            margin-left: 2rem;
-        }
-
-        .ee-quizz-options {
-            margin: auto auto 24px;
-            width: 38%;
-        }
-
-        .ee-quizz-options .card:not(:last-child) {
-            margin-bottom: 1rem;
-        }
-
-        .ee-quizz-options .card .card-header {
-            cursor: pointer;
-        }
-
-        .ee-quizz-options .card .card-header .icon {
-            transition: color .2s ease-in-out;
-        }
-        .ee-quizz-options .card .card-header:hover .icon {
-            color: rgb(21, 21, 21);
-        }
-
-        .ee-quizz-options .card .card-content:not(.card-tags) ul {
-            display: flex;
-            flex-direction: row;
-            align-content: center;
-        }
-        .ee-quizz-options .card .card-content ul li {
-            flex: 1;
-        }
-
-        .ee-quizz-options .card .card-content.card-tags {
-            text-align: left;
-        }
-
-        .ee-quizz-options .card .card-content .select,
-        .ee-quizz-options .card .card-content .select select {
-            width: 100%;
-        }
-
-        .login-invitation {
-            margin: 72px auto 0;
-            width: 48%;
-        }
-
-        @media screen and (max-width:768px) {
-            .hero-body {
-                padding-left: 0;
-                padding-right: 0;
-            }
-            .ee-quizz-options {
-                width: 100%;
-            }
-            .login-invitation {
-                width: 100%;
-                text-align: center;
-                border-radius: 0;
-            }
-        }
-    </style>
+    <!-- Only used for the « login » button -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:500&text={% trans "Login" %}" rel="stylesheet" />
 {% endblock %}

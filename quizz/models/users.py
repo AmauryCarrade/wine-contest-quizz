@@ -1,4 +1,5 @@
 import requests
+from django.core.cache import cache
 from django.core.files import File
 from django.dispatch import receiver
 
@@ -55,6 +56,12 @@ def create_profile_for_new_users(sender, instance, created, **kwargs):
     if profile is None:
         profile = Profile(user=instance)
         profile.save()
+
+
+@receiver(models.signals.post_save, sender=User)
+def clear_overview_cache_when_user_is_created(sender, instance, created, **kwargs):
+    if created:
+        cache.delete("overview-statistics")
 
 
 def save_profile_picture(backend, user, response, *args, **kwargs):

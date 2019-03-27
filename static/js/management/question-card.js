@@ -1,4 +1,8 @@
-$(function()
+'use strict';
+
+import jQuery from "jquery";
+
+jQuery(function($)
 {
     $('.is-overflowing-tags-toggler').on('click', function (e)
     {

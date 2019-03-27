@@ -1,0 +1,63 @@
+{
+  "name": "ehl-oenology-quizz",
+  "version": "1.0.0",
+  "description": "A training tool initially made for oenology but not specific",
+  "main": "web/js/index.js",
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "webpack-server": "webpack-dev-server -d --hot --port 8080 --config webpack.config.js --watch",
+    "webpack-server-remote": "webpack-dev-server -d --hot --port 8080 --host 0.0.0.0 --config webpack.config.js --watch",
+    "prod": "NODE_ENV=production webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AmauryCarrade/wine-contest-quizz.git"
+  },
+  "keywords": [
+    "quizz",
+    "training",
+    "questions",
+    "auto-correction",
+    "contests"
+  ],
+  "contributors": [
+    "Amaury Carrade (https://amaury.carrade.eu)"
+  ],
+  "license": "CECILL-B",
+  "bugs": {
+    "url": "https://github.com/AmauryCarrade/wine-contest-quizz/issues"
+  },
+  "homepage": "https://github.com/AmauryCarrade/wine-contest-quizz#readme",
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "Firefox ESR"
+  ],
+  "dependencies": {
+    "bulma": "^0.7.4",
+    "bulma-steps": "^2.2.1",
+    "bulma-tooltip": "^2.0.2",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.3.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^8.4.1",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "css-loader": "^2.1.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^1.1.11",
+    "node-sass": "^4.9.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss-loader": "^2.1.5",
+    "sass-loader": "^6.0.7",
+    "style-loader": "^0.20.3",
+    "webpack": "^4.8.1",
+    "webpack-bundle-tracker": "^0.4.2-beta",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.1.4"
+  }
+}

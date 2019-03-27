@@ -452,7 +452,7 @@ class UndoImportView(LoginRequiredMixin, PermissionRequiredMixin, View):
             % {"count": count},
         )
 
-        return HttpResponseRedirect(reverse_lazy("quizz:management:import"))
+        return HttpResponseRedirect(reverse_lazy("quizz:management:questions-import"))
 
 
 class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
@@ -716,9 +716,11 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                 "and_after" in self.request.POST
                 and self.request.POST["and_after"] == "ANOTHER"
             ):
-                return HttpResponseRedirect(reverse_lazy("quizz:management:create"))
+                return HttpResponseRedirect(
+                    reverse_lazy("quizz:management:questions-create")
+                )
             else:
-                return HttpResponseRedirect(reverse_lazy("quizz:management:list"))
+                return HttpResponseRedirect(reverse_lazy("quizz:management:questions"))
 
         else:
             return self.form_invalid(
@@ -735,7 +737,6 @@ class QuestionDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
     permission_required = "quizz.delete_question"
 
     model = Question
-    success_url = reverse_lazy("quizz:management:list")
 
     def delete(self, *args, **kwargs):
         question: Question = self.get_object()
@@ -748,7 +749,7 @@ class QuestionDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
             % {"question": question.question},
         )
 
-        return HttpResponseRedirect(self.get_success_url())
+        return HttpResponseRedirect(reverse_lazy("quizz:management:questions"))
 
 
 class MigrateTagsView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
@@ -796,12 +797,12 @@ class MigrateTagsView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     "question was moved to the tag %(new_tag)s.",
                     "The tag %(old_tag)s was deleted, and %(questions_count)d "
                     "questions were moved to the tag %(new_tag)s.",
-                    count
+                    count,
                 )
                 % {
                     "old_tag": old_tag.name,
                     "new_tag": target_tag.name,
-                    "questions_count": count
+                    "questions_count": count,
                 },
             )
         else:
@@ -810,12 +811,9 @@ class MigrateTagsView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                 ngettext_lazy(
                     "%(questions_count)d question was moved to the tag %(new_tag)s.",
                     "%(questions_count)d questions were moved to the tag %(new_tag)s.",
-                    count
+                    count,
                 )
-                % {
-                    "new_tag": target_tag.name,
-                    "questions_count": count
-                },
+                % {"new_tag": target_tag.name, "questions_count": count},
             )
 
         return HttpResponseRedirect(self.get_success_url())

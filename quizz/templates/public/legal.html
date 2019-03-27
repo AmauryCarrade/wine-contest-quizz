@@ -2,6 +2,8 @@
 
 {% load i18n %}
 
+{% block body-id %}page-legal{% endblock %}
+
 {% block head-title %}
     {% trans "Legal Notice and Privacy Policy" %}
 {% endblock %}
@@ -206,19 +208,4 @@
             </div>
         </article>
     </section>
-{% endblock %}
-
-{% block css %}
-    <style>
-        article.container .content * {
-            text-align: justify;
-        }
-        @media screen and (min-width:768px) {
-            article.container {
-                width: 50%;
-                margin-right: auto;
-                margin-left: auto;
-            }
-        }
-    </style>
 {% endblock %}

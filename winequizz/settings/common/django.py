@@ -11,6 +11,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "webpack_loader",
     "social_django",
     "mptt",
     "mathfilters",
@@ -44,6 +45,7 @@ TEMPLATES = [
                 "social_django.context_processors.backends",
                 "social_django.context_processors.login_redirect",
                 "quizz.context_processors.ongoing_quizzes",
+                "quizz.context_processors.overview_statistics",
             ]
         },
     }
@@ -58,6 +60,12 @@ WSGI_APPLICATION = "winequizz.wsgi.application"
 DATABASES = {
     "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
 }
+
+
+# Cache
+# https://docs.djangoproject.com/en/2.1/topics/cache/
+
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 
 
 # Password validation
@@ -95,3 +103,14 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_ROOT = BASE_DIR / "user-generated-content"
 MEDIA_URL = "/user-generated-content/"
+
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": False,
+        "BUNDLE_DIR_NAME": "static/compiled/",  # must end with slash
+        "STATS_FILE": BASE_DIR / "webpack-stats.json",
+        "POLL_INTERVAL": 0.1,
+        "TIMEOUT": None,
+        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
+    }
+}

@@ -1,0 +1,37 @@
+#quizz-question {
+  .hero .box .title, .hero .box .subtitle {
+    color: #4a4a4a;
+  }
+
+  @include widescreen {
+    .box, .question-box-footer {
+      width: 72%;
+      margin: auto;
+    }
+  }
+
+  .is-answer-form {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+
+    .answers-form {
+      flex: 2;
+      margin-bottom: 1.4rem;
+    }
+  }
+
+  figure.image img {
+    border-radius: 4px;
+  }
+
+  .is-next-button {
+    padding-left: 4rem;
+    padding-right: 4rem;
+
+    @include touch {
+      width: 100%;
+    }
+  }
+}

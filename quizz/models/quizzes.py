@@ -1,9 +1,11 @@
 import random
 import string
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
+from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -580,3 +582,11 @@ class Quizz(models.Model):
             quizz.questions.create(question=question, order=index)
 
         return quizz
+
+
+@receiver(models.signals.post_save, sender=Quizz)
+def clear_overview_cache_when_quizz_is_finished(
+    sender, instance: Quizz, created, **kwargs
+):
+    if instance.finished_at:
+        cache.delete("overview-statistics")

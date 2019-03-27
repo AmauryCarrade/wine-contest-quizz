@@ -1,0 +1,14 @@
+#quizz-report {
+  .question-correction-container {
+    width: 70%;
+    margin: auto;
+
+    &:not(:last-child) {
+      margin-bottom: 2rem;
+    }
+
+    @include touch {
+      width: 100%;
+    }
+  }
+}

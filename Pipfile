@@ -18,6 +18,8 @@ unidecode = "*"
 toml = "*"
 social-auth-app-django = "*"
 requests = "*"
+django-webpack-loader = "*"
+si-prefix = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

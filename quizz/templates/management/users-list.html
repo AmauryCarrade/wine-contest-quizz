@@ -83,7 +83,7 @@
                     </div>
                     <div class="column is-4 has-text-right has-text-centered-mobile">
                         {% if perms.quizz.view_quizz %}
-                            <a href="{% url "quizz:management:user-quizzes" app_user.username %}" class="button is-primary{% if app_user.quizzes_count == 0 %} tooltip is-tooltip-bottom{% endif %}" {% if app_user.quizzes_count == 0 %}disabled data-tooltip="{% trans "This user answered no quizzes." %}"{% endif %}>
+                            <a href="{% url "quizz:management:users-quizzes" app_user.username %}" class="button is-primary{% if app_user.quizzes_count == 0 %} tooltip is-tooltip-bottom{% endif %}" {% if app_user.quizzes_count == 0 %}disabled data-tooltip="{% trans "This user answered no quizzes." %}"{% endif %}>
                                 <span class="icon">
                                     <span class="fas fa-file-signature"></span>
                                 </span>
@@ -108,8 +108,4 @@
     <section class="section">
         {% include "pagination.html" with page_obj=page_obj request=request only %}
     </section>
-{% endblock %}
-
-{% block css %}
-    <link rel="stylesheet" href="{% static "css/bulma-tooltip.min.css" %}">
 {% endblock %}

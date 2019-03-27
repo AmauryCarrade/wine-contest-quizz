@@ -117,7 +117,7 @@
     <footer class="card-footer">
         <a href="{% url "quizz:quizz" slug=quizz.slug %}" class="card-footer-item has-text-centered-mobile">{% trans "Report" %}</a>
         {% if management and quizz.user != quizzes_user %}
-            <a href="{% url "quizz:management:user-quizzes" username=quizz.user.username %}" class="card-footer-item has-text-centered-mobile">
+            <a href="{% url "quizz:management:users-quizzes" username=quizz.user.username %}" class="card-footer-item has-text-centered-mobile">
                 {% blocktrans with name=quizz.user.get_full_name %}
                     {{ name }}'s quizzes
                 {% endblocktrans %}

@@ -205,6 +205,4 @@ class UserQuizzesListView(LoginRequiredMixin, QuizzesListMixin):
 
 class LegalView(TemplateView):
     template_name = "public/legal.html"
-    extra_context = {
-        "now": timezone.now()
-    }
+    extra_context = {"now": timezone.now()}

@@ -1,0 +1,195 @@
+.navbar-item.is-mega {
+  position: static;
+
+  .is-mega-menu-title {
+    margin-bottom: .75rem;
+    padding: .375rem 1rem;
+
+    color: $title-color;
+
+    @include touch {
+      color: $white;
+    }
+  }
+
+  .navbar-dropdown {
+    overflow: hidden;
+
+    .container.is-fluid {
+      margin-left: .75rem;
+      margin-right: .75rem;
+
+      & + hr.navbar-divider {
+        margin-top: 0;
+      }
+    }
+
+    .columns {
+      margin-bottom: 0;
+
+      .column {
+        &:not(:first-child) {
+          border-left: solid 1px $grey-lighter;
+
+          @include touch {
+            border-left: none;
+          }
+        }
+
+        .navbar-item {
+          border-radius: 4px;
+
+          &, .title, .help, .icon, .icon .fas {
+            transition: background-color .2s ease-in-out, color .2s ease-in-out;
+
+            @include touch {
+              color: $white;
+            }
+          }
+
+          &:hover {
+            background-color: lighten($primary, 8%);
+          }
+
+          &:hover, &:hover .title, &:hover .help {
+            color: white;
+          }
+
+          &.has-icon > * {
+            position: relative;
+            left: -1rem;
+          }
+
+          > span:not(.icon) {
+            overflow: hidden;
+          }
+
+          .title {
+            font-size: $size-6;
+            font-family: $family-primary;
+            font-weight: bold;
+
+            color: $grey-dark;
+
+            @include touch {
+              color: $white;
+            }
+
+            strong {
+              font-weight: bold;
+            }
+
+            margin-bottom: 0;
+          }
+
+          .help {
+            margin: 0;
+
+            font-size: $size-6;
+            font-weight: normal;
+
+            color: $grey;
+
+            @include touch {
+              display: none;
+            }
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          &.is-overview-number {
+            position: relative;
+            left: -1.6rem;
+
+            padding-right: 1rem;
+
+            &:hover {
+              background: none;
+
+              p.navbar-content {
+                > span.number, > span.number span, > span:not(.number) span.title {
+                  color: $grey-darker;
+
+                  @include touch {
+                    color: $white;
+                  }
+                }
+                > span:not(.number) span.help {
+                  color: $grey;
+
+                  @include touch {
+                    color: $white;
+                  }
+                }
+              }
+            }
+
+            &:first-of-type {
+              padding-top: 0;
+            }
+
+            p.navbar-content {
+              display: flex;
+              align-items: center;
+
+              > span.number {
+                display: inline-block;
+
+                margin-right: 0;
+
+                font-family: $family-serif;
+                font-size: $size-2;
+
+                background: none;
+                color: $grey-darker;
+
+                @include touch {
+                  font-size: $size-4;
+                  color: $white;
+
+                  &:hover {
+                    color: $white;
+                  }
+                }
+              }
+
+              > span:not(.number) {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                width: 100%;
+
+                span.title {
+                  font-size: $size-4;
+                  color: $grey-darker;
+
+                  @include touch {
+                    font-size: $size-5;
+                    color: $white;
+
+                    &:hover {
+                      color: $white;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        hr {
+          margin-left: auto;
+          margin-right: auto;
+
+          width: 90%;
+          height: 1px;
+
+          @include touch {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

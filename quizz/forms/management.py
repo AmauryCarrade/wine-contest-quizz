@@ -288,26 +288,27 @@ class ImportQuestionsForm(forms.Form):
 class MigrateTagsForm(forms.Form):
     old_tag = TreeNodeChoiceField(
         queryset=Tag.objects.all(),
-        label=_("Old tag"),
+        label=_("Old category"),
         help_text=_(
-            "All questions associated to this tag will be migrated to " "the new one."
+            "All questions associated to this category will be migrated to "
+            "the new one."
         ),
     )
 
     new_tag = TreeNodeChoiceField(
         queryset=Tag.objects.all(),
-        label=_("Target tag"),
+        label=_("Target category"),
         help_text=_(
-            "All questions will be moved to this tag (if not already "
+            "All questions will be moved to this category (if not already "
             "attached to it)."
         ),
     )
 
     delete_old_tag = forms.BooleanField(
-        label=_("Delete the old tag?"),
+        label=_("Delete the old category?"),
         help_text=_(
-            "If checked, the old tag will be deleted. Else, kept but without "
-            "any question left attached."
+            "If checked, the old category will be deleted. Else, kept but "
+            "without any question left attached."
         ),
         required=False,
         initial=True,

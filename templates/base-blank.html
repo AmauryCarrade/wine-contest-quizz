@@ -2,6 +2,8 @@
 
 {% load i18n %}
 {% load static %}
+{% load render_bundle from webpack_loader %}
+
 {% get_current_language as current_language %}
 
 <html lang="{{ current_language }}">
@@ -11,58 +13,24 @@
 
         <title>{% block head-title %}{% endblock %}</title>
 
-        <!-- TODO replace with local minified CSS -->
-        <link rel="stylesheet" href="{% static "css/bulma.min.css" %}" />
+        <!-- TODO Host fonts locally -->
+        <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700&amp;subset=latin-ext" rel="stylesheet" §>
+
+        {% render_bundle "ehl-oenology-quizz" "css" %}
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
 
         {% block css %}{% endblock %}
     </head>
 
-    <body>
+    <body id="{% block body-id %}{% endblock %}">
         {% block main %}{% endblock %}
 
-        <script src="{% static "js/jquery.min.js" %}"
-			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-			  crossorigin="anonymous"></script>
-
+        {# The Django catalog must be loaded first #}
         <script type="text/javascript" src="{% url "javascript-catalog" %}"></script>
 
-        <script type="text/javascript">
-            /**
-             * Updates each file input field to be interactive, displaying their file name when a file is selected.
-             */
-            $(function()
-            {
-                $('label.file-label').each(function()
-                {
-                    let $this = $(this);
-                    $this.wrap('<div class="file has-name" />')
-                        .append('<div class="file-name">Ø</div>')
-                        .attr("title", gettext("Nothing selected yet. Click to choose a file."));
-
-                    let file_name = $this.find(".file-name");
-                    $this.find("input[type=file]").on('change', function()
-                    {
-                        file_name.text(this.files[0].name);
-                        $this.attr("title", interpolate(gettext("You selected “%s”. Click again to select another file."), [this.files[0].name]));
-                    });
-                });
-            });
-
-            /**
-             * Opens or closes the menu when the burger is clicked, for mobile devices.
-             */
-            $('.navbar-burger').on('click', function()
-            {
-                // Get the target from the "data-target" attribute
-                const target = $(this).data('target');
-                const $target = $('#' + target);
-
-                // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-                $(this).toggleClass('is-active');
-                $target.toggleClass('is-active');
-            });
-        </script>
+        {# Then only we render our own JS bundle #}
+        {% render_bundle 'vendor' 'js' 'DEFAULT' attrs='async'%}
+        {% render_bundle 'ehl-oenology-quizz' 'js' 'DEFAULT' attrs='async'%}
 
         {% block js %}{% endblock %}
     </body>

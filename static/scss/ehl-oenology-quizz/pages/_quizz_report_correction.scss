@@ -1,0 +1,50 @@
+.card.question-correction {
+  .open-answer-correction-block {
+    border-radius: 4px;
+
+    &.is-perfect {
+      background-color: rgba($success, .3);
+    }
+
+    &.is-almost {
+      background-color: rgba($warning, .3);
+    }
+
+    &.is-failed {
+      background-color: rgba($danger, .3);
+    }
+  }
+
+  .card-header {
+    cursor: pointer;
+
+    &:hover .card-header-icon .icon {
+      color: #363636;
+    }
+
+    .card-header-icon .tag {
+      margin-right: .4rem;
+    }
+  }
+
+  .is-static-checkbox {
+    border-radius: 4px;
+  }
+
+  .has-text-stroked {
+    text-decoration: line-through;
+  }
+
+  .is-icon-answer-comment {
+    margin-right: .8rem;
+    color: #444;
+  }
+
+  .card-content.is-answer-comment {
+    box-shadow: 0 -1px 1px rgba(10, 10, 10, .1);
+  }
+
+  figure.image img {
+    border-radius: 4px;
+  }
+}

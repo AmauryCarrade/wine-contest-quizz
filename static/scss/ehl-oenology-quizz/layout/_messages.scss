@@ -1,0 +1,11 @@
+.message {
+  .message-body {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    span {
+      flex: 2;
+    }
+  }
+}

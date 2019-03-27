@@ -1,0 +1,29 @@
+#page-legal {
+  article.container {
+    .content {
+      * {
+        text-align: justify;
+      }
+
+      address {
+        margin: .75rem;
+        padding-left: .75rem;
+
+        border-left: $grey-lighter solid 2px;
+        border-radius: 4px;
+
+        font-style: normal;
+      }
+
+      dd {
+        margin-bottom: .75rem;
+      }
+    }
+
+    @include desktop {
+      width: 50%;
+      margin-right: auto;
+      margin-left: auto;
+    }
+  }
+}

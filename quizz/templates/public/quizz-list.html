@@ -3,6 +3,8 @@
 {% load i18n %}
 {% load static %}
 
+{% block body-id %}quizz-list{% endblock %}
+
 {% block head-title %}{% spaceless %}
     {% if management %}
         {% if quizzes_user %}
@@ -127,11 +129,3 @@
     </section>
 {% endblock %}
 
-{% block css %}
-    <link rel="stylesheet" href="{% static "css/bulma-tooltip.min.css" %}" />
-    <style type="text/css">
-        .media-content {
-            overflow: hidden;
-        }
-    </style>
-{% endblock %}

@@ -31,13 +31,13 @@
 
         <div class="columns is-vcentered">
             <div class="column is-5 has-text-right">
-                <a href="{% url "quizz:management:list" %}" class="button is-success is-medium">
+                <a href="{% url "quizz:management:questions" %}" class="button is-success is-medium">
                     {% trans "Keep that, everything is good" %}
                 </a>
             </div>
             <div class="column is-2 has-text-centered">{% trans "or" %}</div>
             <div class="column is-5 has-text-left">
-                <form action="{% url "quizz:management:undo-import" %}" method="post">
+                <form action="{% url "quizz:management:questions-undo-import" %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="pks" value="{{ created_questions_pks }}" />
                     <input type="submit" value="{% trans "undo" %}" class="button is-text is-medium" />
@@ -61,13 +61,13 @@
     <section class="section">
         <div class="columns is-vcentered">
             <div class="column is-5 has-text-right">
-                <a href="{% url "quizz:management:list" %}" class="button is-success is-medium">
+                <a href="{% url "quizz:management:questions" %}" class="button is-success is-medium">
                     {% trans "Keep that, everything is good" %}
                 </a>
             </div>
             <div class="column is-2 has-text-centered">{% trans "or" %}</div>
             <div class="column is-5 has-text-left">
-                <form action="{% url "quizz:management:undo-import" %}" method="post">
+                <form action="{% url "quizz:management:questions-undo-import" %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="pks" value="{{ created_questions_pks }}" />
                     <input type="submit" value="{% trans "undo" %}" class="button is-text is-medium" />
@@ -151,13 +151,13 @@
     <section class="section">
         <div class="columns is-vcentered">
             <div class="column is-5 has-text-right">
-                <a href="{% url "quizz:management:list" %}" class="button is-success is-medium">
+                <a href="{% url "quizz:management:questions" %}" class="button is-success is-medium">
                     {% trans "Keep that, everything is good" %}
                 </a>
             </div>
             <div class="column is-2 has-text-centered">{% trans "or" %}</div>
             <div class="column is-5 has-text-left">
-                <form action="{% url "quizz:management:undo-import" %}" method="post">
+                <form action="{% url "quizz:management:questions-undo-import" %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="pks" value="{{ created_questions_pks }}" />
                     <input type="submit" value="{% trans "undo" %}" class="button is-text is-medium" />
@@ -165,11 +165,4 @@
             </div>
         </div>
     </section>
-{% endblock %}
-
-
-{% block js %}
-    <script type="text/javascript">
-        {% include "snippets/question-card.js" %}
-    </script>
 {% endblock %}
