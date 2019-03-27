@@ -353,8 +353,10 @@ class QuestionsImportView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
                             # The tag is created as a root node. It can be moved afterward.
                             tag_obj = Tag(name=tag, parent=None)
                             tag_obj.save()
-                        question_tags.append(tag_obj)
-                        tags[tag.lower()] = tag_obj
+
+                        if tag_obj:
+                            question_tags.append(tag_obj)
+                            tags[tag.lower()] = tag_obj
 
             # Actual question creation
             if question_type == QUESTION_OPEN:
