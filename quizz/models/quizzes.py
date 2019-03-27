@@ -248,20 +248,33 @@ class QuizzQuestion(models.Model):
 
             if self.question.has_open_choice:
                 open_answer_count = 1
-
-                distance = gentle_levenshtein_distance(
-                    self.question.open_valid_answer,
+                open_answer = (
                     form.cleaned_data["other_answer"]
                     if "other_answer" in form.cleaned_data
-                    else None,
+                    else None
                 )
 
-                if distance == 0:
-                    open_answer_points = 1.0
-                elif distance < 4:
-                    open_answer_points = 0.5
+                # If the open answer should be left blank and the user entered
+                # something, we don't consider this as an almost-good answer
+                # with less than 4 characters (that what the distance would
+                # yield). Instead, the answer is immediately considered wrong.
+                if not self.question.open_valid_answer.strip() and open_answer.strip():
+                    open_answer_points = 0
+
                 else:
-                    open_answer_points = 0.0
+                    distance = gentle_levenshtein_distance(
+                        self.question.open_valid_answer, open_answer
+                    )
+
+                    if distance == 0:
+                        open_answer_points = 1.0
+                    elif distance < 4:
+                        open_answer_points = 0.5
+                    else:
+                        open_answer_points = 0.0
+
+                if open_answer:
+                    self.open_answer = open_answer
 
             for answer in answers:
                 user_checked = str(answer.pk) in form.cleaned_data["answers"]
@@ -276,26 +289,43 @@ class QuizzQuestion(models.Model):
                 user_answer.save()
                 user_answers.append(user_answer)
 
-            self.points = max(
-                self.question.difficulty
-                * (
-                    float(
-                        correct_user_answers
-                        - wrong_user_answers_checked
-                        + open_answer_points
-                    )
-                    / float(correct_answers + open_answer_count)
-                ),
-                0,
-            )
-
-            if correct_user_answers == correct_answers and (
-                open_answer_count == 0 or open_answer_points > 0.99
+            # For questions with answers, we calculate normally the points.
+            # For questions without any valid checked answer, we give all
+            # the points if the question is left blank, and none else.
+            if correct_answers > 0:
+                self.points = max(
+                    self.question.difficulty
+                    * (
+                        float(
+                            correct_user_answers
+                            - wrong_user_answers_checked
+                            + open_answer_points
+                        )
+                        / float(correct_answers + open_answer_count)
+                    ),
+                    0,
+                )
+            elif (
+                correct_user_answers == 0
+                and wrong_user_answers_checked == 0
+                and (open_answer_count == 0 or open_answer_points > 0.99)
             ):
+                self.points = self.question.difficulty
+            else:
+                self.points = 0
+
+            if (
+                (0 < correct_answers == correct_user_answers)
+                or wrong_user_answers_checked == 0
+            ) and (open_answer_count == 0 or open_answer_points > 0.99):
                 self.success = QuestionSuccess.PERFECT.value
             elif (
                 correct_user_answers == correct_answers - 1 and correct_user_answers > 1
-            ) or (open_answer_count == 1 and open_answer_points > 0.49):
+            ) or (
+                open_answer_count == 1
+                and open_answer_points > 0.49
+                and self.open_answer
+            ):
                 self.success = QuestionSuccess.ALMOST.value
             else:
                 self.success = QuestionSuccess.FAILED.value
@@ -563,9 +593,18 @@ class Quizz(models.Model):
 
                 questions_weights.insert(index, weight)
 
-            selected_questions = random.choices(
-                questions, questions_weights, k=questions_count
-            )
+            # To avoid duplicated questions, we select questions one after
+            # another, removing them each time from the list, because
+            # random.choices selects randomly with duplicates.
+            selected_questions = []
+            for i in range(questions_count):
+                selected_question = random.choices(questions, questions_weights, k=1)[0]
+                index = questions.index(selected_question)
+
+                del questions[index]
+                del questions_weights[index]
+
+                selected_questions.append(selected_question)
 
         # We will select all questions anyway, as we want as many as we have.
         else:
