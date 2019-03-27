@@ -287,6 +287,7 @@ class QuestionsImportView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
                 for answer in raw_question["proposed_answers"]:
                     if answer.lower() in [
                         "other:",
+                        "other :",
                         "autre:",
                         "autre :",  # space [SP]
                         "autre :",  # no-break space [NBSP]
@@ -301,7 +302,7 @@ class QuestionsImportView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
                         answers.append(
                             {
                                 "answer": answer.strip(),
-                                "is_correct": answer.lower() in normalized_answers,
+                                "is_correct": answer.lower().strip() in normalized_answers,
                             }
                         )
 
@@ -314,7 +315,7 @@ class QuestionsImportView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
                 other_answers = [
                     answer
                     for answer in raw_question["answers"]
-                    if answer.lower() not in normalized_proposed_answers
+                    if answer.lower().strip() not in normalized_proposed_answers
                 ]
                 if has_open_choice:
                     open_choice = "\n".join(other_answers)
