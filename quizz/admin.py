@@ -27,7 +27,7 @@ class TagsInline(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [TagsInline]
     exclude = ("tags",)
-    readonly_fields = ("type", "creator", "editors", "imported")
+    readonly_fields = ("type", "creator", "created_at", "editors", "updated_at", "imported")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

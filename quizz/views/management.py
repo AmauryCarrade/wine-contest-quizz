@@ -90,7 +90,11 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         elif sort_by == "type":
             questions = questions.order_by(rev + "type")
         elif sort_by == "locale":
-            questions = questions.order_by(rev + "locale")
+            questions = questions.order_by(rev + "locale__name")
+        elif sort_by == "created":
+            questions = questions.order_by(F("created_at").asc(nulls_last=True, descending=not sort_reversed))
+        elif sort_by == "updated":
+            questions = questions.order_by(F("updated_at").asc(nulls_last=True, descending=not sort_reversed))
         elif sort_by == "answered":
             questions = questions.order_by(
                 ("" if sort_reversed else "-") + "user_answers_count"

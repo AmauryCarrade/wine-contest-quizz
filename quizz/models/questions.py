@@ -212,6 +212,18 @@ class Question(models.Model):
         User, verbose_name=_("Editors"), editable=False, related_name="questions_edited"
     )
 
+    """The question's creation date"""
+    created_at = models.DateTimeField(
+        _("Created at"),
+        auto_now_add=True
+    )
+
+    """The question's update date"""
+    updated_at = models.DateTimeField(
+        _("Last updated at"),
+        auto_now=True
+    )
+
     """True if this question was imported."""
     imported = models.BooleanField(
         verbose_name=_("Was this question imported?"), editable=False, default=False

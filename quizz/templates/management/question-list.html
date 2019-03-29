@@ -51,6 +51,18 @@
                                             {% trans "Sorting by <strong>illustration</strong>" %}
                                         {% elif sort_by == "illustration" and sort_reversed %}
                                             {% trans "Sorting by <strong>illustration</strong> (without first)" %}
+                                        {% elif sort_by == "locale" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>language</strong>" %}
+                                        {% elif sort_by == "locale" and sort_reversed %}
+                                            {% trans "Sorting by <strong>language</strong> (Z → A)" %}
+                                        {% elif sort_by == "created" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>creation date</strong> (newest first)" %}
+                                        {% elif sort_by == "created" and sort_reversed %}
+                                            {% trans "Sorting by <strong>creation date</strong> (oldest first)" %}
+                                        {% elif sort_by == "updated" and not sort_reversed %}
+                                            {% trans "Sorting by <strong>recently updated</strong>" %}
+                                        {% elif sort_by == "updated" and sort_reversed %}
+                                            {% trans "Sorting by <strong>least recently updated</strong>" %}
                                         {% elif sort_by == "answered" and not sort_reversed %}
                                             {% trans "Sorting by <strong>most answered</strong>" %}
                                         {% elif sort_by == "answered" and sort_reversed %}
@@ -71,7 +83,9 @@
                                     <div class="dropdown-item has-text-weight-bold">
                                         {% trans "Sort by…" %}
                                     </div>
+
                                     <hr class="dropdown-divider" />
+
                                     <a href="?sort={% if sort_by == "name" and not sort_reversed %}-{% endif %}name" class="dropdown-item{% if sort_by == "name" %} is-active{% endif %}">
                                         <span class="icon">
                                             {% if sort_by == "name" %}<span class="fas fa-check"></span>{% endif %}
@@ -90,13 +104,21 @@
                                         </span>
                                         {% trans "Source" %}
                                     </a>
+                                    <a href="?sort={% if sort_by == "locale" and not sort_reversed %}-{% endif %}locale" class="dropdown-item{% if sort_by == "locale" %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "locale" %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Language" %}
+                                    </a>
                                     <a href="?sort={% if sort_by == "illustration" and not sort_reversed %}-{% endif %}illustration" class="dropdown-item{% if sort_by == "illustration" %} is-active{% endif %}">
                                         <span class="icon">
                                             {% if sort_by == "illustration" %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Illustration" %}
                                     </a>
+
                                     <hr class="dropdown-divider" />
+
                                     <a href="?sort=answered" class="dropdown-item{% if sort_by == "answered" and not sort_reversed %} is-active{% endif %}">
                                         <span class="icon">
                                             {% if sort_by == "answered" and not sort_reversed %}<span class="fas fa-check"></span>{% endif %}
@@ -120,6 +142,21 @@
                                             {% if sort_by == "success-rate" and sort_reversed %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Worst success rate" %}
+                                    </a>
+
+                                    <hr class="dropdown-divider" />
+
+                                    <a href="?sort={% if sort_by == "created" and not sort_reversed %}-{% endif %}created" class="dropdown-item{% if sort_by == "created" %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "created" %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Created" %}
+                                    </a>
+                                    <a href="?sort={% if sort_by == "updated" and not sort_reversed %}-{% endif %}updated" class="dropdown-item{% if sort_by == "updated" %} is-active{% endif %}">
+                                        <span class="icon">
+                                            {% if sort_by == "updated" %}<span class="fas fa-check"></span>{% endif %}
+                                        </span>
+                                        {% trans "Updated" %}
                                     </a>
                                 </div>
                             </div>
