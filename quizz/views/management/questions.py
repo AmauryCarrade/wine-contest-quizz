@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, FormView, DeleteView
+from urllib.parse import urlencode
 
 from quizz.forms.management import (
     ManageQuizzQuestionForm,
@@ -41,7 +42,7 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
                 # to be able to use the paginator the same way to
                 # get the questions count (else the paginator is not
                 # available at all).
-                return 2**31 - 1
+                return 2 ** 31 - 1
             else:
                 try:
                     return int(self.request.GET["batch"])
@@ -57,8 +58,12 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         context["search"] = self.search
 
         context["batch"] = self.get_paginate_by(None)
-        if context["batch"] == 2**31 - 1:
+        if context["batch"] == 2 ** 31 - 1:
             context["batch"] = "all"
+
+        # We store the filtering state in the session to be able to go back to
+        # the same after editing
+        self.request.session["questions-list-filters"] = urlencode(self.request.GET)
 
         return context
 
@@ -388,6 +393,11 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     },
                 )
 
+            # If we create a question, we always redirect to the main unfiltered
+            # list.
+            if not is_update and "questions-list-filters" in self.request.session:
+                del self.request.session["questions-list-filters"]
+
             if (
                 "and_after" in self.request.POST
                 and self.request.POST["and_after"] == "ANOTHER"
@@ -396,7 +406,15 @@ class EditQuestionView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                     reverse_lazy("quizz:management:questions-create")
                 )
             else:
-                return HttpResponseRedirect(reverse_lazy("quizz:management:questions"))
+                return HttpResponseRedirect(
+                    reverse_lazy("quizz:management:questions")
+                    + (
+                        f"?{self.request.session['questions-list-filters']}"
+                        if "questions-list-filters" in self.request.session
+                        and self.request.session["questions-list-filters"]
+                        else ""
+                    )
+                )
 
         else:
             return self.form_invalid(
