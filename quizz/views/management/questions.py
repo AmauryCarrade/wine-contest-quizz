@@ -30,15 +30,9 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         sort_reversed = sort.startswith("-")
         return sort.strip("-"), sort_reversed
 
-    def get_context_data(self, **kwargs):
-        context = super(QuestionsListView, self).get_context_data(**kwargs)
-
-        context["sort_by"] = self.sort_by[0]
-        context["sort_reversed"] = self.sort_by[1]
-
-        context["batch"] = self.get_paginate_by(None)
-
-        return context
+    @cached_property
+    def search(self):
+        return self.request.GET.get("q")
 
     def get_paginate_by(self, queryset):
         if "batch" in self.request.GET:
@@ -54,6 +48,19 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
                 except ValueError:
                     return self.paginate_by
         return self.paginate_by
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionsListView, self).get_context_data(**kwargs)
+
+        context["sort_by"] = self.sort_by[0]
+        context["sort_reversed"] = self.sort_by[1]
+        context["search"] = self.search
+
+        context["batch"] = self.get_paginate_by(None)
+        if context["batch"] == 2**31 - 1:
+            context["batch"] = "all"
+
+        return context
 
     def get_queryset(self):
         questions = (
@@ -78,6 +85,10 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             .prefetch_related("tags")
             .select_related("locale", "source")
         )
+
+        if self.search:
+            questions = questions.filter(question__icontains=self.search)
+
         sort_by, sort_reversed = self.sort_by
         rev = "-" if sort_reversed else ""
 

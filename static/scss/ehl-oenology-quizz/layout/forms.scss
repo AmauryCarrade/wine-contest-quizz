@@ -1,0 +1,7 @@
+.dropdown .dropdown-menu .dropdown-content .field {
+  min-width: 16rem;
+
+  @include mobile {
+    min-width: auto;
+  }
+}

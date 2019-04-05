@@ -31,6 +31,59 @@
                     <div class="control">
                         <div class="dropdown is-hoverable">
                             <div class="dropdown-trigger">
+                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu-search">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-search" aria-hidden="true"></i>
+                                    </span>
+                                    <span>
+                                        {% if search %}
+                                            {% blocktrans with search=search %}
+                                                Searching for <strong>{{ search }}</strong>
+                                            {% endblocktrans %}
+                                        {% else %}
+                                            {% trans "Search…" %}
+                                        {% endif %}
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu-search" role="menu">
+                                <div class="dropdown-content">
+                                    <form class="dropdown-item">
+                                        {% if sort_by != "name" or sort_reverse %}
+                                            <input type="hidden" name="sort" value="{% if sort_reverse %}-{% endif %}{{ sort_by }}" />
+                                        {% endif %}
+                                        {% if batch != 20 %}
+                                            <input type="hidden" name="batch" value="{{ batch }}" />
+                                        {% endif %}
+                                        <div class="field">
+                                            <p class="control has-icons-left">
+                                                <input class="input" type="search" name="q" value="{{ search|default:"" }}" placeholder="{% trans "Lookup for a question…" %}">
+                                                <input type="submit" class="is-sr-only" value="{% trans "Search" %}" />
+                                                <span class="icon is-small is-left">
+                                                    <span class="fas fa-search"></span>
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </form>
+                                    {% if search %}
+                                        <hr class="dropdown-divider" />
+
+                                        <a href="?{% url_replace q="" %}" class="dropdown-item">
+                                            <span class="icon">
+                                                <span class="fas fa-times"></span>
+                                            </span>
+                                            {% trans "Remove filter" %}
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <div class="control">
+                        <div class="dropdown is-hoverable">
+                            <div class="dropdown-trigger">
                                 <button class="button" aria-haspopup="true" aria-controls="dropdown-menu-per-page">
                                     <span>
                                         {% if batch|lower == 'all' %}
@@ -46,38 +99,42 @@
                                     </span>
                                 </button>
                             </div>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu" id="dropdown-menu-per-page" role="menu">
                                 <div class="dropdown-content">
                                     <div class="dropdown-item has-text-weight-bold">
                                         {% trans "In each page, display…" %}
                                     </div>
 
-                                    <hr class="dropdown-divider" />
+                                    <hr class="dropdown-divider"/>
 
-                                    <a href="?{% url_replace batch=20 %}" class="dropdown-item {% if batch == 20 %}is-active{% endif %}">
+                                    <a href="?{% url_replace batch=20 %}"
+                                       class="dropdown-item {% if batch == 20 %}is-active{% endif %}">
                                          <span class="icon">
                                             {% if batch == 20 %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "20 questions" %}
                                     </a>
 
-                                    <a href="?{% url_replace batch=40 %}" class="dropdown-item {% if batch == 40 %}is-active{% endif %}">
+                                    <a href="?{% url_replace batch=40 %}"
+                                       class="dropdown-item {% if batch == 40 %}is-active{% endif %}">
                                          <span class="icon">
                                             {% if batch == 40 %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "40 questions" %}
                                     </a>
 
-                                    <a href="?{% url_replace batch=100 %}" class="dropdown-item {% if batch == 100 %}is-active{% endif %}">
+                                    <a href="?{% url_replace batch=100 %}"
+                                       class="dropdown-item {% if batch == 100 %}is-active{% endif %}">
                                          <span class="icon">
                                             {% if batch == 100 %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "100 questions" %}
                                     </a>
 
-                                    <hr class="dropdown-divider" />
+                                    <hr class="dropdown-divider"/>
 
-                                    <a href="?{% url_replace batch="all" %}" class="dropdown-item {% if batch == "all" %}is-active{% endif %}">
+                                    <a href="?{% url_replace batch="all" %}"
+                                       class="dropdown-item {% if batch == "all" %}is-active{% endif %}">
                                          <span class="icon">
                                             {% if batch == "all" %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
@@ -143,7 +200,7 @@
                                         {% trans "Sort by…" %}
                                     </div>
 
-                                    <hr class="dropdown-divider" />
+                                    <hr class="dropdown-divider"/>
 
                                     <a href="?{% if sort_by == "name" and not sort_reversed %}{% url_replace sort="-name" %}{% else %}{% url_replace sort="name" %}{% endif %}"
                                        class="dropdown-item{% if sort_by == "name" %} is-active{% endif %}">
@@ -155,65 +212,84 @@
                                     <a href="?{% if sort_by == "difficulty" and not sort_reversed %}{% url_replace sort="-difficulty" %}{% else %}{% url_replace sort="difficulty" %}{% endif %}"
                                        class="dropdown-item{% if sort_by == "difficulty" %} is-active{% endif %}">
                                         <span class="icon">
-                                            {% if sort_by == "difficulty" %}<span class="fas fa-check"></span>{% endif %}
+                                            {% if sort_by == "difficulty" %}
+                                                <span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Difficulty" %}
                                     </a>
-                                    <a href="?{% if sort_by == "source" and not sort_reversed %}{% url_replace sort="-source" %}{% else %}{% url_replace sort="source" %}{% endif %}" class="dropdown-item{% if sort_by == "source" %} is-active{% endif %}">
+                                    <a href="?{% if sort_by == "source" and not sort_reversed %}{% url_replace sort="-source" %}{% else %}{% url_replace sort="source" %}{% endif %}"
+                                       class="dropdown-item{% if sort_by == "source" %} is-active{% endif %}">
                                         <span class="icon">
                                             {% if sort_by == "source" %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Source" %}
                                     </a>
-                                    <a href="?{% if sort_by == "locale" and not sort_reversed %}{% url_replace sort="-locale" %}{% else %}{% url_replace sort="locale" %}{% endif %}" class="dropdown-item{% if sort_by == "locale" %} is-active{% endif %}">
+                                    <a href="?{% if sort_by == "locale" and not sort_reversed %}{% url_replace sort="-locale" %}{% else %}{% url_replace sort="locale" %}{% endif %}"
+                                       class="dropdown-item{% if sort_by == "locale" %} is-active{% endif %}">
                                         <span class="icon">
                                             {% if sort_by == "locale" %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Language" %}
                                     </a>
-                                    <a href="?{% if sort_by == "illustration" and not sort_reversed %}{% url_replace sort="-illustration" %}{% else %}{% url_replace sort="illustration" %}{% endif %}" class="dropdown-item{% if sort_by == "illustration" %} is-active{% endif %}">
+                                    <a href="?{% if sort_by == "illustration" and not sort_reversed %}{% url_replace sort="-illustration" %}{% else %}{% url_replace sort="illustration" %}{% endif %}"
+                                       class="dropdown-item{% if sort_by == "illustration" %} is-active{% endif %}">
                                         <span class="icon">
-                                            {% if sort_by == "illustration" %}<span class="fas fa-check"></span>{% endif %}
+                                            {% if sort_by == "illustration" %}
+                                                <span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Illustration" %}
                                     </a>
 
-                                    <hr class="dropdown-divider" />
+                                    <hr class="dropdown-divider"/>
 
-                                    <a href="?{% url_replace sort="answered" %}" class="dropdown-item{% if sort_by == "answered" and not sort_reversed %} is-active{% endif %}">
+                                    <a href="?{% url_replace sort="answered" %}"
+                                       class="dropdown-item{% if sort_by == "answered" and not sort_reversed %} is-active{% endif %}">
                                         <span class="icon">
-                                            {% if sort_by == "answered" and not sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                            {% if sort_by == "answered" and not sort_reversed %}
+                                                <span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Most answered" %}
                                     </a>
-                                    <a href="?{% url_replace sort="-answered" %}" class="dropdown-item{% if sort_by == "answered" and sort_reversed %} is-active{% endif %}">
+                                    <a href="?{% url_replace sort="-answered" %}"
+                                       class="dropdown-item{% if sort_by == "answered" and sort_reversed %} is-active{% endif %}">
                                         <span class="icon">
-                                            {% if sort_by == "answered" and sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                            {% if sort_by == "answered" and sort_reversed %}
+                                                <span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Least answered" %}
                                     </a>
-                                    <a href="?{% url_replace sort="success-rate" %}" class="dropdown-item{% if sort_by == "success-rate" and not sort_reversed %} is-active{% endif %}">
+                                    <a href="?{% url_replace sort="success-rate" %}"
+                                       class="dropdown-item{% if sort_by == "success-rate" and not sort_reversed %} is-active{% endif %}">
                                         <span class="icon">
-                                            {% if sort_by == "success-rate" and not sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                            {% if sort_by == "success-rate" and not sort_reversed %}
+                                                <span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Best success rate" %}
                                     </a>
-                                    <a href="?{% url_replace sort="-success-rate" %}" class="dropdown-item{% if sort_by == "success-rate" and sort_reversed %} is-active{% endif %}">
+                                    <a href="?{% url_replace sort="-success-rate" %}"
+                                       class="dropdown-item{% if sort_by == "success-rate" and sort_reversed %} is-active{% endif %}">
                                         <span class="icon">
-                                            {% if sort_by == "success-rate" and sort_reversed %}<span class="fas fa-check"></span>{% endif %}
+                                            {% if sort_by == "success-rate" and sort_reversed %}
+                                                <span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Worst success rate" %}
                                     </a>
 
-                                    <hr class="dropdown-divider" />
+                                    <hr class="dropdown-divider"/>
 
-                                    <a href="?{% if sort_by == "created" and not sort_reversed %}{% url_replace sort="-created" %}{% else %}{% url_replace sort="created" %}{% endif %}" class="dropdown-item{% if sort_by == "created" %} is-active{% endif %}">
+                                    <a href="?
+
+                                            {% if sort_by == "created" and not sort_reversed %}{% url_replace sort="-created" %}{% else %}{% url_replace sort="created" %}{% endif %}"
+                                       class="dropdown-item{% if sort_by == "created" %} is-active{% endif %}">
                                         <span class="icon">
                                             {% if sort_by == "created" %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
                                         {% trans "Created" %}
                                     </a>
-                                    <a href="?{% if sort_by == "updated" and not sort_reversed %}{% url_replace sort="-updated" %}{% else %}{% url_replace sort="updated" %}{% endif %}" class="dropdown-item{% if sort_by == "updated" %} is-active{% endif %}">
+                                    <a href="?
+
+                                            {% if sort_by == "updated" and not sort_reversed %}{% url_replace sort="-updated" %}{% else %}{% url_replace sort="updated" %}{% endif %}"
+                                       class="dropdown-item{% if sort_by == "updated" %} is-active{% endif %}">
                                         <span class="icon">
                                             {% if sort_by == "updated" %}<span class="fas fa-check"></span>{% endif %}
                                         </span>
@@ -227,19 +303,11 @@
 
                 {% if perms.quizz.add_question %}
                     <p class="level-item">
-                        <a href="{% url "quizz:management:questions-create" %}" class="button is-success">
+                        <a href="{% url "quizz:management:questions-create" %}" class="button is-primary">
                             <span class="icon">
                                 <span class="fas fa-plus"></span>
                             </span>
                             <span>{% trans "Create a new question" %}</span>
-                        </a>
-                    </p>
-                    <p class="level-item">
-                        <a href="{% url "quizz:management:questions-import" %}" class="button is-info">
-                            <span class="icon">
-                                <span class="fas fa-file-import"></span>
-                            </span>
-                            <span>{% trans "Import" %}</span>
                         </a>
                     </p>
                 {% endif %}
