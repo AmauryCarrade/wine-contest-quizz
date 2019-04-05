@@ -36,7 +36,24 @@ class QuestionsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         context["sort_by"] = self.sort_by[0]
         context["sort_reversed"] = self.sort_by[1]
 
+        context["batch"] = self.get_paginate_by(None)
+
         return context
+
+    def get_paginate_by(self, queryset):
+        if "batch" in self.request.GET:
+            if self.request.GET["batch"].lower() == "all":
+                # We still return a (big) number instead of None
+                # to be able to use the paginator the same way to
+                # get the questions count (else the paginator is not
+                # available at all).
+                return 2**31 - 1
+            else:
+                try:
+                    return int(self.request.GET["batch"])
+                except ValueError:
+                    return self.paginate_by
+        return self.paginate_by
 
     def get_queryset(self):
         questions = (
