@@ -201,8 +201,3 @@ class QuizzesListMixin(ListView):
 class UserQuizzesListView(LoginRequiredMixin, QuizzesListMixin):
     def get_base_queryset(self):
         return Quizz.objects.filter(user=self.request.user)
-
-
-class LegalView(TemplateView):
-    template_name = "public/legal.html"
-    extra_context = {"now": timezone.now()}

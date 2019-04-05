@@ -213,16 +213,10 @@ class Question(models.Model):
     )
 
     """The question's creation date"""
-    created_at = models.DateTimeField(
-        _("Created at"),
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     """The question's update date"""
-    updated_at = models.DateTimeField(
-        _("Last updated at"),
-        auto_now=True
-    )
+    updated_at = models.DateTimeField(_("Last updated at"), auto_now=True)
 
     """True if this question was imported."""
     imported = models.BooleanField(
